@@ -632,7 +632,11 @@
       "@activepieces/ui/feature-templates": [
         "packages/ui/feature-templates/src/index.ts"
       ],
+      "@coasy/piece-coasy": ["packages/pieces/community/coasy/src/index.ts"],
       "@ee/*": ["packages/ee/*"],
+      "@wusoma/piece-namecloud": [
+        "packages/pieces/community/namecloud/src/index.ts"
+      ],
       "ee-billing-ui": ["packages/ee/ui/billing/src/index.ts"],
       "ee-components": ["packages/ee/ui/components/src/index.ts"],
       "ee-embed-sdk": ["packages/ee/ui/embed-sdk/src/index.ts"],
