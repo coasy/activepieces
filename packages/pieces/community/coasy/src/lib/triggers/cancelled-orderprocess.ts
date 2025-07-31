@@ -2,20 +2,14 @@ import { createTrigger, Property, TriggerStrategy } from '@activepieces/pieces-f
 import { coasyAuth } from '../..';
 import { createCoasyTrigger, destroyCoasyTrigger, testCoasyTrigger } from '../common/triggers';
 
-const triggerName = "NEW_FUNNEL_PARTICIPANT";
+const triggerName = "CANCELLED_ORDERPROCESS";
 
-export const newFunnelParticipant = createTrigger({
+export const cancelledOrderprocess = createTrigger({
   auth: coasyAuth,
-  name: 'newFunnelParticipant',
-  displayName: 'New Funnel Participant',
-  description: 'Triggers when a new funnel particpant is created',
-  props: {
-    funnelIds: Property.Array({
-      displayName: 'Funnel IDs',
-      description: 'IDs of funnel to react to',
-      required: false
-    })
-  },
+  name: 'cancelledOrderprocess',
+  displayName: 'Cancelled Order Process',
+  description: 'Triggers when a customer starts checkout but does not finish within 1 hour.',
+  props: {},
   sampleData: {},
   type: TriggerStrategy.WEBHOOK,
   onEnable: (context) => createCoasyTrigger({
