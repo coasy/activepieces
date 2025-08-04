@@ -15,58 +15,70 @@ export const newAuthEvent = createTrigger({
       description: 'categories of trigger',
       required: true,
       options: {
-        options: [{
-          value: "CustomEmailSender",
-          label: "Custom Email Sender"
-        }, {
-          value: "UserMigration",
-          label: "User Migration"
-        }, {
-          value: "DefineAuthChallenge",
-          label: "Define Auth Challenge"
-        }, {
-          value: "CreateAuthChallenge",
-          label: "Create Auth Challenge"
-        }, {
-          value: "VerifyAuthChallengeResponse",
-          label: "Verify Auth Challenge Response"
-        }]
-      }
+        options: [
+          {
+            value: 'CustomEmailSender',
+            label: 'Custom Email Sender',
+          },
+          {
+            value: 'UserMigration',
+            label: 'User Migration',
+          },
+          {
+            value: 'DefineAuthChallenge',
+            label: 'Define Auth Challenge',
+          },
+          {
+            value: 'CreateAuthChallenge',
+            label: 'Create Auth Challenge',
+          },
+          {
+            value: 'VerifyAuthChallengeResponse',
+            label: 'Verify Auth Challenge Response',
+          },
+        ],
+      },
     }),
     triggerNames: Property.StaticMultiSelectDropdown({
       displayName: 'Triggers',
       description: 'Select triggers to react on',
       required: true,
       options: {
-        options: [{
-          value: "SignUp",
-          label: "Sign Up"
-        }, {
-          value: "ResendCode",
-          label: "Resend Code"
-        }, {
-          value: "ForgotPassword",
-          label: "Forgot Password"
-        }, {
-          value: "Authentication",
-          label: "Authentication"
-        }, {
-          value: "ELSE",
-          label: "Else"
-        }]
-      }
-    })
+        options: [
+          {
+            value: 'SignUp',
+            label: 'Sign Up',
+          },
+          {
+            value: 'ResendCode',
+            label: 'Resend Code',
+          },
+          {
+            value: 'ForgotPassword',
+            label: 'Forgot Password',
+          },
+          {
+            value: 'Authentication',
+            label: 'Authentication',
+          },
+          {
+            value: 'ELSE',
+            label: 'Else',
+          },
+        ],
+      },
+    }),
   },
   sampleData: {},
   type: TriggerStrategy.WEBHOOK,
-  onEnable : (context) => createCoasyTrigger({
+  onEnable: (context) => createCoasyTrigger({
     triggerName,
     webhookUrl: context.webhookUrl,
     auth: context.auth,
     filter: context.propsValue,
     store: context.store
   }),
-  onDisable : (context) => destroyCoasyTrigger({
+  onDisable: (context) => destroyCoasyTrigger({
     triggerName,
     auth: context.auth,
     store: context.store

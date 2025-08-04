@@ -1,4 +1,9 @@
-import { AuthenticationType, httpClient, HttpMethod, HttpRequest } from '@activepieces/pieces-common';
+import {
+  AuthenticationType,
+  httpClient,
+  HttpMethod,
+  HttpRequest,
+} from '@activepieces/pieces-common';
 
 export class CoasyClient {
   private baseUrl: string;
@@ -9,7 +14,6 @@ export class CoasyClient {
     this.apiKey = apiKey;
   }
 
-
   async action(actionName: string, request: any) {
     return this.request(`/apps/actions/${actionName}`, request);
   }
@@ -18,20 +22,19 @@ export class CoasyClient {
     return this.request(`/apps/triggers/create`, {
       hookUrl,
       trigger,
-      filter
+      filter,
     });
   }
 
   async destroyTrigger(webhookId: string) {
-    return this.request(`/apps/triggers/destroy`, { webhookId})
+    return this.request(`/apps/triggers/destroy`, { webhookId });
   }
 
   async listTriggerEvents(trigger: string) {
     return this.request(`/apps/list`, {
-      trigger
-    })
+      trigger,
+    });
   }
-
 
   async request(path: string, requestBody: any) {
     const request: HttpRequest<string> = {
@@ -40,7 +43,7 @@ export class CoasyClient {
       body: JSON.stringify(requestBody),
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: this.apiKey
+        token: this.apiKey,
       },
     };
 
@@ -52,5 +55,4 @@ export class CoasyClient {
       return response.body;
     }
   }
-
 }
