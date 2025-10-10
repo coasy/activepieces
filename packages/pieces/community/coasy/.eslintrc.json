@@ -13,7 +13,11 @@
         "*.js",
         "*.jsx"
       ],
-      "rules": {}
+   "rules": {},
+        "extends": [
+        "plugin:prettier/recommended"
+        ],
+      "plugins": ["prettier"]
     },
     {
       "files": [
