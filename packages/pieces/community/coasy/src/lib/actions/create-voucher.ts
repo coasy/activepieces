@@ -1,28 +1,46 @@
-import { createAction, Property } from "@activepieces/pieces-framework";
-import { coasyAuth } from "../..";
-import { CoasyClient } from "../common/coasyClient";
+import { createAction, Property } from '@activepieces/pieces-framework';
+import { coasyAuth } from '../..';
+import { runCoasyAction } from '../common/actions';
+
+const name = 'createVoucher';
 
 export const createVoucher = createAction({
   auth: coasyAuth,
-  name: "createVoucher",
-  displayName: "Create Voucher",
-  description: "Creates a new voucher",
+  name,
+  displayName: 'Create Voucher',
+  description: 'Creates a new voucher',
   props: {
-    offerId: Property.ShortText({
-      displayName: "Offer ID",
-      description: "ID of offer",
-      required: true
-    })
+    offerIds: Property.Array({
+      displayName: 'Offer ID',
+      description: 'ID of offer',
+      required: false,
+    }),
+    countLeft: Property.Number({
+      displayName: 'Quantity',
+      description: 'Count of vouchers',
+      required: false,
+    }),
+    recurringPeriod: Property.StaticDropdown({
+      displayName: 'Recurring period',
+      description: 'How the voucher will recurre',
+      required: false,
+      options: {
+        options: [
+          {
+            label: 'Monthly',
+            value: 'MONTHLY',
+          },
+          {
+            label: 'Quarterly',
+            value: 'QUARTERLY',
+          },
+          {
+            label: 'Yearly',
+            value: 'YEARLY',
+          },
+        ],
+      },
+    }),
   },
-  async run(configValue) {
-    const { propsValue, auth } = configValue;
-    const client = new CoasyClient(
-      auth.baseUrl ?? "https://backend.api.prod.coasy.io",
-      auth.apiKey
-    );
-    const request = {
-      offerId: propsValue.offerId
-    };
-    return client.action("createVoucher", request);
-  }
+  run: (configValue) => runCoasyAction(configValue, name),
 });

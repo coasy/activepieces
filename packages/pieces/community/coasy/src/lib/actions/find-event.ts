@@ -1,28 +1,20 @@
-import { createAction, Property } from "@activepieces/pieces-framework";
-import { coasyAuth } from "../..";
-import { CoasyClient } from "../common/coasyClient";
+import { createAction, Property } from '@activepieces/pieces-framework';
+import { coasyAuth } from '../..';
+import { runCoasyAction } from '../common/actions';
+
+const name = 'findEvent';
 
 export const findEvent = createAction({
   auth: coasyAuth,
-  name: "findEvent",
-  displayName: "Find Event",
-  description: "Finds Event",
+  name,
+  displayName: 'Find Event',
+  description: 'Finds Event',
   props: {
     title: Property.ShortText({
-      displayName: "Title",
-      description: "Title Name",
-      required: false
-    })
+      displayName: 'Title',
+      description: 'Title Name',
+      required: false,
+    }),
   },
-  async run(configValue) {
-    const { propsValue, auth } = configValue;
-    const client = new CoasyClient(
-      auth.baseUrl ?? "https://backend.api.prod.coasy.io",
-      auth.apiKey
-    );
-    const request = {
-      title: propsValue.title
-    };
-    return client.action("findEvent", request);
-  }
+  run: (configValue) => runCoasyAction(configValue, name),
 });
