@@ -16,7 +16,13 @@ import {
   PropertyType,
   ArraySubProps,
 } from '@activepieces/pieces-framework';
-import { isNil } from '@activepieces/shared';
+import {
+  FlowActionType,
+  FlowTriggerType,
+  isNil,
+  PropertyExecutionType,
+  Step,
+} from '@activepieces/shared';
 
 import { MultiSelectPieceProperty } from '../../../components/custom/multi-select-piece-property';
 
@@ -36,6 +42,7 @@ type AutoFormProps = {
   markdownVariables?: Record<string, string>;
   useMentionTextInput: boolean;
   disabled?: boolean;
+  onValueChange?: (val: { value: unknown; propertyName: string }) => void;
 };
 
 const AutoPropertiesFormComponent = React.memo(
@@ -46,12 +53,22 @@ const AutoPropertiesFormComponent = React.memo(
     prefixValue,
     disabled,
     useMentionTextInput,
+    onValueChange,
   }: AutoFormProps) => {
     const form = useFormContext();
+    const step = form.getValues() as Step;
+
     return (
       Object.keys(props).length > 0 && (
         <div className="flex flex-col gap-4 w-full">
           {Object.entries(props).map(([propertyName]) => {
+            const isPieceStep =
+              step.type === FlowActionType.PIECE ||
+              step.type === FlowTriggerType.PIECE;
+            const dynamicInputModeToggled = isPieceStep
+              ? step.settings.propertySettings[propertyName]?.type ===
+                PropertyExecutionType.DYNAMIC
+              : false;
             return (
               <FormField
                 key={propertyName}
@@ -59,7 +76,17 @@ const AutoPropertiesFormComponent = React.memo(
                 control={form.control}
                 render={({ field }) =>
                   selectFormComponentForProperty({
-                    field,
+                    field: {
+                      ...field,
+                      onChange: (value) => {
+                        field.onChange(value);
+                        //must come after because the form value won't be updated yet otherwise
+                        onValueChange?.({
+                          value,
+                          propertyName,
+                        });
+                      },
+                    },
                     propertyName,
                     inputName: `${prefixValue}.${propertyName}`,
                     property: props[propertyName],
@@ -67,6 +94,7 @@ const AutoPropertiesFormComponent = React.memo(
                     markdownVariables: markdownVariables ?? {},
                     useMentionTextInput: useMentionTextInput,
                     disabled: disabled ?? false,
+                    dynamicInputModeToggled,
                   })
                 }
               />
@@ -87,6 +115,7 @@ type selectFormComponentForPropertyParams = {
   markdownVariables: Record<string, string>;
   useMentionTextInput: boolean;
   disabled: boolean;
+  dynamicInputModeToggled: boolean;
 };
 
 const selectFormComponentForProperty = ({
@@ -98,6 +127,7 @@ const selectFormComponentForProperty = ({
   markdownVariables,
   useMentionTextInput,
   disabled,
+  dynamicInputModeToggled,
 }: selectFormComponentForPropertyParams) => {
   switch (property.type) {
     case PropertyType.ARRAY:
@@ -109,6 +139,7 @@ const selectFormComponentForProperty = ({
           disabled={disabled}
           inputName={inputName}
           allowDynamicValues={allowDynamicValues}
+          dynamicInputModeToggled={dynamicInputModeToggled}
         >
           <ArrayPieceProperty
             disabled={disabled}
@@ -127,6 +158,7 @@ const selectFormComponentForProperty = ({
           inputName={inputName}
           disabled={disabled}
           allowDynamicValues={allowDynamicValues}
+          dynamicInputModeToggled={dynamicInputModeToggled}
         >
           <DictionaryProperty
             disabled={disabled}
@@ -146,6 +178,7 @@ const selectFormComponentForProperty = ({
           inputName={inputName}
           allowDynamicValues={allowDynamicValues}
           placeBeforeLabelText={true}
+          dynamicInputModeToggled={dynamicInputModeToggled}
         >
           <FormControl>
             <Switch
@@ -174,6 +207,7 @@ const selectFormComponentForProperty = ({
           field={field}
           disabled={disabled}
           allowDynamicValues={allowDynamicValues}
+          dynamicInputModeToggled={dynamicInputModeToggled}
         >
           <SearchableSelect
             options={property.options.options}
@@ -194,6 +228,7 @@ const selectFormComponentForProperty = ({
           field={field}
           disabled={disabled}
           allowDynamicValues={allowDynamicValues}
+          dynamicInputModeToggled={dynamicInputModeToggled}
         >
           {useMentionTextInput ? (
             <BuilderJsonEditorWrapper
@@ -214,6 +249,7 @@ const selectFormComponentForProperty = ({
           field={field}
           disabled={disabled}
           allowDynamicValues={allowDynamicValues}
+          dynamicInputModeToggled={dynamicInputModeToggled}
         >
           <MultiSelectPieceProperty
             placeholder={property.options.placeholder ?? t('Select an option')}
@@ -239,6 +275,7 @@ const selectFormComponentForProperty = ({
           field={field}
           disabled={disabled}
           allowDynamicValues={allowDynamicValues}
+          dynamicInputModeToggled={dynamicInputModeToggled}
         >
           <DynamicDropdownPieceProperty
             refreshers={property.refreshers}
@@ -248,6 +285,7 @@ const selectFormComponentForProperty = ({
             propertyName={propertyName}
             multiple={property.type === PropertyType.MULTI_SELECT_DROPDOWN}
             showDeselect={!property.required}
+            shouldRefreshOnSearch={property.refreshOnSearch ?? false}
           ></DynamicDropdownPieceProperty>
         </AutoFormFieldWrapper>
       );
@@ -265,6 +303,7 @@ const selectFormComponentForProperty = ({
           propertyName={propertyName}
           disabled={disabled}
           allowDynamicValues={false}
+          dynamicInputModeToggled={dynamicInputModeToggled}
         >
           {useMentionTextInput ? (
             <TextInputWithMentions
@@ -316,6 +355,7 @@ const selectFormComponentForProperty = ({
           field={field}
           disabled={disabled}
           allowDynamicValues={allowDynamicValues}
+          dynamicInputModeToggled={dynamicInputModeToggled}
         >
           <ColorPicker value={field.value} onChange={field.onChange} />
         </AutoFormFieldWrapper>
