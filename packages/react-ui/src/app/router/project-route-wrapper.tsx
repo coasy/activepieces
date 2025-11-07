@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 
-import { useEmbedding } from '@/components/embed-provider';
+import { useAuthorization } from '@/hooks/authorization-hooks';
 import { projectHooks } from '@/hooks/project-hooks';
 import {
   FROM_QUERY_PARAM,
@@ -26,15 +26,15 @@ export const TokenCheckerWrapper: React.FC<{ children: React.ReactNode }> = ({
     isFetching,
   } = projectHooks.useSwitchToProjectInParams();
 
-  const { embedState } = useEmbedding();
+  const { checkAccess } = useAuthorization();
 
-  if (isNil(projectIdFromParams) || isNil(projectIdFromParams)) {
+  if (isNil(projectIdFromParams)) {
     return <Navigate to="/sign-in" replace />;
   }
   const failedToSwitchToProject =
     !isProjectValid && !isNil(projectIdFromParams);
   if (failedToSwitchToProject) {
-    const defaultRoute = determineDefaultRoute(embedState.isEmbedded);
+    const defaultRoute = determineDefaultRoute(checkAccess);
     return <Navigate to={defaultRoute} replace />;
   }
   if (isError || !isProjectValid) {
@@ -78,7 +78,6 @@ const RedirectToCurrentProjectRoute: React.FC<
   const pathWithParamsAndSearchParams = `${pathWithParams}${
     searchParamsString ? `?${searchParamsString}` : ''
   }`;
-
   return (
     <Navigate
       to={`/projects/${currentProjectId}${pathWithParamsAndSearchParams}`}
@@ -117,9 +116,6 @@ export const ProjectRouterWrapper = ({
 ];
 
 export const projectSettingsRoutes = {
-  general: '/settings/general',
-  team: '/settings/team',
   pieces: '/settings/pieces',
   environments: '/settings/environments',
-  alerts: '/settings/alerts',
 } as const;

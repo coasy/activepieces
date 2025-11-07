@@ -2,6 +2,7 @@ import {
     File,
     Flow,
     FlowRun,
+    FlowVersion,
     Project,
 } from '@activepieces/shared'
 import { EntitySchema } from 'typeorm'
@@ -17,6 +18,7 @@ import {
 type FlowRunSchema = FlowRun & {
     project: Project
     flow: Flow
+    flowVersion: FlowVersion
     logsFile: File
 }
 
@@ -30,9 +32,6 @@ export const FlowRunEntity = new EntitySchema<FlowRunSchema>({
         environment: {
             type: String,
             nullable: true,
-        },
-        flowDisplayName: {
-            type: String,
         },
         logsFileId: { 
             ...ApIdSchema, 
@@ -59,10 +58,6 @@ export const FlowRunEntity = new EntitySchema<FlowRunSchema>({
             nullable: true,
             type: Number,
         },
-        tasks: {
-            nullable: true,
-            type: Number,
-        },
         startTime: {
             type: TIMESTAMP_COLUMN_TYPE,
         },
@@ -75,6 +70,10 @@ export const FlowRunEntity = new EntitySchema<FlowRunSchema>({
             nullable: true,
         },
         failedStepName: {
+            type: String,
+            nullable: true,
+        },
+        stepNameToTest: {
             type: String,
             nullable: true,
         },
@@ -112,6 +111,10 @@ export const FlowRunEntity = new EntitySchema<FlowRunSchema>({
             name: 'idx_run_parent_run_id',
             columns: ['parentRunId'],
         },
+        {
+            name: 'idx_run_flow_version_id',
+            columns: ['flowVersionId'],
+        },
     ],
     relations: {
         project: {
@@ -132,6 +135,16 @@ export const FlowRunEntity = new EntitySchema<FlowRunSchema>({
             joinColumn: {
                 name: 'flowId',
                 foreignKeyConstraintName: 'fk_flow_run_flow_id',
+            },
+        },
+        flowVersion: {
+            type: 'many-to-one',
+            target: 'flow_version',
+            cascade: true,
+            onDelete: 'CASCADE',
+            joinColumn: {
+                name: 'flowVersionId',
+                foreignKeyConstraintName: 'fk_flow_run_flow_version_id',
             },
         },
         logsFile: {
