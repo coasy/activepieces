@@ -1,6 +1,7 @@
 import { Writable } from 'stream'
+import { AI_USAGE_AGENT_ID_HEADER, AI_USAGE_FEATURE_HEADER, AI_USAGE_MCP_ID_HEADER, AIUsageFeature, AIUsageMetadata, SUPPORTED_AI_PROVIDERS, SupportedAIProvider } from '@activepieces/common-ai'
 import { exceptionHandler } from '@activepieces/server-shared'
-import { ActivepiecesError, AI_USAGE_AGENT_ID_HEADER, AI_USAGE_FEATURE_HEADER, AI_USAGE_MCP_ID_HEADER, AIUsageFeature, AIUsageMetadata, ErrorCode, isNil, PlatformUsageMetric, PrincipalType, SUPPORTED_AI_PROVIDERS, SupportedAIProvider } from '@activepieces/shared'
+import { ActivepiecesError, EnginePrincipal, ErrorCode, isNil, PlatformUsageMetric, PrincipalType } from '@activepieces/shared'
 import proxy from '@fastify/http-proxy'
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
 import { FastifyRequest } from 'fastify'
@@ -17,6 +18,9 @@ export const aiProviderModule: FastifyPluginAsyncTypebox = async (app) => {
         prefix: '/v1/ai-providers/proxy/:provider',
         upstream: '',
         disableRequestLogging: false,
+        config: {
+            allowedPrincipals: [PrincipalType.ENGINE],
+        },
         replyOptions: {
             rewriteRequestHeaders: (_request, headers) => {
                 headers['accept-encoding'] = 'identity'
@@ -28,8 +32,14 @@ export const aiProviderModule: FastifyPluginAsyncTypebox = async (app) => {
             // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onResponse: async (request, reply, response) => {
                 request.body = (request as ModifiedFastifyRequest).originalBody
-                const projectId = request.principal.projectId
+
+                const principal = request.principal as EnginePrincipal
+                const projectId = principal.projectId
                 const { provider } = request.params as { provider: string }
+                if (aiProviderService.isNonUsageRequest(provider, request)) {
+                    return reply.send(response.stream)
+                }
+
                 const isStreaming = aiProviderService.isStreaming(provider, request)
                 let streamingParser: StreamingParser
                 if (isStreaming) {
@@ -77,7 +87,7 @@ export const aiProviderModule: FastifyPluginAsyncTypebox = async (app) => {
                                 return
                             }
 
-                            let usage: Usage
+                            let usage: Usage | null
                             if (isStreaming) {
                                 const finalResponse = streamingParser.onEnd()
                                 if (!finalResponse) {
@@ -90,15 +100,20 @@ export const aiProviderModule: FastifyPluginAsyncTypebox = async (app) => {
                                 usage = aiProviderService.calculateUsage(provider, request, completeResponse)
                             }
 
-                            const metadata = buildAIUsageMetadata(request.headers)
-                            await platformUsageService(app.log).increaseAiCreditUsage({ 
-                                projectId,
-                                platformId: request.principal.platform.id,
-                                provider,
-                                model: usage.model,
-                                cost: usage.cost,
-                                metadata,
-                            })
+                            if (usage) {
+                                const metadata = {
+                                    ...usage.metadata,
+                                    ...buildAIUsageMetadata(request.headers),
+                                }
+                                await platformUsageService(app.log).increaseAiCreditUsage({
+                                    projectId,
+                                    platformId: principal!.platform.id,
+                                    provider,
+                                    model: usage.model,
+                                    cost: usage.cost,
+                                    metadata,
+                                })
+                            }
                         }
                         catch (error) {
                             exceptionHandler.handle({
@@ -118,40 +133,13 @@ export const aiProviderModule: FastifyPluginAsyncTypebox = async (app) => {
         },
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         preHandler: async (request) => {
-            if (![PrincipalType.ENGINE, PrincipalType.USER].includes(request.principal.type)) {
-                throw new ActivepiecesError({
-                    code: ErrorCode.AUTHORIZATION,
-                    params: {
-                        message: 'invalid route for principal type',
-                    },
-                })
-            }
-
-            validateAIUsageHeaders(request.headers)
-
+            const principal = request.principal as EnginePrincipal
             const provider = (request.params as { provider: string }).provider
-            if (aiProviderService.isStreaming(provider, request) && !aiProviderService.providerSupportsStreaming(provider)) {
-                throw new ActivepiecesError({
-                    code: ErrorCode.AI_REQUEST_NOT_SUPPORTED,
-                    params: {
-                        message: 'Streaming is not supported for this provider',
-                    },
-                })
-            }
+            aiProviderService.validateRequest(provider, request)
 
-            const model = aiProviderService.extractModelId(provider, request)
-            if (!model || !aiProviderService.isModelSupported(provider, model, request)) {
-                throw new ActivepiecesError({
-                    code: ErrorCode.AI_MODEL_NOT_SUPPORTED,
-                    params: {
-                        provider,
-                        model: model ?? 'unknown',
-                    },
-                })
-            }
-
-            const projectId = request.principal.projectId
-            const exceededLimit = await projectLimitsService(request.log).checkAICreditsExceededLimit(projectId)
+            const projectId = principal.projectId
+            const videoModelRequestCost = aiProviderService.getVideoModelCost({ provider, request })
+            const exceededLimit = await projectLimitsService(request.log).checkAICreditsExceededLimit({ projectId, requestCostBeforeFiring: videoModelRequestCost })
             if (exceededLimit) {
                 throw new ActivepiecesError({
                     code: ErrorCode.QUOTA_EXCEEDED,
@@ -161,7 +149,8 @@ export const aiProviderModule: FastifyPluginAsyncTypebox = async (app) => {
                 })
             }
 
-            const userPlatformId = request.principal.platform.id
+
+            const userPlatformId = principal.platform.id
             const providerConfig = getProviderConfigOrThrow(provider)
 
             const platformId = await aiProviderService.getAIProviderPlatformId(userPlatformId)
@@ -201,41 +190,6 @@ function getProviderConfigOrThrow(provider: string | undefined): SupportedAIProv
         })
     }
     return providerConfig
-}
-
-function validateAIUsageHeaders(headers: Record<string, string | string[] | undefined>): void {
-    const feature = headers[AI_USAGE_FEATURE_HEADER] as AIUsageFeature
-    const agentId = headers[AI_USAGE_AGENT_ID_HEADER] as string | undefined
-    const mcpId = headers[AI_USAGE_MCP_ID_HEADER] as string | undefined
-
-    // Validate feature header
-    const supportedFeatures = Object.values(AIUsageFeature).filter(f => f !== AIUsageFeature.UNKNOWN) as AIUsageFeature[]
-    if (feature && !supportedFeatures.includes(feature)) {
-        throw new ActivepiecesError({
-            code: ErrorCode.VALIDATION,
-            params: {
-                message: `${AI_USAGE_FEATURE_HEADER} header must be one of the following: ${supportedFeatures.join(', ')}`,
-            },
-        })
-    }
-
-    if (feature === AIUsageFeature.AGENTS && !agentId) {
-        throw new ActivepiecesError({
-            code: ErrorCode.VALIDATION,
-            params: {
-                message: `${AI_USAGE_AGENT_ID_HEADER} header is required when feature is ${AIUsageFeature.AGENTS}`,
-            },
-        })
-    }
-    
-    if (feature === AIUsageFeature.MCP && !mcpId) {
-        throw new ActivepiecesError({
-            code: ErrorCode.VALIDATION,
-            params: {
-                message: `${AI_USAGE_MCP_ID_HEADER} header is required when feature is ${AIUsageFeature.MCP}`,
-            },
-        })
-    }
 }
 
 function buildAIUsageMetadata(headers: Record<string, string | string[] | undefined>): AIUsageMetadata {

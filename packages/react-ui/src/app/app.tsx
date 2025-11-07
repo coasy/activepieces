@@ -13,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 import { EmbeddingProvider } from '@/components/embed-provider';
 import TelemetryProvider from '@/components/telemetry-provider';
 import { ThemeProvider } from '@/components/theme-provider';
-import { SidebarProvider } from '@/components/ui/sidebar-shadcn';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import {
@@ -31,7 +30,6 @@ import {
   ResourceLockedParams,
 } from '@activepieces/shared';
 
-import { ChangelogProvider } from './components/changelog-provider';
 import { EmbeddingFontLoader } from './components/embedding-font-loader';
 import { InitialDataGuard } from './components/initial-data-guard';
 import { ApRouter } from './router';
@@ -75,11 +73,8 @@ export function App() {
                 <TooltipProvider>
                   <React.Fragment key={i18n.language}>
                     <ThemeProvider storageKey="vite-ui-theme">
-                      <SidebarProvider>
-                        <ApRouter />
-                        <Toaster />
-                        <ChangelogProvider />
-                      </SidebarProvider>
+                      <ApRouter />
+                      <Toaster />
                     </ThemeProvider>
                   </React.Fragment>
                 </TooltipProvider>

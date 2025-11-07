@@ -8,8 +8,8 @@ import {
   ResumePayload,
   SeekPage,
   TriggerPayload,
+  TriggerStrategy,
 } from '@activepieces/shared';
-import { TriggerStrategy } from './trigger/trigger';
 import {
   InputPropertyMap,
   PiecePropValueSchema,
@@ -23,6 +23,7 @@ type BaseContext<
   Props extends InputPropertyMap
 > = {
   flows: FlowsContext;
+  step: StepContext;
   auth: PiecePropValueSchema<PieceAuth>;
   propsValue: StaticPropsValue<Props>;
   store: Store;
@@ -103,7 +104,7 @@ export type PauseHookParams = {
 };
 
 export type PauseHook = (params: {
-  pauseMetadata: DelayPauseMetadata | Omit<WebhookPauseMetadata, 'requestId'>
+  pauseMetadata: Omit<DelayPauseMetadata, 'requestIdToReply'> | Omit<WebhookPauseMetadata, 'requestId' | 'requestIdToReply'>
 }) => void;
 
 export type FlowsContext = {
@@ -114,6 +115,10 @@ export type FlowsContext = {
       id: string;
     };
   };
+}
+
+export type StepContext = {
+  name: string;
 }
 
 export type ListFlowsContextParams = {
