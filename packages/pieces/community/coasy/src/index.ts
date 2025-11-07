@@ -13,13 +13,9 @@ import { cancelledOrder } from './lib/triggers/cancelled-order';
 import { cancelledOrderItem } from './lib/triggers/cancelled-order-item';
 import { cancelledOrderprocess } from './lib/triggers/cancelled-orderprocess';
 import { cancelledSubscription } from './lib/triggers/cancelled-subscription';
-import { getEvents } from './lib/triggers/get-events';
-import { newAppUserSignUp } from './lib/triggers/new-app-user-sign-up';
 import { newAuthEvent } from './lib/triggers/new-auth-event';
 import { newCustomer } from './lib/triggers/new-customer';
-import { newEventParticipant } from './lib/triggers/new-event-participant';
 import { newFunnelParticipant } from './lib/triggers/new-funnel-participant';
-import { newLead } from './lib/triggers/new-lead';
 import { newMembership } from './lib/triggers/new-membership';
 import { newOrder } from './lib/triggers/new-order';
 import { newOrderItem } from './lib/triggers/new-order-item';
@@ -66,13 +62,9 @@ export const coasy = createPiece({
     cancelledOrderItem,
     cancelledOrderprocess,
     cancelledSubscription,
-    getEvents,
-    newAppUserSignUp,
     newAuthEvent,
     newCustomer,
-    newEventParticipant,
     newFunnelParticipant,
-    newLead,
     newMembership,
     newOrder,
     newOrderItem,

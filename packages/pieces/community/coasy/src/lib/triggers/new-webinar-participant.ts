@@ -30,16 +30,12 @@ export const newWebinarParticipant = createTrigger({
       options: {
         options: [
           {
-            label: 'Upcoming',
-            value: 'UPCOMING',
+            label: 'Later',
+            value: 'LATER',
           },
           {
-            label: 'Attended',
-            value: 'ATTENDED',
-          },
-          {
-            label: 'Not Attended',
-            value: 'NOT_ATTENDED',
+            label: 'Instantly',
+            value: 'INSTANTLY',
           },
         ],
       },

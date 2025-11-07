@@ -18,9 +18,9 @@ export const cancelledOrderItem = createTrigger({
   displayName: 'Cancelled Order Item',
   description: 'Triggers when an order item is cancelled.',
   props: {
-    mainOfferIds: Property.Array({
-      displayName: 'Main Offer IDs',
-      description: 'IDs of main offers to react to',
+    offerIds: Property.Array({
+      displayName: 'Offer IDs',
+      description: 'IDs of offers to react to',
       required: false,
     }),
     selectedPaymentPlans: Property.Array({

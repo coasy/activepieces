@@ -1,8 +1,16 @@
-import { createTrigger, Property, TriggerStrategy } from '@activepieces/pieces-framework';
+import {
+  createTrigger,
+  Property,
+  TriggerStrategy,
+} from '@activepieces/pieces-framework';
 import { coasyAuth } from '../..';
-import { createCoasyTrigger, destroyCoasyTrigger, testCoasyTrigger } from '../common/triggers';
+import {
+  createCoasyTrigger,
+  destroyCoasyTrigger,
+  testCoasyTrigger,
+} from '../common/triggers';
 
-const triggerName = "NEW_FUNNEL_PARTICIPANT";
+const triggerName = 'NEW_FUNNEL_PARTICIPANT';
 
 export const newFunnelParticipant = createTrigger({
   auth: coasyAuth,
@@ -13,28 +21,31 @@ export const newFunnelParticipant = createTrigger({
     funnelIds: Property.Array({
       displayName: 'Funnel IDs',
       description: 'IDs of funnel to react to',
-      required: false
-    })
+      required: false,
+    }),
   },
   sampleData: {},
   type: TriggerStrategy.WEBHOOK,
-  onEnable: (context) => createCoasyTrigger({
-    triggerName,
-    webhookUrl: context.webhookUrl,
-    auth: context.auth,
-    filter: context.propsValue,
-    store: context.store
-  }),
-  onDisable: (context) => destroyCoasyTrigger({
-    triggerName,
-    auth: context.auth,
-    store: context.store
-  }),
-  test: (context) => testCoasyTrigger({
-    triggerName,
-    auth: context.auth
-  }),
+  onEnable: (context) =>
+    createCoasyTrigger({
+      triggerName,
+      webhookUrl: context.webhookUrl,
+      auth: context.auth,
+      filter: context.propsValue,
+      store: context.store,
+    }),
+  onDisable: (context) =>
+    destroyCoasyTrigger({
+      triggerName,
+      auth: context.auth,
+      store: context.store,
+    }),
+  test: (context) =>
+    testCoasyTrigger({
+      triggerName,
+      auth: context.auth,
+    }),
   async run(context) {
     return [context.payload.body];
-  }
+  },
 });

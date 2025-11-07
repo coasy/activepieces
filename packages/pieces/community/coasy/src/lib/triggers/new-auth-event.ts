@@ -1,14 +1,23 @@
-import { createTrigger, Property, TriggerStrategy } from '@activepieces/pieces-framework';
+import {
+  createTrigger,
+  Property,
+  TriggerStrategy,
+} from '@activepieces/pieces-framework';
 import { coasyAuth } from '../..';
-import { createCoasyTrigger, destroyCoasyTrigger, testCoasyTrigger } from '../common/triggers';
+import {
+  createCoasyTrigger,
+  destroyCoasyTrigger,
+  testCoasyTrigger,
+} from '../common/triggers';
 
-const triggerName = "NEW_AUTH_EVENT";
+const triggerName = 'NEW_AUTH_EVENT';
 
 export const newAuthEvent = createTrigger({
   auth: coasyAuth,
   name: 'newAuthEvent',
   displayName: 'New Auth event',
-  description: 'Triggers when an authentication (signUp, password forgotten etc.) event happens',
+  description:
+    'Triggers when an authentication (signUp, password forgotten etc.) event happens',
   props: {
     triggerCategories: Property.StaticMultiSelectDropdown({
       displayName: 'Trigger Categories',
@@ -71,23 +80,26 @@ export const newAuthEvent = createTrigger({
   },
   sampleData: {},
   type: TriggerStrategy.WEBHOOK,
-  onEnable: (context) => createCoasyTrigger({
-    triggerName,
-    webhookUrl: context.webhookUrl,
-    auth: context.auth,
-    filter: context.propsValue,
-    store: context.store
-  }),
-  onDisable: (context) => destroyCoasyTrigger({
-    triggerName,
-    auth: context.auth,
-    store: context.store
-  }),
-  test: (context) => testCoasyTrigger({
-    triggerName,
-    auth: context.auth
-  }),
+  onEnable: (context) =>
+    createCoasyTrigger({
+      triggerName,
+      webhookUrl: context.webhookUrl,
+      auth: context.auth,
+      filter: context.propsValue,
+      store: context.store,
+    }),
+  onDisable: (context) =>
+    destroyCoasyTrigger({
+      triggerName,
+      auth: context.auth,
+      store: context.store,
+    }),
+  test: (context) =>
+    testCoasyTrigger({
+      triggerName,
+      auth: context.auth,
+    }),
   async run(context) {
     return [context.payload.body];
-  }
+  },
 });

@@ -17,23 +17,7 @@ export const cancelledOrder = createTrigger({
   name: 'cancelledOrder',
   displayName: 'Cancelled Order',
   description: 'Triggers when an order is cancelled.',
-  props: {
-    mainOfferIds: Property.Array({
-      displayName: 'Main Offer IDs',
-      description: 'IDs of main offers to react to',
-      required: false,
-    }),
-    selectedPaymentPlans: Property.Array({
-      displayName: 'Selected Payment Plans',
-      description: 'Payment plans to filter by',
-      required: false,
-    }),
-    selectedShippingOptions: Property.Array({
-      displayName: 'Selected Shipping Options',
-      description: 'Shipping options to filter by',
-      required: false,
-    }),
-  },
+  props: {},
   sampleData: {},
   type: TriggerStrategy.WEBHOOK,
   onEnable: (context) =>

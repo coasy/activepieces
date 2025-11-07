@@ -18,9 +18,9 @@ export const newOrderItem = createTrigger({
   displayName: 'New Order Item',
   description: 'Triggers for each item in a new Order.',
   props: {
-    mainOfferIds: Property.Array({
-      displayName: 'Main Offer IDs',
-      description: 'IDs of main offers to react to',
+    offerIds: Property.Array({
+      displayName: 'Offer IDs',
+      description: 'IDs of offers to react to',
       required: false,
     }),
     selectedPaymentPlans: Property.Array({

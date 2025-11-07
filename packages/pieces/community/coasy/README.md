@@ -5,6 +5,7 @@ This is the Coasy integration piece for Activepieces, providing actions and trig
 ## Overview
 
 The Coasy piece includes:
+
 - **Actions**: Create funnel participants
 - **Triggers**: New funnel participants, new webinar participants, new auth events
 - **Authentication**: Custom auth with base URL and API key
@@ -12,6 +13,7 @@ The Coasy piece includes:
 ## Development Setup
 
 ### Prerequisites
+
 1. Clone the activepieces repository
 2. Install dependencies: `npm install`
 3. Ensure you're in the root directory of the activepieces monorepo
@@ -19,6 +21,7 @@ The Coasy piece includes:
 ### Development Commands
 
 #### Building the Piece
+
 ```bash
 # Build the coasy piece specifically
 nx build pieces-coasy
@@ -28,6 +31,7 @@ nx build pieces-coasy --watch
 ```
 
 #### Testing
+
 ```bash
 # Run tests for the coasy piece
 nx test pieces-coasy
@@ -37,6 +41,7 @@ nx test pieces-coasy --watch
 ```
 
 #### Linting
+
 ```bash
 # Lint the coasy piece
 nx lint pieces-coasy
@@ -48,6 +53,7 @@ nx lint pieces-coasy --fix
 ### Development Workflow
 
 #### 1. Start Development Environment
+
 ```bash
 # Start the full development environment (frontend + backend + engine + pieces)
 npm run dev
@@ -57,6 +63,7 @@ npm run dev:backend
 ```
 
 #### 2. Testing Your Changes
+
 - Navigate to `http://localhost:4200` (frontend)
 - Create a new flow and add Coasy actions/triggers
 - Test authentication with your Coasy credentials
@@ -65,16 +72,19 @@ npm run dev:backend
 #### 3. Adding New Features
 
 **Adding a New Action:**
+
 1. Create a new file in `src/lib/actions/`
 2. Export the action from `src/index.ts`
 3. Follow the existing patterns in `create-funnel-participant.ts`
 
 **Adding a New Trigger:**
+
 1. Create a new file in `src/lib/triggers/`
 2. Export the trigger from `src/index.ts`
 3. Follow the existing patterns in `new-funnel-participant.ts`
 
 #### 4. File Structure
+
 ```
 packages/pieces/community/coasy/
 ├── README.md                 # This file
@@ -92,16 +102,20 @@ packages/pieces/community/coasy/
 ## Code Standards
 
 ### Authentication
+
 The piece uses custom authentication with:
+
 - `baseUrl`: Coasy instance base URL
 - `apiKey`: API key for authentication
 
 ### Error Handling
+
 - Use proper error messages for user-facing errors
 - Handle API errors gracefully
 - Validate inputs before making API calls
 
 ### Properties
+
 - Use descriptive `displayName` and `description` for all properties
 - Mark required fields appropriately
 - Use proper property types from `@activepieces/pieces-framework`
@@ -109,10 +123,12 @@ The piece uses custom authentication with:
 ## Testing in Activepieces
 
 1. **Authentication Testing**:
+
    - Verify connection works with valid credentials
    - Test error handling with invalid credentials
 
 2. **Action Testing**:
+
    - Test with valid inputs
    - Test error scenarios
    - Verify data transformation
@@ -124,18 +140,23 @@ The piece uses custom authentication with:
 
 ## Publishing
 
-The piece is published as `@coasy/piece-coasy` to npm. Version is currently `0.0.12`.
+The piece is published as `@coasy/piece-coasy` to npm. Version is currently `0.0.13`.
 
 To publish a new version:
-1. Navigate to the coasy piece directory:
+
+1. Update the `version` in `package.json` in Coasy community folder (e.g., from `0.0.13` to `0.0.14`)
+2. Build the package with:
    ```bash
-   cd packages/pieces/community/coasy
+   npm run build-piece coasy
    ```
-2. Update the `version` in `package.json` (e.g., from `0.0.11` to `0.0.12`)
-3. Publish directly to npm:
+3. Navigate to the dist folder, where is the output:
    ```bash
+   cd dist/packages/pieces/community/coasy  
+   ```
+4. Here check the content, delete tgz and publish directly to npm
+  ```bash
    npm publish
-   ```
+   ```   
 
 **Note**: The monorepo's `npm run publish-piece` script currently has dependency resolution issues. Use the direct `npm publish` method above instead.
 

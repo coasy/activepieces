@@ -19,6 +19,11 @@ export const webinarParticipantAttend = createTrigger({
   description:
     'Triggers when a webinar participant has attended or not attended',
   props: {
+    webinarIds: Property.Array({
+      displayName: 'Webinar IDs',
+      description: 'IDs of webinar to react to',
+      required: false,
+    }),
     selectedStartType: Property.StaticDropdown({
       displayName: 'Selected start type',
       description: 'filter only those participants',
@@ -26,24 +31,15 @@ export const webinarParticipantAttend = createTrigger({
       options: {
         options: [
           {
-            label: 'Upcoming',
-            value: 'UPCOMING',
+            label: 'Later',
+            value: 'LATER',
           },
           {
-            label: 'Attended',
-            value: 'ATTENDED',
-          },
-          {
-            label: 'Not Attended',
-            value: 'NOT_ATTENDED',
+            label: 'Instantly',
+            value: 'INSTANTLY',
           },
         ],
       },
-    }),
-    webinarIds: Property.Array({
-      displayName: 'Webinar IDs',
-      description: 'IDs of webinar to react to',
-      required: false,
     }),
   },
   sampleData: {},
