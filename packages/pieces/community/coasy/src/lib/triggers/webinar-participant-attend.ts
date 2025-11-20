@@ -26,7 +26,7 @@ export const webinarParticipantAttend = createTrigger({
     }),
     selectedStartType: Property.StaticDropdown({
       displayName: 'Selected start type',
-      description: 'filter only those participants',
+      description: 'Filter participants based on the start type',
       required: false,
       options: {
         options: [
@@ -37,6 +37,23 @@ export const webinarParticipantAttend = createTrigger({
           {
             label: 'Instantly',
             value: 'INSTANTLY',
+          },
+        ],
+      },
+    }),
+    status: Property.StaticDropdown({
+      displayName: 'Webinar participant attendance',
+      description: 'Filter participants based on their attendance',
+      required: false,
+      options: {
+        options: [
+          {
+            label: 'Attented',
+            value: 'ATTENDED',
+          },
+          {
+            label: 'Not Attented',
+            value: 'NOT_ATTENDED',
           },
         ],
       },
