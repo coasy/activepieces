@@ -10,35 +10,18 @@ import {
   testCoasyTrigger,
 } from '../common/triggers';
 
-const triggerName = 'NEW_WEBINAR_PARTICIPANT';
+const triggerName = 'NEW_MEMBERSHIP';
 
-export const newWebinarParticipant = createTrigger({
+export const newMembership = createTrigger({
   auth: coasyAuth,
-  name: 'newWebinarParticipant',
-  displayName: 'New Webinar Participant',
-  description: 'Triggers when a new webinar particpant is created',
+  name: 'newMembership',
+  displayName: 'New Membership',
+  description: 'Triggers when a new membership is created.',
   props: {
-    webinarIds: Property.Array({
-      displayName: 'Webinar IDs',
-      description: 'IDs of webinar to react to',
+    membershipTypeIds: Property.Array({
+      displayName: 'Membership Type IDs',
+      description: 'IDs of membership types to react to',
       required: false,
-    }),
-    selectedStartType: Property.StaticDropdown({
-      displayName: 'Selected start type',
-      description: 'filter only those participants',
-      required: false,
-      options: {
-        options: [
-          {
-            label: 'Later',
-            value: 'LATER',
-          },
-          {
-            label: 'Instantly',
-            value: 'INSTANTLY',
-          },
-        ],
-      },
     }),
   },
   sampleData: {},

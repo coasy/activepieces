@@ -10,13 +10,13 @@ import {
   testCoasyTrigger,
 } from '../common/triggers';
 
-const triggerName = 'NEW_WEBINAR_PARTICIPANT';
+const triggerName = 'WEBINAR_PARTICIPANT_REMINDER';
 
-export const newWebinarParticipant = createTrigger({
+export const webinarParticipantReminder = createTrigger({
   auth: coasyAuth,
-  name: 'newWebinarParticipant',
-  displayName: 'New Webinar Participant',
-  description: 'Triggers when a new webinar particpant is created',
+  name: 'webinarParticipantReminder',
+  displayName: 'Webinar Participant Reminder',
+  description: 'Triggers when a webinar participant is reminded',
   props: {
     webinarIds: Property.Array({
       displayName: 'Webinar IDs',
@@ -25,7 +25,7 @@ export const newWebinarParticipant = createTrigger({
     }),
     selectedStartType: Property.StaticDropdown({
       displayName: 'Selected start type',
-      description: 'filter only those participants',
+      description: 'Filter participants based on the start type',
       required: false,
       options: {
         options: [
@@ -36,6 +36,43 @@ export const newWebinarParticipant = createTrigger({
           {
             label: 'Instantly',
             value: 'INSTANTLY',
+          },
+        ],
+      },
+    }),
+    status: Property.StaticDropdown({
+      displayName: 'Selected start type',
+      description: 'Webinar start status',
+      required: false,
+      options: {
+        options: [
+          {
+            label: 'Starting',
+            value: 'STARTING',
+          },
+          {
+            label: 'Started',
+            value: 'STARTED',
+          },
+          {
+            label: '15 Minutes Before',
+            value: '15_MINUTES_BEFORE',
+          },
+          {
+            label: '1 Hour Before',
+            value: '1_HOUR_BEFORE',
+          },
+          {
+            label: '3 Hours Before',
+            value: '3_HOURS_BEFORE',
+          },
+          {
+            label: '24 Hours Before',
+            value: '24_HOURS_BEFORE',
+          },
+          {
+            label: '3 Days Before',
+            value: '3_DAYS_BEFORE',
           },
         ],
       },

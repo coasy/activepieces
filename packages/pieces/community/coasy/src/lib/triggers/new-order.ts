@@ -10,37 +10,14 @@ import {
   testCoasyTrigger,
 } from '../common/triggers';
 
-const triggerName = 'NEW_WEBINAR_PARTICIPANT';
+const triggerName = 'NEW_ORDER';
 
-export const newWebinarParticipant = createTrigger({
+export const newOrder = createTrigger({
   auth: coasyAuth,
-  name: 'newWebinarParticipant',
-  displayName: 'New Webinar Participant',
-  description: 'Triggers when a new webinar particpant is created',
-  props: {
-    webinarIds: Property.Array({
-      displayName: 'Webinar IDs',
-      description: 'IDs of webinar to react to',
-      required: false,
-    }),
-    selectedStartType: Property.StaticDropdown({
-      displayName: 'Selected start type',
-      description: 'filter only those participants',
-      required: false,
-      options: {
-        options: [
-          {
-            label: 'Later',
-            value: 'LATER',
-          },
-          {
-            label: 'Instantly',
-            value: 'INSTANTLY',
-          },
-        ],
-      },
-    }),
-  },
+  name: 'newOrder',
+  displayName: 'New Order',
+  description: 'Triggers when a new order is created.',
+  props: {},
   sampleData: {},
   type: TriggerStrategy.WEBHOOK,
   onEnable: (context) =>

@@ -10,13 +10,14 @@ import {
   testCoasyTrigger,
 } from '../common/triggers';
 
-const triggerName = 'NEW_WEBINAR_PARTICIPANT';
+const triggerName = 'WEBINAR_PARTICIPANT_ATTEND';
 
-export const newWebinarParticipant = createTrigger({
+export const webinarParticipantAttend = createTrigger({
   auth: coasyAuth,
-  name: 'newWebinarParticipant',
-  displayName: 'New Webinar Participant',
-  description: 'Triggers when a new webinar particpant is created',
+  name: 'webinarParticipantAttend',
+  displayName: 'Webinar Participant Attend',
+  description:
+    'Triggers when a webinar participant has attended or not attended',
   props: {
     webinarIds: Property.Array({
       displayName: 'Webinar IDs',
@@ -25,7 +26,7 @@ export const newWebinarParticipant = createTrigger({
     }),
     selectedStartType: Property.StaticDropdown({
       displayName: 'Selected start type',
-      description: 'filter only those participants',
+      description: 'Filter participants based on the start type',
       required: false,
       options: {
         options: [
@@ -36,6 +37,23 @@ export const newWebinarParticipant = createTrigger({
           {
             label: 'Instantly',
             value: 'INSTANTLY',
+          },
+        ],
+      },
+    }),
+    status: Property.StaticDropdown({
+      displayName: 'Webinar participant attendance',
+      description: 'Filter participants based on their attendance',
+      required: false,
+      options: {
+        options: [
+          {
+            label: 'Attented',
+            value: 'ATTENDED',
+          },
+          {
+            label: 'Not Attented',
+            value: 'NOT_ATTENDED',
           },
         ],
       },

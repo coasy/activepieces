@@ -10,35 +10,19 @@ import {
   testCoasyTrigger,
 } from '../common/triggers';
 
-const triggerName = 'NEW_WEBINAR_PARTICIPANT';
+const triggerName = 'CANCELLED_ORDERPROCESS';
 
-export const newWebinarParticipant = createTrigger({
+export const cancelledOrderprocess = createTrigger({
   auth: coasyAuth,
-  name: 'newWebinarParticipant',
-  displayName: 'New Webinar Participant',
-  description: 'Triggers when a new webinar particpant is created',
+  name: 'cancelledOrderprocess',
+  displayName: 'Cancelled Order Process',
+  description:
+    'Triggers when a customer starts checkout but does not finish within 1 hour.',
   props: {
-    webinarIds: Property.Array({
-      displayName: 'Webinar IDs',
-      description: 'IDs of webinar to react to',
+    mainOfferIds: Property.Array({
+      displayName: 'Main Offer IDs',
+      description: 'IDs of main offers to react to',
       required: false,
-    }),
-    selectedStartType: Property.StaticDropdown({
-      displayName: 'Selected start type',
-      description: 'filter only those participants',
-      required: false,
-      options: {
-        options: [
-          {
-            label: 'Later',
-            value: 'LATER',
-          },
-          {
-            label: 'Instantly',
-            value: 'INSTANTLY',
-          },
-        ],
-      },
     }),
   },
   sampleData: {},

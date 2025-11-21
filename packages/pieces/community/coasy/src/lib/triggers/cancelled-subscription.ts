@@ -10,35 +10,18 @@ import {
   testCoasyTrigger,
 } from '../common/triggers';
 
-const triggerName = 'NEW_WEBINAR_PARTICIPANT';
+const triggerName = 'CANCELLED_SUBSCRIPTION';
 
-export const newWebinarParticipant = createTrigger({
+export const cancelledSubscription = createTrigger({
   auth: coasyAuth,
-  name: 'newWebinarParticipant',
-  displayName: 'New Webinar Participant',
-  description: 'Triggers when a new webinar particpant is created',
+  name: 'cancelledSubscription',
+  displayName: 'Cancelled Subscription',
+  description: 'Triggers when a customer requests a subscription cancellation.',
   props: {
-    webinarIds: Property.Array({
-      displayName: 'Webinar IDs',
-      description: 'IDs of webinar to react to',
+    membershipTypeIds: Property.Array({
+      displayName: 'Membership Type IDs',
+      description: 'IDs of membership types to react to',
       required: false,
-    }),
-    selectedStartType: Property.StaticDropdown({
-      displayName: 'Selected start type',
-      description: 'filter only those participants',
-      required: false,
-      options: {
-        options: [
-          {
-            label: 'Later',
-            value: 'LATER',
-          },
-          {
-            label: 'Instantly',
-            value: 'INSTANTLY',
-          },
-        ],
-      },
     }),
   },
   sampleData: {},
