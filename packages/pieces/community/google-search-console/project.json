@@ -33,7 +33,8 @@
           }
         ],
         "buildableProjectDepsInPackageJsonType": "dependencies",
-        "updateBuildableProjectDepsInPackageJson": true
+        "updateBuildableProjectDepsInPackageJson": true,
+        "clean": false
       },
       "dependsOn": [
         "^build",
@@ -55,7 +56,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/pieces/community/google-search-console",
-        "command": "bun install --no-save"
+        "command": "bun install --no-save --silent"
       },
       "dependsOn": [
         "^build"

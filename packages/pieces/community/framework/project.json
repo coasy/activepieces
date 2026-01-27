@@ -18,7 +18,8 @@
           "packages/pieces/community/framework/*.md"
         ],
         "buildableProjectDepsInPackageJsonType": "dependencies",
-        "updateBuildableProjectDepsInPackageJson": true
+        "updateBuildableProjectDepsInPackageJson": true,
+        "clean": false
       },
       "dependsOn": [
         "prebuild",
@@ -56,7 +57,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/pieces/community/framework",
-        "command": "bun install --no-save"
+        "command": "bun install --no-save --silent"
       }
     }
   }

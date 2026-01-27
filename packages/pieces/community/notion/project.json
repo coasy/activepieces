@@ -22,7 +22,8 @@
             "glob": "**/!(i18n.json)"
           }
         ],
-        "updateBuildableProjectDepsInPackageJson": true
+        "updateBuildableProjectDepsInPackageJson": true,
+        "clean": false
       },
       "dependsOn": [
         "^build",
@@ -39,7 +40,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/pieces/community/notion",
-        "command": "bun install --no-save"
+        "command": "bun install --no-save --silent"
       },
       "dependsOn": [
         "^build"
