@@ -30,8 +30,8 @@ export class CoasyClient {
     return this.request(`/apps/triggers/destroy`, { webhookId });
   }
 
-  async listTriggerEvents(trigger: string) {
-    return this.request(`/apps/list`, {
+  async pollTriggerExample(trigger: string) {
+    return this.request(`/apps/triggerExample`, {
       trigger,
     });
   }

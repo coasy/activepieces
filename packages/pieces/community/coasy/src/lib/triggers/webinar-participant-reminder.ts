@@ -41,7 +41,7 @@ export const webinarParticipantReminder = createTrigger({
       },
     }),
     status: Property.StaticDropdown({
-      displayName: 'Selected start type',
+      displayName: 'Webinar start',
       description: 'Webinar start status',
       required: false,
       options: {

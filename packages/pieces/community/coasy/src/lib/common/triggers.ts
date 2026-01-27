@@ -67,7 +67,7 @@ export const testCoasyTrigger = async (
     auth.baseUrl ?? 'https://backend.api.prod.coasy.io',
     auth.apiKey
   );
-  const response = await client.listTriggerEvents(triggerName);
+  const response = await client.pollTriggerExample(triggerName);
 
-  return [{ test: true, response }];
+  return [response];
 };
