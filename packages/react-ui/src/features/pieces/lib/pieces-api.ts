@@ -1,6 +1,6 @@
 import { t } from 'i18next';
 
-import { internalErrorToast } from '@/components/ui/sonner';
+import { toast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import {
   PieceMetadataModel,
@@ -25,23 +25,10 @@ export const piecesApi = {
   get(
     request: GetPieceRequestParams & GetPieceRequestQuery,
   ): Promise<PieceMetadataModel> {
-    const req = api.get<PieceMetadataModel>(`/v1/pieces/${request.name}`, {
+    return api.get<PieceMetadataModel>(`/v1/pieces/${request.name}`, {
       version: request.version ?? undefined,
       locale: request.locale ?? undefined,
       projectId: request.projectId ?? undefined,
-    });
-    const latestVersion = api.get<PieceMetadataModel>(
-      `/v1/pieces/${request.name}`,
-      {
-        projectId: request.projectId ?? undefined,
-      },
-    );
-    return Promise.all([req, latestVersion]).then(([req, latestVersion]) => {
-      const latestVersionLogoUrl = latestVersion.logoUrl;
-      return {
-        ...req,
-        logoUrl: latestVersionLogoUrl,
-      };
     });
   },
   options<
@@ -57,7 +44,13 @@ export const piecesApi = {
       .post<ExecutePropsResult<T>>(`/v1/pieces/options`, request)
       .catch((error) => {
         console.error(error);
-        internalErrorToast();
+        toast({
+          title: t('Error'),
+          description: t(
+            'An internal error occurred while fetching data, please contact support',
+          ),
+          variant: 'destructive',
+        });
         const defaultStateForDynamicProperty: ExecutePropsResult<PropertyType.DYNAMIC> =
           {
             options: {} as InputPropertyMap,

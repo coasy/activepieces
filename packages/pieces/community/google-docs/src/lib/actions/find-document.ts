@@ -25,7 +25,6 @@ export const findDocumentAction = createAction({
 			required: false,
 		}),
 		newDocumentProps: Property.DynamicProperties({
-			auth: googleDocsAuth,
 			displayName: 'New Document Properties',
 			required: false,
 			refreshers: ['createIfNotFound'],

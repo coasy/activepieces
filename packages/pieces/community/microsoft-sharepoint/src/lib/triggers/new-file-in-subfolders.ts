@@ -20,8 +20,7 @@ export const newFileInSubfoldersTrigger = createTrigger({
   props: {
     siteId: microsoftSharePointCommon.siteId,
     driveId: microsoftSharePointCommon.driveId,
-    parentFolderId: Property.Dropdown({   
-      auth: microsoftSharePointAuth,
+    parentFolderId: Property.Dropdown({
       displayName: 'Parent Folder',
       description: 'The parent folder whose subfolders you want to monitor.',
       required: true,

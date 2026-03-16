@@ -127,7 +127,6 @@ export const createTicketAction = createAction({
       required: false,
     }),
     custom_fields: Property.DynamicProperties({
-      auth: zendeskAuth,
       displayName: 'Custom Fields',
       description: 'Custom ticket field values',
       required: false,
@@ -138,14 +137,14 @@ export const createTicketAction = createAction({
         }
 
         try {
-          const authentication = auth;
+          const authentication = auth as AuthProps;
           const response = await httpClient.sendRequest({
-            url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/ticket_fields.json`,
+            url: `https://${authentication.subdomain}.zendesk.com/api/v2/ticket_fields.json`,
             method: HttpMethod.GET,
             authentication: {
               type: AuthenticationType.BASIC,
-              username: authentication.props.email + '/token',
-              password: authentication.props.token,
+              username: authentication.email + '/token',
+              password: authentication.token,
             },
           });
 
@@ -287,7 +286,7 @@ export const createTicketAction = createAction({
     problem_id: problemTicketIdDropdown,
   },
   async run({ propsValue, auth }) {
-    const authentication = auth;
+    const authentication = auth as AuthProps;
     const {
       subject,
       comment_body,
@@ -338,12 +337,12 @@ export const createTicketAction = createAction({
     const resolveUserByEmail = async (email: string) => {
       try {
         const response = await httpClient.sendRequest({
-          url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/users/search.json?query=email:${encodeURIComponent(email)}`,
+          url: `https://${authentication.subdomain}.zendesk.com/api/v2/users/search.json?query=email:${encodeURIComponent(email)}`,
           method: HttpMethod.GET,
           authentication: {
             type: AuthenticationType.BASIC,
-            username: authentication.props.email + '/token',
-            password: authentication.props.token,
+            username: authentication.email + '/token',
+            password: authentication.token,
           },
         });
         
@@ -425,12 +424,12 @@ export const createTicketAction = createAction({
     if (custom_fields && typeof custom_fields === 'object') {
       try {
         const fieldsResponse = await httpClient.sendRequest({
-          url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/ticket_fields.json`,
+          url: `https://${authentication.subdomain}.zendesk.com/api/v2/ticket_fields.json`,
           method: HttpMethod.GET,
           authentication: {
             type: AuthenticationType.BASIC,
-            username: authentication.props.email + '/token',
-            password: authentication.props.token,
+            username: authentication.email + '/token',
+            password: authentication.token,
           },
         });
 
@@ -466,15 +465,15 @@ export const createTicketAction = createAction({
 
     try {
       const response = await httpClient.sendRequest({
-        url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/tickets.json`,
+        url: `https://${authentication.subdomain}.zendesk.com/api/v2/tickets.json`,
         method: HttpMethod.POST,
         headers: {
           'Content-Type': 'application/json',
         },
         authentication: {
           type: AuthenticationType.BASIC,
-          username: authentication.props.email + '/token',
-          password: authentication.props.token,
+          username: authentication.email + '/token',
+          password: authentication.token,
         },
         body: {
           ticket,

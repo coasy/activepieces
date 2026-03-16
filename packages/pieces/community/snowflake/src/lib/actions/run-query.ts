@@ -40,7 +40,7 @@ export const runQuery = createAction({
   },
   async run(context) {
     const connection = configureConnection(
-      context.auth.props,
+      context.auth,
       context.propsValue.application,
       context.propsValue.timeout
     );

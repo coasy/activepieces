@@ -49,7 +49,7 @@ export const airtableCreateBaseAction = createAction({
     const { workspaceId, name, tables } = propsValue;
 
     return await airtableCommon.createBase({
-      personalToken: personalToken.secret_text,
+      personalToken,
       workspaceId: workspaceId as string,
       name: name as string,
       tables: tables as unknown as AirtableTableConfig[],

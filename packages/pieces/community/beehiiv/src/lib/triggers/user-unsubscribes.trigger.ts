@@ -20,7 +20,7 @@ export const userUnsubscribesTrigger = createTrigger({
 		const { publicationId } = context.propsValue;
 
 		const response = await beehiivApiCall<{ data: { id: string } }>({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.POST,
 			resourceUri: `/publications/${publicationId}/webhooks`,
 			body: {
@@ -37,7 +37,7 @@ export const userUnsubscribesTrigger = createTrigger({
 		const webhookId = await context.store.get<string>(TRIGGER_KEY);
 		if (!isNil(webhookId)) {
 			await beehiivApiCall({
-				apiKey: context.auth.secret_text,
+				apiKey: context.auth,
 				method: HttpMethod.DELETE,
 				resourceUri: `/publications/${publicationId}/webhooks/${webhookId}`,
 			});

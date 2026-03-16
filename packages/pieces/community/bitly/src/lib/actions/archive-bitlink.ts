@@ -23,7 +23,7 @@ export const archiveBitlinkAction = createAction({
 
       return await bitlyApiCall({
         method: HttpMethod.PATCH,
-        auth: context.auth.props,
+        auth: context.auth,
         resourceUri: `/bitlinks/${bitlink}`,
         body,
       });

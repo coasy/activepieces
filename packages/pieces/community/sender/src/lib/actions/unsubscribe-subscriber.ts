@@ -24,7 +24,7 @@ export const unsubscribeSubscriberAction = createAction({
     };
 
     const response = await makeSenderRequest(
-      context.auth.secret_text,
+      context.auth,
       `/subscribers`,
       HttpMethod.DELETE,
       requestBody

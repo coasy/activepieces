@@ -104,7 +104,7 @@ export const createLead = createAction({
         const response = await callZendeskApi(
             HttpMethod.POST,
             'v2/leads',
-            auth,
+            auth as ZendeskSellAuth,
             { data: cleanedBody }
         );
 

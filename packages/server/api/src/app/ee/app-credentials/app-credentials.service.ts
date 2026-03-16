@@ -51,8 +51,8 @@ export const appCredentialService = {
         await appCredentialRepo().upsert(
             {
                 id: newId,
-                ...request,
                 projectId,
+                ...request,
             },
             ['id'],
         )

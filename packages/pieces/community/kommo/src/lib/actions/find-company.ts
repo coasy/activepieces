@@ -17,7 +17,10 @@ export const findCompanyAction = createAction({
   },
   async run(context) {
     const { query } = context.propsValue;
-    const { subdomain, apiToken } = context.auth.props
+    const { subdomain, apiToken } = context.auth as {
+      subdomain: string;
+      apiToken: string;
+    };
 
     const result = await makeRequest(
       { apiToken, subdomain },

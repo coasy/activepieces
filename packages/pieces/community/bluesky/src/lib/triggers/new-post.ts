@@ -1,11 +1,11 @@
-import { createTrigger, TriggerStrategy, PiecePropValueSchema, Property, AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
+import { createTrigger, TriggerStrategy, PiecePropValueSchema, Property } from '@activepieces/pieces-framework';
 import { DedupeStrategy, Polling, pollingHelper } from '@activepieces/pieces-common';
 import { blueskyAuth } from '../common/auth';
 import { createBlueskyAgent } from '../common/client';
 import { simpleLanguageDropdown } from '../common/props';
 import dayjs from 'dayjs';
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof blueskyAuth>, { 
+const polling: Polling<PiecePropValueSchema<typeof blueskyAuth>, { 
   searchQuery: string; 
   searchLanguage?: string;
   includeImages?: boolean;
@@ -21,7 +21,7 @@ const polling: Polling<AppConnectionValueForAuthProperty<typeof blueskyAuth>, {
         return [];
       }
 
-      const agent = await createBlueskyAgent(auth.props);
+      const agent = await createBlueskyAgent(auth);
 
       const searchParams: any = {
         q: searchQuery.trim(),

@@ -1,13 +1,11 @@
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { Property } from '@activepieces/pieces-framework';
 import { ListProjectsResponse } from './types';
-import { peekshotAuth } from '../..';
 
 export const projectId = Property.Dropdown({
   displayName: 'Project',
   required: true,
   refreshers: [],
-  auth: peekshotAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -21,7 +19,7 @@ export const projectId = Property.Dropdown({
         method: HttpMethod.GET,
         url: 'https://api.peekshot.com/api/v1/projects',
         headers: {
-          'x-api-key': auth.secret_text,
+          'x-api-key': auth as string,
           'Content-Type': 'application/json',
         },
       });

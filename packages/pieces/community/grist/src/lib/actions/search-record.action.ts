@@ -21,7 +21,6 @@ export const gristSearchRecordAction = createAction({
     table_id: commonProps.table_id,
     column: Property.Dropdown({
       displayName: 'Column',
-      auth: gristAuth,
       refreshers: ['document_id', 'table_id'],
       required: true,
       options: async ({ auth, document_id, table_id }) => {
@@ -33,7 +32,7 @@ export const gristSearchRecordAction = createAction({
           };
         }
 
-        const authValue = auth.props;
+        const authValue = auth as PiecePropValueSchema<typeof gristAuth>;
 
         const client = new GristAPIClient({
           domainUrl: authValue.domain,
@@ -69,8 +68,8 @@ export const gristSearchRecordAction = createAction({
     const columnValue = context.propsValue.value;
 
     const client = new GristAPIClient({
-      domainUrl: context.auth.props.domain,
-      apiKey: context.auth.props.apiKey,
+      domainUrl: context.auth.domain,
+      apiKey: context.auth.apiKey,
     });
 
     const encodedQuery = encodeURIComponent(

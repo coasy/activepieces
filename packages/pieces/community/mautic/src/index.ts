@@ -63,14 +63,13 @@ export const mautic = createPiece({
     createCustomApiCallAction({
       auth: mauticAuth,
       baseUrl: (auth) => {
-        if (!auth) {
-          return '';
-        }
-        const { base_url } = auth.props;
+        const { base_url } = auth as PiecePropValueSchema<typeof mauticAuth>;
         return `${base_url.endsWith('/') ? base_url : base_url + '/'}api/`;
       },
       authMapping: async (auth) => {
-        const { username, password } = auth.props;
+        const { username, password } = auth as PiecePropValueSchema<
+          typeof mauticAuth
+        >;
         return {
           Authorization:
             'Basic ' +

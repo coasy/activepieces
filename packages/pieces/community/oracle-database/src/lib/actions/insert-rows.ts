@@ -28,7 +28,7 @@ export const insertRowsAction = createAction({
     }
 
     try {
-      const client = new OracleDbClient(context.auth.props);
+      const client = new OracleDbClient(context.auth);
       return await client.insertRows(
         tableName,
         rows as Record<string, unknown>[]

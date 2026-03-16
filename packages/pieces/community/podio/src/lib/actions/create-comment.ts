@@ -14,7 +14,6 @@ export const createCommentAction = createAction({
     appId: dynamicAppProperty,
 
     type: Property.Dropdown({
-      auth: podioAuth,
       displayName: 'Comment On',
       description: 'What type of object to comment on',
       required: true,
@@ -29,7 +28,6 @@ export const createCommentAction = createAction({
       },
     }),
     id: Property.Dropdown({
-      auth: podioAuth,
       displayName: 'Object',
       description: 'Select the specific object to comment on',
       required: true,

@@ -1,7 +1,6 @@
 import { Property, DynamicPropsValue } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { wufooApiCall } from './client';
-import { wufooAuth } from '../..';
 
 interface WufooForm {
   Name: string;
@@ -40,14 +39,14 @@ interface WufooFormFieldsResponse {
 }
 
 export const formIdentifier = Property.Dropdown({
-  auth: wufooAuth,
   displayName: 'Form Identifier (Name and Hash)',
   description: 'Select a Wufoo form to work with.',
   required: true,
   refreshers: [],
   options: async ({ auth }) => {
+    const { apiKey, subdomain } = auth as { apiKey: string; subdomain: string };
 
-    if (!auth) {
+    if (!apiKey || !subdomain) {
       return {
         disabled: true,
         options: [],
@@ -59,7 +58,7 @@ export const formIdentifier = Property.Dropdown({
 
     try {
       response = await wufooApiCall<{ Forms: WufooForm[] }>({
-        auth: auth,
+        auth: { apiKey, subdomain },
         method: HttpMethod.GET,
         resourceUri: '/forms.json',
       });
@@ -92,7 +91,6 @@ export const formIdentifier = Property.Dropdown({
 });
 
 export const dynamicFormFields = Property.DynamicProperties({
-  auth: wufooAuth,
   displayName: 'Form Fields',
   description: 'Fill out the form fields with the data you want to submit. Field types and validation are automatically configured based on your form structure.',
   required: true,
@@ -102,11 +100,12 @@ export const dynamicFormFields = Property.DynamicProperties({
       return {};
     }
 
+    const { apiKey, subdomain } = auth as { apiKey: string; subdomain: string };
     const responseFormat = (format as unknown as string) || 'json';
 
     try {
       const response = await wufooApiCall<WufooFormFieldsResponse | any>({
-        auth: auth,
+        auth: { apiKey, subdomain },
         method: HttpMethod.GET,
         resourceUri: `/forms/${formIdentifier}/fields.json`,
       });

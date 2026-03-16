@@ -4,8 +4,6 @@ import {
   pollingHelper,
 } from '@activepieces/pieces-common';
 import {
-  AppConnectionValueForAuthProperty,
-  PieceAuth,
   PieceAuthProperty,
   PiecePropValueSchema,
   Store,
@@ -27,7 +25,6 @@ export const rssNewItemTrigger = createTrigger({
   description: 'Runs when a new item is added in the RSS feed',
   type: TriggerStrategy.POLLING,
   sampleData: sampleData,
-  auth: PieceAuth.None(),
   props: {
     rss_feed_url: rssFeedUrl,
   },
@@ -116,7 +113,7 @@ export const rssNewItemTrigger = createTrigger({
 });
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<undefined>,
+  PiecePropValueSchema<PieceAuthProperty>,
   { rss_feed_url: string }
 > = {
   strategy: DedupeStrategy.LAST_ITEM,

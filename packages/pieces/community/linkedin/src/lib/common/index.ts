@@ -6,7 +6,6 @@ import {
 } from '@activepieces/pieces-common';
 
 import FormData from 'form-data';
-import { linkedinAuth } from '../..';
 
 export const santizeText = (text: string) => {
   // LinkedIn Posts API has a list of characters that need to be escaped since it's type is "LittleText"
@@ -20,7 +19,7 @@ export const linkedinCommon = {
   baseUrl: 'https://api.linkedin.com',
   linkedinHeaders: {
     'X-Restli-Protocol-Version': '2.0.0',
-    'LinkedIn-Version': '202511',
+    'LinkedIn-Version': '202411',
   },
   text: Property.LongText({
     displayName: 'Text',
@@ -43,7 +42,6 @@ export const linkedinCommon = {
     required: false,
   }),
   visibility: Property.Dropdown({
-    auth: linkedinAuth,
     displayName: 'Visibility',
     refreshers: [],
     required: true,
@@ -64,7 +62,6 @@ export const linkedinCommon = {
   }),
 
   company: Property.Dropdown({
-    auth: linkedinAuth,
     displayName: 'Company Page',
     required: true,
     refreshers: [],

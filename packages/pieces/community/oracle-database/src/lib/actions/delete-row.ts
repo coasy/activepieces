@@ -35,7 +35,7 @@ export const deleteRowAction = createAction({
     }
 
     try {
-      const client = new OracleDbClient(context.auth.props);
+      const client = new OracleDbClient(context.auth);
       return await client.deleteRow(tableName, filter as Record<string, unknown>);
     } catch (error) {
       throw new Error(

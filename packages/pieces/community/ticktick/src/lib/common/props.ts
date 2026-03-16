@@ -1,7 +1,6 @@
 import { HttpMethod } from '@activepieces/pieces-common';
 import { OAuth2PropertyValue, Property } from '@activepieces/pieces-framework';
 import { tickTickApiCall } from './client';
-import { ticktickAuth } from '../..';
 
 interface DropdownParams {
 	displayName: string;
@@ -14,7 +13,6 @@ export const projectId = (params: DropdownParams) =>
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
-		auth: ticktickAuth,
 		refreshers: [],
 		options: async ({ auth }) => {
 			if (!auth) {
@@ -25,7 +23,7 @@ export const projectId = (params: DropdownParams) =>
 				};
 			}
 
-			const authValue = auth;
+			const authValue = auth as OAuth2PropertyValue;
 			const response = await tickTickApiCall<{ id: string; name: string }[]>({
 				accessToken: authValue.access_token,
 				method: HttpMethod.GET,
@@ -48,7 +46,6 @@ export const projectId = (params: DropdownParams) =>
 
 export const taskId = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: ticktickAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -62,7 +59,7 @@ export const taskId = (params: DropdownParams) =>
 				};
 			}
 
-			const authValue = auth;
+			const authValue = auth as OAuth2PropertyValue;
 			const response = await tickTickApiCall<{ tasks: { id: string; title: string }[] }>({
 				accessToken: authValue.access_token,
 				method: HttpMethod.GET,

@@ -20,7 +20,7 @@ export const textToCadIterationAction = createAction({
       method: HttpMethod.POST,
       url: 'https://api.zoo.dev/ml/text-to-cad/iteration',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
       body: {
         prompt: propsValue.prompt,

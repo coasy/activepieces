@@ -54,7 +54,7 @@ export const kizeoForms = createPiece({
       auth: kizeoFormsAuth,
       authMapping: async (auth) => {
         return {
-          Authorization: auth.secret_text,
+          Authorization: auth as string,
         };
       },
     }),

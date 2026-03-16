@@ -1,5 +1,5 @@
 import { Property } from '@activepieces/pieces-framework';
-import { capsuleCrmAuth, CapsuleCrmAuthType } from './auth';
+import { CapsuleCrmAuthType } from './auth';
 import { capsuleCrmClient } from './client';
 
 export const capsuleCrmProps = {
@@ -9,7 +9,6 @@ export const capsuleCrmProps = {
       description: 'The contact (Person or Organisation) to select.',
       required: required,
       refreshers: [],
-      auth: capsuleCrmAuth,
       options: async (props) => {
         const { auth } = props;
         if (!auth) {
@@ -23,7 +22,7 @@ export const capsuleCrmProps = {
         const searchTerm = (props['searchValue'] as string) ?? '';
 
         const contacts = await capsuleCrmClient.searchContacts(
-          auth,
+          auth as CapsuleCrmAuthType,
           searchTerm
         );
 
@@ -51,8 +50,7 @@ export const capsuleCrmProps = {
       description: 'The milestone to assign the opportunity to.',
       required: required,
       refreshers: [],
-      auth: capsuleCrmAuth,
-      options: async ({ auth }) => {    
+      options: async ({ auth }) => {
         if (!auth) {
           return {
             disabled: true,
@@ -61,7 +59,7 @@ export const capsuleCrmProps = {
           };
         }
         const milestones = await capsuleCrmClient.listMilestones(
-          auth
+          auth as CapsuleCrmAuthType
         );
         const options = milestones.map((milestone) => {
           return {
@@ -82,7 +80,6 @@ export const capsuleCrmProps = {
       description: 'The opportunity to associate with this item.',
       required: required,
       refreshers: [],
-      auth: capsuleCrmAuth,
       options: async ({ auth }) => {
         if (!auth) {
           return {
@@ -92,7 +89,7 @@ export const capsuleCrmProps = {
           };
         }
         const opportunities = await capsuleCrmClient.listOpportunities(
-          auth
+          auth as CapsuleCrmAuthType
         );
         return {
           disabled: false,
@@ -110,7 +107,6 @@ export const capsuleCrmProps = {
       description: 'The project to associate this item with.',
       required: required,
       refreshers: [],
-      auth: capsuleCrmAuth,
       options: async ({ auth }) => {
         if (!auth) {
           return {
@@ -120,7 +116,7 @@ export const capsuleCrmProps = {
           };
         }
         const projects = await capsuleCrmClient.listProjects(
-          auth
+          auth as CapsuleCrmAuthType
         );
         return {
           disabled: false,
@@ -138,7 +134,6 @@ export const capsuleCrmProps = {
       description: 'The case to associate this item with.',
       required: required,
       refreshers: [],
-      auth: capsuleCrmAuth,
       options: async ({ auth }) => {
         if (!auth) {
           return {
@@ -148,7 +143,7 @@ export const capsuleCrmProps = {
           };
         }
         const cases = await capsuleCrmClient.listCases(
-          auth
+          auth as CapsuleCrmAuthType
         );
         return {
           disabled: false,
@@ -159,7 +154,6 @@ export const capsuleCrmProps = {
 
   owner_id: (required = false) =>
     Property.Dropdown({
-      auth: capsuleCrmAuth,
       displayName: 'Owner',
       description: 'The user to assign the task to.',
       required: required,
@@ -173,7 +167,7 @@ export const capsuleCrmProps = {
           };
         }
         const users = await capsuleCrmClient.listUsers(
-          auth  
+          auth as CapsuleCrmAuthType
         );
         return {
           disabled: false,
@@ -191,7 +185,6 @@ export const capsuleCrmProps = {
       description: 'The team to assign the contact to.',
       required: required,
       refreshers: [],
-      auth: capsuleCrmAuth,
       options: async ({ auth }) => {
         if (!auth) {
           return {
@@ -201,7 +194,7 @@ export const capsuleCrmProps = {
           };
         }
         const teams = await capsuleCrmClient.listTeams(
-          auth
+          auth as CapsuleCrmAuthType
         );
         return {
           disabled: false,

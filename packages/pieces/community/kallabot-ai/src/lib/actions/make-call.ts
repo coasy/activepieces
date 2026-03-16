@@ -14,8 +14,7 @@ export const makeCallAction = createAction({
         description: 'Select the AI agent to use for the call.',
         required: true,
         refreshers: ['auth'],
-        auth: kallabotAuth,
-        options: async ({ auth }) => {
+        options: async ({ auth }: { auth?: string }) => {
             if (!auth) {
                 return {
                     disabled: true,
@@ -28,7 +27,7 @@ export const makeCallAction = createAction({
                     method: HttpMethod.GET,
                     url: 'https://api.kallabot.com/agents',
                     headers: {
-                        'Authorization': `Bearer ${auth.secret_text}`,
+                        'Authorization': `Bearer ${auth}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -87,8 +86,7 @@ export const makeCallAction = createAction({
       description: 'The phone number to make the call from.',
       required: true,
       refreshers: ['auth'],
-      auth: kallabotAuth,
-      options: async ({ auth }) => {
+      options: async ({ auth }: { auth?: string }) => {
         if (!auth) {
           return {
             disabled: true,
@@ -102,7 +100,7 @@ export const makeCallAction = createAction({
             method: HttpMethod.GET,
             url: 'https://api.kallabot.com/account-phone-numbers',
             headers: {
-              'Authorization': `Bearer ${auth.secret_text}`,
+              'Authorization': `Bearer ${auth}`,
               'Content-Type': 'application/json'
             }
           });

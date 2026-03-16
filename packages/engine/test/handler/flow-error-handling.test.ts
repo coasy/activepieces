@@ -1,7 +1,6 @@
 
-import { FlowRunStatus } from '@activepieces/shared'
 import { codeExecutor } from '../../src/lib/handler/code-executor'
-import { FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
+import { ExecutionVerdict, FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
 import { pieceExecutor } from '../../src/lib/handler/piece-executor'
 import { buildCodeAction, buildPieceAction, generateMockEngineConstants } from './test-helper'
 
@@ -22,9 +21,7 @@ describe('code piece with error handling', () => {
                 },
             }), executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.runtime.status).toEqual('FAILED')
         expect(result.steps.runtime.errorMessage).toContain('Custom Runtime Error')
     })
@@ -70,9 +67,7 @@ describe('piece with error handling', () => {
             request: {},
         }
 
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.send_http.status).toBe('FAILED')
         expect(result.steps.send_http.errorMessage).toEqual(JSON.stringify(expectedError, null, 2))
 

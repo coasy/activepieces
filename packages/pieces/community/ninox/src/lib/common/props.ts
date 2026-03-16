@@ -1,12 +1,9 @@
 import { Property } from '@activepieces/pieces-framework';
 import { makeRequest } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { NinoxAuth } from './auth';
 
 export const teamidDropdown = Property.Dropdown({
-	auth: NinoxAuth,
-
-	displayName: 'Team ID',	
+	displayName: 'Team ID',
 	description: 'Select the team containing the database.',
 	required: true,
 	refreshers: [],
@@ -21,7 +18,7 @@ export const teamidDropdown = Property.Dropdown({
 
 		try {
 			const teams = await makeRequest<{ id: string; name: string }[]>(
-				auth.secret_text,
+				auth as string,
 				HttpMethod.GET,
 				'/teams',
 			);
@@ -43,8 +40,6 @@ export const teamidDropdown = Property.Dropdown({
 });
 
 export const databaseIdDropdown = Property.Dropdown({
-	auth: NinoxAuth,
-
 	displayName: 'Database ID',
 	description: 'Select the database containing the table.',
 	required: true,
@@ -60,7 +55,7 @@ export const databaseIdDropdown = Property.Dropdown({
 
 		try {
 			const databases = await makeRequest<{ id: string; name: string }[]>(
-				auth.secret_text,
+				auth as string,
 				HttpMethod.GET,
 				`/teams/${teamid}/databases`,
 			);
@@ -82,8 +77,6 @@ export const databaseIdDropdown = Property.Dropdown({
 });
 
 export const tableIdDropdown = Property.Dropdown({
-	auth: NinoxAuth,
-
 	displayName: 'Table ID',
 	description: 'Select the table',
 	required: true,
@@ -99,7 +92,7 @@ export const tableIdDropdown = Property.Dropdown({
 
 		try {
 			const tables = await makeRequest<{ id: string; name: string }[]>(
-				auth.secret_text,
+				auth as string,
 				HttpMethod.GET,
 				`/teams/${teamid}/databases/${dbid}/tables`,
 			);
@@ -122,8 +115,6 @@ export const tableIdDropdown = Property.Dropdown({
 });
 
 export const recordIdDropdown = Property.Dropdown({
-	auth: NinoxAuth,
-
 	displayName: 'Record ID',
 	required: true,
 	refreshers: ['teamid', 'dbid', 'tid'],
@@ -138,7 +129,7 @@ export const recordIdDropdown = Property.Dropdown({
 
 		try {
 			const records = await makeRequest<{ id: number }[]>(
-				auth.secret_text,
+				auth as string,
 				HttpMethod.GET,
 				`/teams/${teamid}/databases/${dbid}/tables/${tid}/records`,
 			);
@@ -160,8 +151,6 @@ export const recordIdDropdown = Property.Dropdown({
 });
 
 export const filenameDropdown = Property.Dropdown({
-	auth: NinoxAuth,
-
 	displayName: 'File ID',
 	required: true,
 	refreshers: ['teamid', 'dbid', 'tid', 'rid'],
@@ -176,7 +165,7 @@ export const filenameDropdown = Property.Dropdown({
 
 		try {
 			const records = await makeRequest<{ name: string }[]>(
-				auth.secret_text,
+				auth as string,
 				HttpMethod.GET,
 				`/teams/${teamid}/databases/${dbid}/tables/${tid}/records/${rid}/files`,
 			);
@@ -198,7 +187,6 @@ export const filenameDropdown = Property.Dropdown({
 });
 
 export const tableFields = Property.DynamicProperties({
-	auth: NinoxAuth,
 	displayName: 'Record Fields',
 	required: true,
 	refreshers: ['teamid', 'dbid', 'tid'],
@@ -305,8 +293,6 @@ export const tableFields = Property.DynamicProperties({
 });
 
 export const tablefieldDropdown = Property.Dropdown({
-	auth: NinoxAuth,
-
 	displayName: 'Table Field',
 	required: true,
 	refreshers: ['teamid', 'dbid', 'tid'],

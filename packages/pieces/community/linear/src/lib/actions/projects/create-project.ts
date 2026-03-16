@@ -47,7 +47,7 @@ export const linearCreateProject = createAction({
       targetDate: propsValue.targetDate,
     };
 
-    const client = makeClient(auth);
+    const client = makeClient(auth as string);
     const result = await client.createProject(project);
     if (result.success) {
       const createdProject = await result.project;

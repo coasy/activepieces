@@ -3,7 +3,7 @@ import {
   HttpMethod,
 } from '@activepieces/pieces-common';
 import { createPiece, PieceAuth } from '@activepieces/pieces-framework';
-import { AppConnectionType, PieceCategory } from '@activepieces/shared';
+import { PieceCategory } from '@activepieces/shared';
 import { calltidycalapi } from './lib/common';
 import { tidycalbookingcancelled } from './lib/trigger/cancelled-booking';
 import { tidycalnewbooking } from './lib/trigger/new-booking';
@@ -20,10 +20,7 @@ export const tidyCalAuth = PieceAuth.SecretText({
   required: true,
   validate: async ({ auth }) => {
     try {
-      await calltidycalapi(HttpMethod.GET, 'bookings', {
-        type: AppConnectionType.SECRET_TEXT,
-        secret_text: auth,
-      }, undefined);
+      await calltidycalapi(HttpMethod.GET, 'bookings', auth, undefined);
       return {
         valid: true,
       };

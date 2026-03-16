@@ -5,7 +5,7 @@ import { useState } from 'react';
 import ActivepiecesCreateTodoGuide from '@/assets/img/custom/ActivepiecesCreateTodoGuide.png';
 import ActivepiecesTodo from '@/assets/img/custom/ActivepiecesTodo.png';
 import ExternalChannelTodo from '@/assets/img/custom/External_Channel_Todo.png';
-import { RadioGroupList } from '@/components/custom/radio-group-list';
+import { CardListItem } from '@/components/custom/card-list';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/tooltip';
 import { useNewWindow } from '@/lib/navigation-utils';
 import { PieceSelectorOperation, PieceSelectorPieceItem } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { isNil, TodoType } from '@activepieces/shared';
 
 import { useBuilderStateContext } from '../builder-hooks';
@@ -108,7 +109,14 @@ const AddTodoStepDialog = ({
                   {t('Where would you like the todo to be reviewed?')}
                 </h3>
                 <div className="space-y-4">
-                  <TodoRadioGroup
+                  <TodoTypeOption
+                    todoType={TodoType.INTERNAL}
+                    setTodoType={setTodoType}
+                    setHoveredOption={setHoveredTodoType}
+                    selectedTodoType={todoType}
+                  />
+                  <TodoTypeOption
+                    todoType={TodoType.EXTERNAL}
                     setTodoType={setTodoType}
                     setHoveredOption={setHoveredTodoType}
                     selectedTodoType={todoType}
@@ -165,7 +173,7 @@ const PreviewImage = ({ todoType }: { todoType: TodoType }) => {
 
         <div className="w-full h-[350px]  rounded mb-2 flex items-center justify-center bg-muted/50 relative">
           <img src={image} alt={alt} className="w-full h-full object-contain" />
-          <div className="absolute -bottom-1 left-0 right-0 h-28 bg-linear-to-t from-white dark:from-background to-transparent"></div>
+          <div className="absolute -bottom-1 left-0 right-0 h-28 bg-gradient-to-t from-white dark:from-background to-transparent"></div>
         </div>
 
         <p className="text-sm text-muted-foreground italic text-center mb-2">
@@ -176,26 +184,44 @@ const PreviewImage = ({ todoType }: { todoType: TodoType }) => {
   );
 };
 
-const TodoRadioGroup = ({
+const TodoTypeOption = ({
+  todoType,
   setTodoType,
   setHoveredOption,
   selectedTodoType,
 }: {
+  todoType: TodoType;
   setTodoType: (todoType: TodoType) => void;
   setHoveredOption: (todoType: TodoType | null) => void;
   selectedTodoType: TodoType;
 }) => {
+  const selected = todoType === selectedTodoType;
+  const title =
+    todoType === TodoType.INTERNAL
+      ? t('Internal Todos')
+      : t('External Channel (Slack, Teams, Email, ...)');
+  const description =
+    todoType === TodoType.INTERNAL
+      ? t('Users will manage tasks directly in our interface')
+      : t(
+          'Send notifications with approval links via external channels like Slack, Teams or Email. Best for collaborating with external stakeholders.',
+        );
   const openNewWindow = useNewWindow();
-
   return (
-    <RadioGroupList
-      value={selectedTodoType}
-      items={[
-        {
-          label: t('Internal Todos'),
-          value: TodoType.INTERNAL,
-          description: t('Users will manage tasks directly in our interface'),
-          labelExtra: (
+    <CardListItem
+      className={cn(
+        `p-4 rounded-lg border  block hover:border-primary/50 hover:bg-muted/50`,
+        selected && 'border-primary bg-primary/5',
+      )}
+      onClick={() => setTodoType(todoType)}
+      interactive={true}
+      onMouseEnter={() => setHoveredOption(todoType)}
+      onMouseLeave={() => setHoveredOption(null)}
+    >
+      <div className="flex justify-between items-center mb-2">
+        <h4 className="text-md font-medium flex items-center gap-2">
+          {title}
+          {todoType === TodoType.INTERNAL && (
             <Tooltip delayDuration={100}>
               <TooltipTrigger asChild>
                 <InfoIcon className="w-4 h-4" />
@@ -224,18 +250,22 @@ const TodoRadioGroup = ({
                 </div>
               </TooltipContent>
             </Tooltip>
-          ),
-        },
-        {
-          label: t('External Channel (Slack, Teams, Email, ...)'),
-          value: TodoType.EXTERNAL,
-          description: t(
-            'Send notifications with approval links via external channels like Slack, Teams or Email. Best for collaborating with external stakeholders.',
-          ),
-        },
-      ]}
-      onChange={setTodoType}
-      onHover={setHoveredOption}
-    />
+          )}
+        </h4>
+        <div className="flex-shrink-0 w-5 h-5">
+          <div
+            className={cn(
+              `w-5 h-5 rounded-full grid place-items-center border border-muted-foreground`,
+              selected && 'border-primary',
+            )}
+          >
+            {selected && (
+              <div className="w-3 h-3 rounded-full bg-primary"></div>
+            )}
+          </div>
+        </div>
+      </div>
+      <p className="text-sm text-muted-foreground">{description}</p>
+    </CardListItem>
   );
 };

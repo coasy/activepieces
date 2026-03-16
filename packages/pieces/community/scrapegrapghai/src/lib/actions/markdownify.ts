@@ -20,7 +20,7 @@ export const markdownify = createAction({
       url: 'https://api.scrapegraphai.com/v1/markdownify',
       headers: {
         'Content-Type': 'application/json',
-        'SGAI-APIKEY': auth.secret_text,
+        'SGAI-APIKEY': auth,
       },
       body: {
         website_url: propsValue.website_url,

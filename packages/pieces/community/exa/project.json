@@ -28,8 +28,7 @@
           "packages/pieces/community/exa/*.md"
         ],
         "buildableProjectDepsInPackageJsonType": "dependencies",
-        "updateBuildableProjectDepsInPackageJson": true,
-        "clean": false
+        "updateBuildableProjectDepsInPackageJson": true
       },
       "dependsOn": [
         "^build",
@@ -51,7 +50,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/pieces/community/exa",
-        "command": "bun install --no-save --silent"
+        "command": "bun install --no-save"
       },
       "dependsOn": [
         "^build"

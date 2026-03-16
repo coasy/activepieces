@@ -1,6 +1,4 @@
 import { HttpMethod, httpClient, HttpRequest, AuthenticationType } from '@activepieces/pieces-common';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-import { fireberryAuth } from '../..';
 
 const FIREBERRY_API_BASE_URL = 'https://api.fireberry.com';
 const MAX_RETRIES = 3;
@@ -24,8 +22,8 @@ function normalizeQueryParams(params?: Record<string, string | number | boolean>
 export class FireberryClient {
   private apiKey: string;
 
-  constructor(apiKey: AppConnectionValueForAuthProperty<typeof fireberryAuth>) {
-    this.apiKey = apiKey.secret_text;
+  constructor(apiKey: string) {
+    this.apiKey = apiKey;
   }
 
   private parseError(error: any): string {

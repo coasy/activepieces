@@ -146,7 +146,7 @@ export const findMeetingByQueryAction = createAction({
 				method: HttpMethod.POST,
 				authentication: {
 					type: AuthenticationType.BEARER_TOKEN,
-					token: auth.secret_text,
+					token: auth,
 				},
 				body: {
 					query: query,

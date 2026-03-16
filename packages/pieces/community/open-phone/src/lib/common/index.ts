@@ -3,8 +3,6 @@ import {
   HttpMethod,
   AuthenticationType,
 } from '@activepieces/pieces-common';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-import { openPhoneAuth } from '../..';
 
 export interface OpenPhoneMessage {
   id: string;
@@ -47,14 +45,14 @@ export const openPhoneCommon = {
   async makeRequest<T>(
     method: HttpMethod,
     endpoint: string,
-    auth: AppConnectionValueForAuthProperty<typeof openPhoneAuth>,
+    auth: string,
     body?: any
   ): Promise<T> {
     const response = await httpClient.sendRequest<T>({
       method,
       url: `${this.baseUrl}${endpoint}`,
       headers: {
-        Authorization: auth.secret_text,
+        Authorization: auth,
       },
       body: body,
     });

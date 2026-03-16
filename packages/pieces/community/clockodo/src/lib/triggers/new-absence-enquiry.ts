@@ -1,4 +1,4 @@
-import { AppConnectionValueForAuthProperty, TriggerStrategy, createTrigger } from '@activepieces/pieces-framework';
+import { TriggerStrategy, createTrigger } from '@activepieces/pieces-framework';
 import {
   DedupeStrategy,
   Polling,
@@ -8,15 +8,21 @@ import { currentYear } from '../common';
 import { ClockodoClient } from '../common/client';
 import { clockodoAuth } from '../../';
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof clockodoAuth>, unknown> = {
+interface AuthData {
+  email: string;
+  token: string;
+  company_name: string;
+  company_email: string;
+}
+
+const polling: Polling<AuthData, unknown> = {
   strategy: DedupeStrategy.LAST_ITEM,
   items: async ({ auth }) => {
-
     const client = new ClockodoClient(
-      auth.props.email,
-      auth.props.token,
-      auth.props.company_name,
-      auth.props.company_email
+      auth.email,
+      auth.token,
+      auth.company_name,
+      auth.company_email
     );
     const res = await client.listAbsences({ year: currentYear() });
     return res.absences

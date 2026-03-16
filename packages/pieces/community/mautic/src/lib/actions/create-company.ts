@@ -16,7 +16,7 @@ export const createCompany = createAction({
     fields: mauticCommon.companyFields,
   },
   run: async function (context) {
-    const { base_url, username, password } = context.auth.props;
+    const { base_url, username, password } = context.auth;
     const request: HttpRequest = {
       method: HttpMethod.POST,
       url:

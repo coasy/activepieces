@@ -3,14 +3,12 @@ import { foreplayCoApiCall } from '../common';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { findBoards as findBoardsProperties } from '../properties';
 import { findBoardsSchema } from '../schemas';
-import { foreplayCoAuth } from '../..';
 
 export const findBoards = createAction({
   name: 'findBoards',
   displayName: 'Find Boards',
   description: 'Get all boards for the authenticated user with pagination.',
   props: findBoardsProperties(),
-  auth: foreplayCoAuth,
   async run({ auth, propsValue }) {
     // Validate props using Zod schema
     const validation = findBoardsSchema.safeParse(propsValue);
@@ -30,7 +28,7 @@ export const findBoards = createAction({
     }
 
     const response = await foreplayCoApiCall({
-      apiKey: auth,
+      apiKey: auth as string,
       method: HttpMethod.GET,
       resourceUri: '/api/boards',
       queryParams,

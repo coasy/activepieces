@@ -14,7 +14,6 @@ import {
 } from '@activepieces/pieces-common';
 import dayjs from 'dayjs';
 import { fetchContacts, fetchProjects, fetchOpportunities, fetchEventCategories, WEALTHBOX_API_BASE, handleApiError } from '../common';
-import { wealthboxAuth } from '../..';
 
 const polling: Polling<any, any> = {
   strategy: DedupeStrategy.TIMEBASED,
@@ -54,7 +53,7 @@ const polling: Polling<any, any> = {
         method: HttpMethod.GET,
         url: url,
         headers: {
-          'ACCESS_TOKEN': auth.secret_text,
+          'ACCESS_TOKEN': auth as unknown as string,
           'Accept': 'application/json'
         }
       });
@@ -102,7 +101,6 @@ export const newEvent = createTrigger({
     }),
 
     resource_record: Property.DynamicProperties({
-      auth: wealthboxAuth,
       displayName: 'Linked Resource',
       description: 'Select the specific resource to filter events by',
       required: false,
@@ -126,15 +124,15 @@ export const newEvent = createTrigger({
 
           switch (resourceTypeValue) {
             case 'Contact':
-              records = await fetchContacts(auth.secret_text, { active: true, order: 'recent' });
+              records = await fetchContacts(auth as unknown as string, { active: true, order: 'recent' });
               recordType = 'Contact';
               break;
             case 'Project':
-              records = await fetchProjects(auth.secret_text);
+              records = await fetchProjects(auth as unknown as string);
               recordType = 'Project';
               break;
             case 'Opportunity':
-              records = await fetchOpportunities(auth.secret_text);
+              records = await fetchOpportunities(auth as unknown as string);
               recordType = 'Opportunity';
               break;
             default:
@@ -176,7 +174,6 @@ export const newEvent = createTrigger({
     }),
 
     event_category: Property.Dropdown({
-      auth: wealthboxAuth,
       displayName: 'Event Category',
       description: 'Only trigger for events of this category (optional)',
       required: false,
@@ -185,7 +182,7 @@ export const newEvent = createTrigger({
         if (!auth) return { options: [] };
 
         try {
-          const categories = await fetchEventCategories(auth.secret_text);
+          const categories = await fetchEventCategories(auth as unknown as string);
           return {
             options: categories.map((category: any) => ({
               label: category.name || `Category ${category.id}`,

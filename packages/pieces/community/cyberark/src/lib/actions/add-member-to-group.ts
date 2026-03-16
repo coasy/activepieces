@@ -32,7 +32,7 @@ export const addMemberToGroup = createAction({
     }),
   },
   async run(context) {
-    const authData = await getAuthToken(context.auth);
+    const authData = await getAuthToken(context.auth as CyberArkAuth);
 
     if (!context.propsValue.memberId) {
       return {

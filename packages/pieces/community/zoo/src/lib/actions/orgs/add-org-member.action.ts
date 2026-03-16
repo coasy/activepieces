@@ -30,7 +30,7 @@ export const addOrgMemberAction = createAction({
       method: HttpMethod.POST,
       url: 'https://api.zoo.dev/org/members',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
       body: {
         email: propsValue.email,

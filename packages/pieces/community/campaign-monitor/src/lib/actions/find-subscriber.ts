@@ -23,7 +23,7 @@ export const findSubscriberAction = createAction({
 
     try {
       const response = await makeRequest(
-          { apiKey: auth.secret_text },
+        { apiKey: auth as string },
         HttpMethod.GET,
         `/subscribers/${listId}.json?email=${encodeURIComponent(
           email

@@ -3,7 +3,6 @@ import {
   TriggerStrategy,
   PiecePropValueSchema,
   Property,
-  AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import {
   DedupeStrategy,
@@ -17,7 +16,7 @@ import crypto from 'crypto';
 
 // replace auth with piece auth variable
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof surrealdbAuth>,
+  PiecePropValueSchema<typeof surrealdbAuth>,
   {
     table: string;
     order_by: string;
@@ -33,7 +32,7 @@ const polling: Polling<
       order_direction: propsValue.order_direction,
     });
 
-    const authProps = auth.props;
+    const authProps = auth as PiecePropValueSchema<typeof surrealdbAuth>;
     const result = await client.query(authProps, query, {
       table: propsValue.table,
     });
@@ -113,7 +112,6 @@ export const newRow = createTrigger({
       required: true,
       refreshers: ['auth'],
       refreshOnSearch: false,
-      auth: surrealdbAuth,
       options: async ({ auth }) => {
         if (!auth) {
           return {
@@ -122,7 +120,7 @@ export const newRow = createTrigger({
             placeholder: 'Please authenticate first',
           };
         }
-        const authProps = auth.props;
+        const authProps = auth as PiecePropValueSchema<typeof surrealdbAuth>;
         try {
           const result = await client.query(authProps, 'INFO FOR DB');
           const options = Object.keys(result.body[0].result.tables).map(

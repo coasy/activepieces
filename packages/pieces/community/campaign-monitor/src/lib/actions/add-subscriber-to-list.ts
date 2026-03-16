@@ -87,7 +87,7 @@ export const addSubscriberToListAction = createAction({
     };
 
     const response = await makeRequest(
-      { apiKey: auth.secret_text }, 
+      { apiKey: auth as string },
       HttpMethod.POST,
       `/subscribers/${listId}.json`,
       payload

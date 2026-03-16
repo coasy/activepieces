@@ -17,16 +17,16 @@ export const analyzeDocument = createAction({
     const { document, domain } = propsValue;
 
     const uploadResponse = await vlmRunCommon.uploadFile({
-      apiKey:apiKey.secret_text,
+      apiKey,
       file: document,
     });
 
     const response = await vlmRunCommon.analyzeDocument({
-      apiKey:apiKey.secret_text,
+      apiKey,
       file_id: uploadResponse.id,
       domain,
     });
 
-    return await vlmRunCommon.getresponse(apiKey.secret_text, response.id, response.status);
+    return await vlmRunCommon.getresponse(apiKey, response.id, response.status);
   },
 });

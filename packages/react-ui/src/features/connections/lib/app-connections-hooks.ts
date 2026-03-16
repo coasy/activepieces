@@ -1,17 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { t } from 'i18next';
 import { UseFormReturn } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { useEmbedding } from '@/components/embed-provider';
-import { internalErrorToast } from '@/components/ui/sonner';
-import { projectMembersApi } from '@/features/members/lib/project-members-api';
+import { INTERNAL_ERROR_TOAST, toast } from '@/components/ui/use-toast';
+import { projectMembersApi } from '@/features/team/lib/project-members-api';
 import { api } from '@/lib/api';
 import { authenticationSession } from '@/lib/authentication-session';
-import {
-  getAuthPropertyForValue,
-  PieceAuthProperty,
-} from '@activepieces/pieces-framework';
 import {
   ApErrorParams,
   AppConnectionScope,
@@ -147,7 +142,7 @@ export const appConnectionsMutations = {
 
             default: {
               setErrorMessage('Unexpected error, please contact support');
-              internalErrorToast();
+              toast(INTERNAL_ERROR_TOAST);
               console.error(err);
             }
           }
@@ -165,7 +160,10 @@ export const appConnectionsMutations = {
         refetch();
       },
       onError: () => {
-        internalErrorToast();
+        toast({
+          title: t('Error deleting connections'),
+          variant: 'destructive',
+        });
       },
     });
   },
@@ -195,7 +193,8 @@ export const appConnectionsMutations = {
       },
       onSuccess: () => {
         refetch();
-        toast.success(t('Success'), {
+        toast({
+          title: t('Success'),
           description: t('Connection has been renamed.'),
           duration: 3000,
         });
@@ -207,7 +206,7 @@ export const appConnectionsMutations = {
             message: error.message,
           });
         } else {
-          internalErrorToast();
+          toast(INTERNAL_ERROR_TOAST);
         }
       },
     });
@@ -222,15 +221,18 @@ export const appConnectionsMutations = {
         await appConnectionsApi.replace(request);
       },
       onSuccess: () => {
-        toast.success(t('Success'), {
+        toast({
+          title: t('Success'),
           description: t('Connections replaced successfully'),
         });
         setDialogOpen(false);
         refetch();
       },
       onError: () => {
-        toast.error(t('Error'), {
+        toast({
+          title: t('Error'),
           description: t('Failed to replace connections'),
+          variant: 'destructive',
         });
       },
     });
@@ -242,7 +244,6 @@ type UseConnectionsProps = {
   extraKeys: any[];
   enabled?: boolean;
   staleTime?: number;
-  pieceAuth?: PieceAuthProperty | PieceAuthProperty[] | undefined;
 };
 
 export const appConnectionsQueries = {
@@ -251,28 +252,10 @@ export const appConnectionsQueries = {
     extraKeys,
     enabled,
     staleTime,
-    pieceAuth,
   }: UseConnectionsProps) => {
     return useQuery({
       queryKey: ['app-connections', ...extraKeys],
-      queryFn: async () => {
-        const connections = await appConnectionsApi.list(request);
-        if (pieceAuth) {
-          return {
-            ...connections,
-            data: connections.data.filter(
-              (connection) =>
-                !isNil(
-                  getAuthPropertyForValue({
-                    authValueType: connection.type,
-                    pieceAuth,
-                  }),
-                ),
-            ),
-          };
-        }
-        return connections;
-      },
+      queryFn: () => appConnectionsApi.list(request),
       enabled,
       staleTime,
     });

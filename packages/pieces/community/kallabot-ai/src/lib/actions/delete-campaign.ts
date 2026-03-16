@@ -32,7 +32,7 @@ export const deleteCampaignAction = createAction({
             method: HttpMethod.DELETE,
             url: url,
             headers: {
-                'Authorization': `Bearer ${context.auth.secret_text}`,
+                'Authorization': `Bearer ${context.auth}`,
                 'Content-Type': 'application/json'
             }
         });

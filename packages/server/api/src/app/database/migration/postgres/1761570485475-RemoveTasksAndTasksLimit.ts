@@ -8,7 +8,7 @@ export class RemoveTasksAndTasksLimit1761570485475 implements MigrationInterface
             ALTER TABLE "flow" DROP CONSTRAINT "fk_flow_project_id"
         `)
         await queryRunner.query(`
-            ALTER TABLE "flow_run" RENAME COLUMN "tasks" TO "stepsCount"
+            ALTER TABLE "flow_run" DROP COLUMN "tasks"
         `)
         const hasProjectPlan = await queryRunner.hasTable('project_plan')
         if (hasProjectPlan) {
@@ -76,7 +76,8 @@ export class RemoveTasksAndTasksLimit1761570485475 implements MigrationInterface
             `)
         }
         await queryRunner.query(`
-            ALTER TABLE "flow_run" RENAME COLUMN "stepsCount" TO "tasks"
+            ALTER TABLE "flow_run"
+            ADD "tasks" integer
         `)
         await queryRunner.query(`
             ALTER TABLE "flow"

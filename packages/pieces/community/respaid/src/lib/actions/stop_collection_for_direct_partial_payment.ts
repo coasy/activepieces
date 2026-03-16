@@ -33,7 +33,7 @@ export const stopCollectionForDirectPartialPayment = createAction({
     const res = await httpClient.sendRequest<string[]>({
       method: HttpMethod.POST,
       url: `${respaidCommon.baseUrl}/actions/stop_collection_for_direct_partial_payment`,
-      headers: respaidCommon.getHeadersStructure(auth.secret_text),
+      headers: respaidCommon.getHeadersStructure(auth),
       body: respaidActionsCommon.getPayloadBodyStructure(propsValue),
     });
 

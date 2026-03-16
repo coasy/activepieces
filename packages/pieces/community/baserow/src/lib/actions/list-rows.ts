@@ -1,4 +1,5 @@
 import {
+  PiecePropValueSchema,
   Property,
   createAction,
 } from '@activepieces/pieces-framework';
@@ -38,7 +39,7 @@ export const listRowsAction = createAction({
   async run(context) {
     const { table_id, limit, search, order_by } = context.propsValue;
     const client = makeClient(
-      context.auth.props
+      context.auth as PiecePropValueSchema<typeof baserowAuth>
     );
     return await client.listRows(table_id, limit, search, order_by);
   },

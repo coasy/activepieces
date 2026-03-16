@@ -8,7 +8,7 @@ import {
   AuthenticationType,
   HttpHeaders,
 } from '@activepieces/pieces-common';
-import { AppConnectionValueForAuthProperty, PiecePropValueSchema } from '@activepieces/pieces-framework';
+import { PiecePropValueSchema } from '@activepieces/pieces-framework';
 
 interface ListAPIResponse<T> {
   '@odata.context': string;
@@ -110,10 +110,10 @@ export class BusinessCentralAPIClient {
 }
 
 export function makeClient(
-  auth: AppConnectionValueForAuthProperty<typeof businessCentralAuth>
+  auth: PiecePropValueSchema<typeof businessCentralAuth>
 ) {
   const client = new BusinessCentralAPIClient(
-    auth.props?.['environment'] as string ?? '',
+    auth.props?.['environment'],
     auth.access_token
   );
   return client;

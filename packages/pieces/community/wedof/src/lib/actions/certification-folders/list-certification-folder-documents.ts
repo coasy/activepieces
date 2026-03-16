@@ -28,7 +28,7 @@ export const getCertificationFolderDocuments = createAction({
           '/files',
         headers: {
           'Content-Type': 'application/json',
-          'X-Api-Key': context.auth.secret_text,
+          'X-Api-Key': context.auth as string,
         },
       })
     ).body;

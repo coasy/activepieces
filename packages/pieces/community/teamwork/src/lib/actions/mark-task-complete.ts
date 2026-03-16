@@ -10,7 +10,6 @@ export const markTaskComplete = createAction({
 	auth: teamworkAuth,
 	props: {
 		taskId: Property.Dropdown({
-auth: teamworkAuth,
 			displayName: 'Task',
 			description: 'The task to mark as complete.',
 			required: true,
@@ -23,7 +22,7 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const res = await teamworkRequest(auth, {
+				const res = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: '/tasks.json',
 					query: {

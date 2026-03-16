@@ -20,7 +20,6 @@ export const createFulfillmentEventAction = createAction({
       required: true,
     }),
     status: Property.Dropdown({
-      auth: shopifyAuth,
       displayName: 'Status',
       required: true,
       refreshers: [],

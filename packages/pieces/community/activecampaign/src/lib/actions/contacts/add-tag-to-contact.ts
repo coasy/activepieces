@@ -14,7 +14,7 @@ export const addTagToContactAction = createAction({
 	async run(context) {
 		const { contactId, tagId } = context.propsValue;
 
-		const client = makeClient(context.auth.props);
+		const client = makeClient(context.auth);
 		return await client.addTagToContact(contactId, tagId);
 	},
 });

@@ -17,7 +17,6 @@ export const searchCertificationFolder = createAction({
         }),
         period: wedofCommon.period,
         periodForm: Property.DynamicProperties({      
-            auth: wedofAuth,
             description: '',      
             displayName: 'ez',      
             required: true,      
@@ -352,7 +351,7 @@ export const searchCertificationFolder = createAction({
                 url: wedofCommon.baseUrl + '/certificationFolders',
                 headers: {
                      'Content-Type': 'application/json',
-                     'X-Api-Key': context.auth.secret_text,
+                     'X-Api-Key': context.auth as string,
                 },
             })
         ).body;

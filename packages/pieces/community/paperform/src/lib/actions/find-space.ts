@@ -18,7 +18,7 @@ export const findSpace = createAction({
 
     try {
       const response = await paperformCommon.getSpaces({
-        auth: auth.secret_text,
+        auth: auth as string,
         search: search as string,
         limit: 100,
       });

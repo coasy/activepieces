@@ -5,7 +5,7 @@ import { downloadFileFromDrive } from '../common/get-file-content';
 export const readFile = createAction({
   auth: googleDriveAuth,
   name: 'read-file',
-  displayName: 'Read File Content',
+  displayName: 'Read file',
   description: 'Read a selected file from google drive file',
   props: {
     fileId: Property.ShortText({

@@ -9,7 +9,7 @@ export const getClientList = createAction({
   description: 'Find all Clients',
   props: {},
   async run(context) {
-    const { hostUrl, appKey, appToken } = context.auth.props;
+    const { hostUrl, appKey, appToken } = context.auth;
 
     const client = new Client(hostUrl, appKey, appToken);
 

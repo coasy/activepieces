@@ -20,7 +20,8 @@ export const removeTagFromContact = createAction({
     tagId: appliedTagsDropdown(['auth', 'contactId']),
   },
   async run({auth, propsValue}) {
-    await clickfunnelsApiService.removeAppliedTags(auth.props, propsValue.tagId as string);
+    await clickfunnelsApiService.removeAppliedTags(auth, propsValue.tagId as string);
+
     return {
       message: "Tag removed"
     }

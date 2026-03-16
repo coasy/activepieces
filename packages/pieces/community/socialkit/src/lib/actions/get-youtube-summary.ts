@@ -1,11 +1,9 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { HttpMethod, httpClient } from '@activepieces/pieces-common';
-import { socialkitAuth } from '../..';
 
 const socialkitApiUrl = 'https://api.socialkit.dev';
 
 export const getYoutubeSummary = createAction({
-  auth: socialkitAuth,
   name: 'get_youtube_summary',
   displayName: 'Get YouTube Summary',
   description: 'Generates an AI-powered summary of a YouTube video.',
@@ -27,7 +25,7 @@ export const getYoutubeSummary = createAction({
       method: HttpMethod.GET,
       url: `${socialkitApiUrl}/youtube/summarize`,
       queryParams: {
-        access_key: accessKey.secret_text,
+        access_key: accessKey as string,
         url: url,
       },
     });

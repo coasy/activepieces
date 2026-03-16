@@ -15,10 +15,10 @@ export const listProject = createAction({
   async run({ auth }) {
     const response = await httpClient.sendRequest<string[]>({
       method: HttpMethod.GET,
-      url: `${auth.props.baseApiUrl}/projects`,
+      url: `${auth.baseApiUrl}/projects`,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: auth.props.apiKey,
+        token: auth.apiKey,
       },
     });
 

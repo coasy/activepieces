@@ -23,7 +23,6 @@ const ExploreTabContent = ({
     usePieceSelectorTabs();
   const { data: categories, isLoading: isLoadingPieces } =
     piecesHooks.usePiecesSearch({
-      shouldCaptureEvent: false,
       searchQuery: '',
       type:
         operation.type === FlowOperationType.UPDATE_TRIGGER
@@ -75,7 +74,7 @@ const ExploreTabContent = ({
                     showTooltip={false}
                     size={'sm'}
                   />
-                  <div className="grow h-full flex items-center justify-left text-sm">
+                  <div className="flex-grow h-full flex items-center justify-left text-sm">
                     {pieceMetadata.displayName}
                   </div>
                 </div>{' '}

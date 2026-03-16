@@ -4,16 +4,18 @@ exclude-labels:
   - 'release'
   - 'pre-release'
 categories:
-  - title: "🔌 Pieces"
-    labels:
-      - "🧩 area/third-party-pieces"
-      - "🧩 area/core-pieces"
   - title: "⛓️‍💥 Breaking Changes"
     labels:
       - "⛓️‍💥 breaking-change"
   - title: "✨ Exciting New Features"
     labels:
       - "🌟 feature"
+  - title: "🧩 Pieces"
+    labels:
+      - "🔌 pieces"
+  - title: "🛠️ Piece Framework"
+    labels:
+      - "🛠️ piece-framework"
   - title: "🐞 Bug Fixes"
     labels:
       - "🐛 bug"
@@ -23,9 +25,12 @@ categories:
   - title: "📚 Documentation"
     labels:
       - "📚 documentation"
-  - title: "🧹 Maintenance"
+  - title: "🧹 Maintenance & Dev Experience"
     labels:
       - "🧹 clean up"
+  - title: "Other Changes"
+    labels:
+      - "*"
 
 template: |
 

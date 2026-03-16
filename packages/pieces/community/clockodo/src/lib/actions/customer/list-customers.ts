@@ -22,7 +22,7 @@ export default createAction({
     }),
   },
   async run({ auth, propsValue }) {
-    const client = makeClient(auth.props);
+    const client = makeClient(auth);
     const filter: CustomerListFilter = {
       active: propsValue.active_filter,
     };

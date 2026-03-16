@@ -9,7 +9,6 @@ export const findFormProduct = createAction({
   description: 'Finds a form product by name.',
   props: {
     formId: Property.Dropdown({
-      auth: paperformAuth,
       displayName: 'Form',
       description: 'Select the form to search products in',
       required: true,
@@ -25,7 +24,7 @@ export const findFormProduct = createAction({
 
         try {
           const forms = await paperformCommon.getForms({
-            auth: auth.secret_text,
+            auth: auth as string,
             limit: 100,
           });
 
@@ -56,7 +55,7 @@ export const findFormProduct = createAction({
     try {
       const response = await paperformCommon.getProducts({
         formSlugOrId: formId as string,
-        auth: auth.secret_text,
+        auth: auth as string,
         search: search as string,
         limit: 100,
       });

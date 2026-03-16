@@ -23,7 +23,6 @@ export const createNote = createAction({
             }
         }),
         dynamic_resource_id: Property.DynamicProperties({
-            auth: zendeskSellAuth,
             displayName: 'Resource ID',
             description: 'Select the specific resource to attach the note to.',
             required: true,
@@ -105,7 +104,7 @@ export const createNote = createAction({
         const response = await callZendeskApi(
             HttpMethod.POST,
             'v2/notes',
-            auth,
+            auth as ZendeskSellAuth,
             { data: cleanedBody } 
         );
 

@@ -16,7 +16,7 @@ export const terminateSessionAction = createAction({
 		const { sessionId } = context.propsValue;
 
 		const response = await airtopApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.DELETE,
 			resourceUri: `/sessions/${sessionId}`,
 		});

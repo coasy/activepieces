@@ -22,7 +22,7 @@ export const generateSignedUrl = createAction({
     }),
   },
   async run(context) {
-  const { bucket, region, accessKeyId, secretAccessKey } = context.auth.props;
+  const { bucket, region, accessKeyId, secretAccessKey } = context.auth;
   const { key, expiresIn } = context.propsValue;
 
   const clientUrl = await createPresignedUrlWithClient({

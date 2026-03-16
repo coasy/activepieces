@@ -25,7 +25,7 @@ export const mistralAi = createPiece({
       baseUrl:()=>'https://api.mistral.ai/v1',
       authMapping:async (auth)=>{
         return{
-          Authorization:`Bearer ${auth.secret_text}`
+          Authorization:`Bearer ${auth as string}`
         }
       }
     })

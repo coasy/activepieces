@@ -18,8 +18,7 @@ type Props = {
 	additionalPropertiesToRetrieve?: string | string[];
 };
 
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-const polling: Polling<AppConnectionValueForAuthProperty<typeof hubspotAuth>, Props> = {
+const polling: Polling<PiecePropValueSchema<typeof hubspotAuth>, Props> = {
 	strategy: DedupeStrategy.TIMEBASED,
 	async items({ auth, propsValue, lastFetchEpochMS }) {
 		const listId = propsValue.listId;
@@ -94,7 +93,6 @@ export const newContactInListTrigger = createTrigger({
 	props: {
 		listId: Property.Dropdown({
 			displayName: 'Contact List',
-			auth: hubspotAuth,
 			refreshers: [],
 			required: true,
 			options: async ({ auth }) => {

@@ -1,6 +1,5 @@
 import { Property } from '@activepieces/pieces-framework';
 import { HttpMethod, httpClient } from '@activepieces/pieces-common';
-import { togglTrackAuth } from '../..';
 
 
 type TogglOrganization = {
@@ -30,7 +29,6 @@ type TogglTask = {
 
 export const togglCommon = {
   organization_id: Property.Dropdown({
-    auth:togglTrackAuth,
     displayName: 'Organization',
     description: 'The organization to operate in.',
     required: true,
@@ -43,7 +41,7 @@ export const togglCommon = {
           options: [],
         };
       }
-      const apiToken = auth.secret_text;
+      const apiToken = auth as string;
       const response = await httpClient.sendRequest<TogglOrganization[]>({
         method: HttpMethod.GET,
         url: 'https://api.track.toggl.com/api/v9/me/organizations',
@@ -71,7 +69,6 @@ export const togglCommon = {
     },
   }),
   workspace_id: Property.Dropdown({
-    auth:togglTrackAuth,
     displayName: 'Workspace',
     description: 'The workspace to operate in.',
     required: true,
@@ -84,7 +81,7 @@ export const togglCommon = {
           options: [],
         };
       }
-      const apiToken = auth.secret_text;
+      const apiToken = auth as string;
       
       const response = await httpClient.sendRequest<TogglWorkspace[]>({
         method: HttpMethod.GET,
@@ -114,7 +111,6 @@ export const togglCommon = {
     },
   }),
   client_id: Property.Dropdown({
-    auth:togglTrackAuth,
     displayName: 'Client',
     description: 'The client to associate the project with.',
     required: false,
@@ -127,7 +123,7 @@ export const togglCommon = {
           options: [],
         };
       }
-      const apiToken = auth.secret_text;
+      const apiToken = auth as string;
       const response = await httpClient.sendRequest<TogglClient[]>({
         method: HttpMethod.GET,
         url: `https://api.track.toggl.com/api/v9/workspaces/${workspace_id}/clients`,
@@ -155,7 +151,6 @@ export const togglCommon = {
     },
   }),
   project_id: Property.Dropdown({
-    auth:togglTrackAuth,
     displayName: 'Project',
     description: 'The project to create the task under.',
     required: true,
@@ -168,7 +163,7 @@ export const togglCommon = {
           options: [],
         };
       }
-      const apiToken = auth.secret_text;
+      const apiToken = auth as string;
       const response = await httpClient.sendRequest<TogglProject[]>({
         method: HttpMethod.GET,
         url: `https://api.track.toggl.com/api/v9/workspaces/${workspace_id}/projects`,
@@ -196,7 +191,6 @@ export const togglCommon = {
     },
   }),
   optional_project_id: Property.Dropdown({
-    auth:togglTrackAuth,
     displayName: 'Project',
     description: 'The project to associate the time entry with.',
     required: false,
@@ -209,7 +203,7 @@ export const togglCommon = {
           options: [],
         };
       }
-      const apiToken = auth.secret_text;
+      const apiToken = auth as string;
       const response = await httpClient.sendRequest<TogglProject[]>({
         method: HttpMethod.GET,
         url: `https://api.track.toggl.com/api/v9/workspaces/${workspace_id}/projects`,
@@ -237,7 +231,6 @@ export const togglCommon = {
     },
   }),
   tags: Property.MultiSelectDropdown({
-    auth:togglTrackAuth,
     displayName: 'Tags',
     description: 'Tags to associate with the time entry. You can create new tags by typing them.',
     required: false,
@@ -250,7 +243,7 @@ export const togglCommon = {
           options: [],
         };
       }
-      const apiToken = auth.secret_text;
+      const apiToken = auth as string;
       const response = await httpClient.sendRequest<TogglTag[]>({
         method: HttpMethod.GET,
         url: `https://api.track.toggl.com/api/v9/workspaces/${workspace_id}/tags`,
@@ -278,7 +271,6 @@ export const togglCommon = {
     },
   }),
   optional_task_id: Property.Dropdown({
-    auth:togglTrackAuth,
     displayName: "Task",
     description: "The task to select.",
     required: false,
@@ -291,7 +283,7 @@ export const togglCommon = {
                 options: [],
             };
         }
-          const apiToken = auth.secret_text;
+        const apiToken = auth as string;
 
         const response = await httpClient.sendRequest<{ data: TogglTask[] }>({
             method: HttpMethod.GET,

@@ -2,7 +2,9 @@ import { Project, ProjectPlan } from '@activepieces/shared'
 import { EntitySchema } from 'typeorm'
 import {
     ApIdSchema,
+    ARRAY_COLUMN_TYPE,
     BaseColumnSchemaPart,
+    isPostgres,
 } from '../../../database/database-common'
 
 export type ProjectPlanSchema = {
@@ -18,8 +20,8 @@ export const ProjectPlanEntity = new EntitySchema<ProjectPlanSchema>({
             type: String,
         },
         pieces: {
-            type: String,
-            array: true,
+            type: ARRAY_COLUMN_TYPE,
+            array: isPostgres(),
             nullable: false,
         },
         locked: {
@@ -28,6 +30,10 @@ export const ProjectPlanEntity = new EntitySchema<ProjectPlanSchema>({
         },
         piecesFilterType: {
             type: String,
+        },
+        aiCredits: {
+            type: Number,
+            nullable: true,
         },
     },
     indices: [

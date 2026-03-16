@@ -92,7 +92,7 @@ export const stripeCreatePrice = createAction({
       url: `${stripeCommon.baseUrl}/prices`,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: context.auth.secret_text,
+        token: context.auth,
       },
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

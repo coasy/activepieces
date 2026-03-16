@@ -1,10 +1,9 @@
 import { t } from 'i18next';
 import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 
 import { LoadingScreen } from '@/components/ui/loading-screen';
-import { internalErrorToast } from '@/components/ui/sonner';
+import { toast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import { authenticationApi } from '@/lib/authentication-api';
 import { authenticationSession } from '@/lib/authentication-session';
@@ -46,13 +45,18 @@ const RedirectPage: React.FC = React.memo(() => {
             (e.response?.data as { code: ErrorCode })?.code ===
               ErrorCode.INVITATION_ONLY_SIGN_UP
           ) {
-            toast(t('Invitation only sign up'), {
+            toast({
+              title: t('Invitation only sign up'),
               description: t(
                 'Please ask your administrator to add you to the organization.',
               ),
             });
           } else {
-            internalErrorToast();
+            toast({
+              title: t('Something went wrong, please try again.'),
+              description: t('Please try again.'),
+              variant: 'destructive',
+            });
           }
           console.error(e);
 

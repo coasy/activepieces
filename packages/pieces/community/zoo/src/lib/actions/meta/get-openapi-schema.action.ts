@@ -14,7 +14,7 @@ export const getOpenApiSchemaAction = createAction({
       method: HttpMethod.GET,
       url: 'https://api.zoo.dev/',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
     });
     return response.body;

@@ -41,7 +41,6 @@ export const generatePodcast = createAction({
       required: true,
     }),
     voice1: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Host Voice',
       description: 'The host voice for AI Podcast',
       required: false,
@@ -60,7 +59,7 @@ export const generatePodcast = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_voices',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
             timeout: 10000, // 10 second timeout
           });
@@ -110,7 +109,6 @@ export const generatePodcast = createAction({
       required: true,
     }),
     voice2: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Guest Voice',
       description: 'The guest voice for AI Podcast',
       required: false,
@@ -129,7 +127,7 @@ export const generatePodcast = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_voices',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
             timeout: 10000, // 10 second timeout
           });
@@ -174,7 +172,6 @@ export const generatePodcast = createAction({
       },
     }),
     theme: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Theme',
       description: 'To display captions with style',
       required: false,
@@ -193,7 +190,7 @@ export const generatePodcast = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_themes',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
           });
 
@@ -215,7 +212,6 @@ export const generatePodcast = createAction({
       },
     }),
     language: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Language',
       description: 'To generate video in language you want',
       required: false,
@@ -234,7 +230,7 @@ export const generatePodcast = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_languages',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
           });
 
@@ -326,7 +322,7 @@ export const generatePodcast = createAction({
       method: HttpMethod.POST,
       url: 'https://viralapi.vadoo.tv/api/generate_podcast',
       headers: {
-        'X-API-KEY': context.auth.secret_text,
+        'X-API-KEY': context.auth,
         'Content-Type': 'application/json',
       },
       body: requestBody,
@@ -349,7 +345,7 @@ export const generatePodcast = createAction({
         method: HttpMethod.GET,
         url: 'https://viralapi.vadoo.tv/api/get_video_url',
         headers: {
-          'X-API-KEY': context.auth.secret_text,
+          'X-API-KEY': context.auth,
           'Content-Type': 'application/json',
         },
         queryParams: {

@@ -10,7 +10,6 @@ export const createNotebookComment = createAction({
 	auth: teamworkAuth,
 	props: {
 		notebookId: Property.Dropdown({
-auth: teamworkAuth,
 			displayName: 'Notebook',
 			description: 'The notebook to add a comment to.',
 			required: true,
@@ -23,7 +22,7 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const res = await teamworkRequest(auth, {
+				const res = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: '/notebooks.json',
 				});

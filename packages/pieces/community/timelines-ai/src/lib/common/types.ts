@@ -1,9 +1,6 @@
-import { AppConnectionValueForAuthProperty } from "@activepieces/pieces-framework";
-import { timelinesAiAuth } from ".";
-
 // Base Interfaces
 export interface AuthenticationParams {
-  apiKey: AppConnectionValueForAuthProperty<typeof timelinesAiAuth>;
+  apiKey: string;
 }
 
 export interface BaseStatusResponse {

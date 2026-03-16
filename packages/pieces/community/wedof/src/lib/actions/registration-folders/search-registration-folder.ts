@@ -25,8 +25,7 @@ export const searchRegistrationFolder = createAction({
       required: false,
     }),
     period: wedofCommon.period,
-    periodForm: Property.DynamicProperties( {
-      auth: wedofAuth,
+    periodForm: Property.DynamicProperties({
       description: '',
       displayName: 'ez',
       required: true,
@@ -269,7 +268,7 @@ export const searchRegistrationFolder = createAction({
         url: wedofCommon.baseUrl + '/registrationFolders',
         headers: {
           'Content-Type': 'application/json',
-          'X-Api-Key': context.auth.secret_text,
+          'X-Api-Key': context.auth as string,
         },
       })
     ).body;

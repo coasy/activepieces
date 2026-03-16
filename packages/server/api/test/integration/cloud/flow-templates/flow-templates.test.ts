@@ -1,6 +1,5 @@
 import {
     apId,
-    CreateTemplateRequestBody,
     PlatformPlan,
     PlatformRole,
     PrincipalType,
@@ -31,27 +30,25 @@ afterAll(async () => {
     await app?.close()
 })
 
-describe('Templates', () => {
-    describe('List Templates', () => {
+describe('Flow Templates', () => {
+    describe('List Flow Templates', () => {
         it('should list platform templates only', async () => {
             // arrange
-            const { mockPlatform, mockUser, mockPlatformTemplate } =
+            const { mockPlatform, mockUser, mockProject, mockPlatformTemplate } =
                 await createMockPlatformTemplate({ platformId: apId(), plan: { manageTemplatesEnabled: true } })
 
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: mockUser.id,
+                projectId: mockProject.id,
                 platform: { id: mockPlatform.id },
             })
 
             const response = await app?.inject({
                 method: 'GET',
-                url: '/v1/templates',
+                url: '/v1/flow-templates',
                 headers: {
                     authorization: `Bearer ${testToken}`,
-                },
-                query: {
-                    type: TemplateType.CUSTOM,
                 },
             })
 
@@ -64,22 +61,31 @@ describe('Templates', () => {
         })
 
         it('should list cloud platform template for anonymous users', async () => {
-            const response = await app?.inject({
-                method: 'GET',
-                url: '/v1/templates',
-                query: {
-                    type: TemplateType.OFFICIAL,
-                },
+            // arrange
+            const { mockPlatformTemplate } = await createMockPlatformTemplate({
+                platformId: CLOUD_PLATFORM_ID,
+            })
+            await createMockPlatformTemplate({
+                platformId: apId(),
             })
 
+            const response = await app?.inject({
+                method: 'GET',
+                url: '/v1/flow-templates',
+            })
+
+            // assert
             expect(response?.statusCode).toBe(StatusCodes.OK)
+            const responseBody = response?.json()
+            expect(responseBody.data).toHaveLength(1)
+            expect(responseBody.data[0].id).toBe(mockPlatformTemplate.id)
         })
     })
 
-    describe('Create Template', () => {
+    describe('Create Flow Template', () => {
         it('should create a flow template', async () => {
             // arrange
-            const { mockPlatform, mockOwner } = await mockAndSaveBasicSetup({
+            const { mockPlatform, mockOwner, mockProject } = await mockAndSaveBasicSetup({
                 platform: {
                 },
                 plan: {
@@ -90,23 +96,21 @@ describe('Templates', () => {
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: mockOwner.id,
+                projectId: mockProject.id,
                 platform: { id: mockPlatform.id },
             })
 
             const mockTemplate = createMockTemplate({
                 platformId: mockPlatform.id,
-                type: TemplateType.CUSTOM,
+                projectId: mockProject.id,
+                type: TemplateType.PLATFORM,
             })
 
-            const createTemplateRequest: CreateTemplateRequestBody = {
-                name: mockTemplate.name,
+            const createTemplateRequest = {
                 description: mockTemplate.description,
-                summary: mockTemplate.summary,
-                flows: mockTemplate.flows,
-                blogUrl: mockTemplate.blogUrl ?? undefined,
-                type: TemplateType.CUSTOM,
-                author: mockTemplate.author,
-                categories: mockTemplate.categories,
+                template: mockTemplate.template,
+                blogUrl: mockTemplate.blogUrl,
+                type: TemplateType.PLATFORM,
                 tags: mockTemplate.tags,
                 metadata: {
                     foo: 'bar',
@@ -116,7 +120,7 @@ describe('Templates', () => {
             // act
             const response = await app?.inject({
                 method: 'POST',
-                url: '/v1/templates',
+                url: '/v1/flow-templates',
                 headers: {
                     authorization: `Bearer ${testToken}`,
                 },
@@ -130,20 +134,21 @@ describe('Templates', () => {
         })
     })
 
-    describe('Delete Template', () => {
+    describe('Delete Flow Template', () => {
         it('should not be able delete platform template as member', async () => {
             // arrange
-            const { mockUser, mockPlatform, mockPlatformTemplate } =
+            const { mockUser, mockPlatform, mockProject, mockPlatformTemplate } =
                 await createMockPlatformTemplate({ platformId: apId() })
             const testToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
+                projectId: mockProject.id,
                 platform: { id: mockPlatform.id },
             })
 
             const response = await app?.inject({
                 method: 'DELETE',
-                url: `/v1/templates/${mockPlatformTemplate.id}`,
+                url: `/v1/flow-templates/${mockPlatformTemplate.id}`,
                 headers: {
                     authorization: `Bearer ${testToken}`,
                 },
@@ -155,18 +160,19 @@ describe('Templates', () => {
 
         it('should be able delete platform template as owner', async () => {
             // arrange
-            const { mockPlatform, mockOwner, mockPlatformTemplate } =
+            const { mockPlatform, mockOwner, mockProject, mockPlatformTemplate } =
                 await createMockPlatformTemplate({ platformId: apId() })
 
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: mockOwner.id,
+                projectId: mockProject.id,
                 platform: { id: mockPlatform.id },
             })
 
             const response = await app?.inject({
                 method: 'DELETE',
-                url: `/v1/templates/${mockPlatformTemplate.id}`,
+                url: `/v1/flow-templates/${mockPlatformTemplate.id}`,
                 headers: {
                     authorization: `Bearer ${testToken}`,
                 },
@@ -184,7 +190,7 @@ describe('Templates', () => {
 
             const response = await app?.inject({
                 method: 'DELETE',
-                url: `/v1/templates/${mockPlatformTemplate.id}`,
+                url: `/v1/flow-templates/${mockPlatformTemplate.id}`,
             })
 
             // assert
@@ -193,7 +199,7 @@ describe('Templates', () => {
     })
 })
 
-async function createMockPlatformTemplate({ platformId, plan, type }: { platformId: string, plan?: Partial<PlatformPlan>, type?: TemplateType }) {
+async function createMockPlatformTemplate({ platformId, plan }: { platformId: string, plan?: Partial<PlatformPlan> }) {
     const { mockOwner, mockPlatform, mockProject } = await mockAndSaveBasicSetup({
         platform: {
             id: platformId,
@@ -206,10 +212,11 @@ async function createMockPlatformTemplate({ platformId, plan, type }: { platform
 
     const mockPlatformTemplate = createMockTemplate({
         platformId: mockPlatform.id,
-        type: type ?? TemplateType.CUSTOM,
+        projectId: mockProject.id,
+        type: TemplateType.PLATFORM,
     })
     await databaseConnection()
-        .getRepository('template')
+        .getRepository('flow_template')
         .save(mockPlatformTemplate)
 
     const { mockUser } = await mockBasicUser({

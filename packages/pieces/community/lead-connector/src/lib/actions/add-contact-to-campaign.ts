@@ -9,7 +9,6 @@ export const addContactToCampaignAction = createAction({
   description: 'Add an existing contact to a campaign.',
   props: {
     contact: Property.Dropdown({
-  auth: leadConnectorAuth,
       displayName: 'Contact',
       description: 'The contact to use.',
       required: true,
@@ -33,7 +32,6 @@ export const addContactToCampaignAction = createAction({
       },
     }),
     campaign: Property.Dropdown({
-  auth: leadConnectorAuth,
       displayName: 'Campaign',
       required: true,
       refreshers: [],

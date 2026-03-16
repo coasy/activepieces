@@ -1,11 +1,10 @@
 import { Property } from '@activepieces/pieces-framework';
-import { whatConvertsAuth, WhatConvertsAuth } from './auth';
+import { WhatConvertsAuth } from './auth';
 import { whatConvertsClient } from './client';
 
 export const whatConvertsProps = {
   account_id: () =>
-     Property.Dropdown({
-      auth: whatConvertsAuth,
+    Property.Dropdown({
       displayName: 'Account',
       description: 'The account to select a profile from.',
       required: true,
@@ -31,8 +30,7 @@ export const whatConvertsProps = {
       },
     }),
   profile_id: (required = true) =>
-     Property.Dropdown({
-      auth: whatConvertsAuth,
+    Property.Dropdown({
       displayName: 'Profile',
       description: 'The profile to search for leads in.',
       required: required,
@@ -59,8 +57,7 @@ export const whatConvertsProps = {
       },
     }),
   lead_id: () =>
-     Property.Dropdown({
-      auth: whatConvertsAuth,
+    Property.Dropdown({
       displayName: 'Lead',
       description: 'The lead to update.',
       required: true,

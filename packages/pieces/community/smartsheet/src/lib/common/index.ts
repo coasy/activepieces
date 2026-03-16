@@ -1,13 +1,11 @@
 import { DynamicPropsValue, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpRequest, HttpMethod } from '@activepieces/pieces-common';
 import crypto from 'crypto';
-import { smartsheetAuth } from '../..';
 
 export const smartsheetCommon = {
 	baseUrl: 'https://api.smartsheet.com/2.0',
 
-		sheet_id:(required=true)=>  Property.Dropdown({
-		auth: smartsheetAuth,
+	sheet_id:(required=true)=> Property.Dropdown({
 		displayName: 'Sheet',
 		description: 'Select a sheet',
 		required,
@@ -22,7 +20,7 @@ export const smartsheetCommon = {
 			}
 
 			try {
-				const sheets = await listSheets(auth.secret_text);
+				const sheets = await listSheets(auth as string);
 
 				if (sheets.length === 0) {
 					return {
@@ -48,9 +46,7 @@ export const smartsheetCommon = {
 		},
 	}),
 
-	column_id:  Property.Dropdown({
-		auth: smartsheetAuth,
-
+	column_id: Property.Dropdown({
 		displayName: 'Column',
 		description: 'Select a column',
 		required: true,
@@ -74,8 +70,7 @@ export const smartsheetCommon = {
 
 			try {
 				const columns = await getSheetColumns(
-					auth.secret_text
-,
+					auth as unknown as string,
 					sheet_id as unknown as string,
 				);
 
@@ -105,7 +100,6 @@ export const smartsheetCommon = {
 
 	// Dynamic cell properties based on column types
 	cells: Property.DynamicProperties({
-		auth: smartsheetAuth,
 		displayName: 'Cells',
 		description: 'Cell data with properties based on column types',
 		required: true,
@@ -117,8 +111,7 @@ export const smartsheetCommon = {
 
 			try {
 				const columns = await getSheetColumns(
-					auth.secret_text
-,
+					auth as unknown as string,
 					sheet_id as unknown as string,
 				);
 
@@ -225,9 +218,7 @@ export const smartsheetCommon = {
 	}),
 
 	// Dynamic row selector
-	row_id:  Property.Dropdown({
-		auth: smartsheetAuth,
-
+	row_id: Property.Dropdown({
 		displayName: 'Row',
 		required: true,
 		refreshers: ['sheet_id'],
@@ -249,8 +240,7 @@ export const smartsheetCommon = {
 			}
 
 			try {
-				const sheet = await getSheet(auth.secret_text
-, sheet_id as unknown as string);
+				const sheet = await getSheet(auth as unknown as string, sheet_id as unknown as string);
 				const rows = sheet.rows || [];
 
 				if (rows.length === 0) {
@@ -288,9 +278,7 @@ export const smartsheetCommon = {
 	}),
 
 	// Dynamic sheet selector for hyperlinks
-	hyperlink_sheet_id:  Property.Dropdown({
-		auth: smartsheetAuth,
-
+	hyperlink_sheet_id: Property.Dropdown({
 		displayName: 'Target Sheet',
 		description: 'Select a sheet to link to',
 		required: false,
@@ -305,8 +293,7 @@ export const smartsheetCommon = {
 			}
 
 			try {
-				const sheets = await listSheets(auth.secret_text
-);
+				const sheets = await listSheets(auth as unknown as string);
 
 				if (sheets.length === 0) {
 					return {
@@ -333,9 +320,7 @@ export const smartsheetCommon = {
 	}),
 
 	// Dynamic report selector for hyperlinks
-	hyperlink_report_id:  Property.Dropdown({
-		auth: smartsheetAuth,
-
+	hyperlink_report_id: Property.Dropdown({
 		displayName: 'Target Report',
 		description: 'Select a report to link to',
 		required: false,
@@ -350,8 +335,7 @@ export const smartsheetCommon = {
 			}
 
 			try {
-				const reports = await listReports(auth.secret_text
-);
+				const reports = await listReports(auth as unknown as string);
 
 				if (reports.length === 0) {
 					return {
@@ -379,7 +363,6 @@ export const smartsheetCommon = {
 
 	// Dynamic column selector for search/filter operations
 	search_columns: Property.MultiSelectDropdown({
-		auth: smartsheetAuth,
 		displayName: 'Search Columns',
 		description: 'Select specific columns to search within (leave empty to search all columns)',
 		required: false,
@@ -403,7 +386,7 @@ export const smartsheetCommon = {
 
 			try {
 				const columns = await getSheetColumns(
-					auth.secret_text,
+					auth as unknown as string,
 					sheet_id as unknown as string,
 				);
 				const searchableColumns = columns.filter(

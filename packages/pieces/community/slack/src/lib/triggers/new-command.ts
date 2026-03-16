@@ -25,7 +25,6 @@ export const newCommand = createTrigger({
       defaultValue: ['help'],
     }),
     channels: Property.MultiSelectDropdown({
-      auth: slackAuth,
       displayName: 'Channels',
       description:
         'If no channel is selected, the flow will be triggered for commands in all channels',

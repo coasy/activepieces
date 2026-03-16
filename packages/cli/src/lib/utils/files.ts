@@ -30,7 +30,6 @@ export type ProjectJson = {
           | 'peerDependencies'
           | 'dependencies';
         updateBuildableProjectDepsInPackageJson: boolean;
-        clean?: boolean;
         assets?: ({
           input: string;
           output: string;

@@ -20,7 +20,7 @@ export const getOrgMemberAction = createAction({
       method: HttpMethod.GET,
       url: `https://api.zoo.dev/org/members/${propsValue.userId}`,
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
     });
     return response.body;

@@ -46,7 +46,7 @@ export const datastoreSearch = createAction({
         hybrid: context.propsValue.hybrid,
       },
       headers: {
-        'X-API-KEY': context.auth.secret_text,
+        'X-API-KEY': context.auth,
         Accept: 'application/json',
       },
     };

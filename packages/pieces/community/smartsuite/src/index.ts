@@ -39,10 +39,10 @@ export const smartsuite = createPiece({
       auth: smartsuiteAuth,
       baseUrl: () => SMARTSUITE_API_URL,
       authMapping: async (auth) => {
-        const authValue = auth
+        const authValue = auth as PiecePropValueSchema<typeof smartsuiteAuth>;
         return {
-          Authorization: `Token ${auth.props.apiKey}`,
-          'ACCOUNT-ID': auth.props.accountId,
+          Authorization: `Token ${authValue.apiKey}`,
+          'ACCOUNT-ID': authValue.accountId,
         };
       },
     }),

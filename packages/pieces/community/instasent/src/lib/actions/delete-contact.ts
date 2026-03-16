@@ -1,12 +1,13 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
-import { getBaseUrl, instasentAuth } from '../../index';
+import { getBaseUrl } from '../../index';
+import { InstasentAuthType } from '../common/types';
 
 export const deleteContact = createAction({
     name: 'delete_contact',
     displayName: 'Delete Contact',
     description: 'Delete a single contact by User ID',
-    auth: instasentAuth,
+
     props: {
         userId: Property.ShortText({
             displayName: 'User ID',
@@ -17,14 +18,14 @@ export const deleteContact = createAction({
 
     async run(context) {
         const { userId } = context.propsValue;
-        const auth = context.auth;
-        const baseUrl = getBaseUrl({ projectId: auth.props.projectId, datasourceId: auth.props.datasourceId });
+        const auth = context.auth as InstasentAuthType;
+        const baseUrl = getBaseUrl({ projectId: auth.projectId, datasourceId: auth.datasourceId });
 
         const response = await httpClient.sendRequest({
             method: HttpMethod.DELETE,
             url: `${baseUrl}/stream/contacts/${userId}`,
             headers: {
-                'Authorization': `Bearer ${auth.props.apiKey}`
+                'Authorization': `Bearer ${auth.apiKey}`
             }
         });
 

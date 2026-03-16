@@ -12,7 +12,6 @@ export const updateContact = createAction({
     props: {
         contact_book: contactBookDropdown,
         contact_id: Property.Dropdown({
-            auth: missiveAuth,
             displayName: 'Contact',
             description: 'Select the contact to update',
             required: true,
@@ -36,7 +35,7 @@ export const updateContact = createAction({
 
                 try {
                     const response = await missiveCommon.apiCall({
-                        auth: auth,
+                        auth: auth as string,
                         method: HttpMethod.GET,
                         resourceUri: `/contacts?contact_book=${contact_book}`,
                     });
@@ -77,11 +76,10 @@ export const updateContact = createAction({
                 }
             },
         }),
-        move_to_contact_book: Property.Dropdown({   
+        move_to_contact_book: Property.Dropdown({
             displayName: 'Move to Contact Book',
             description: 'Move contact to a different contact book (optional)',
             required: false,
-            auth: missiveAuth,
             refreshers: [],
             options: async ({ auth }) => {
                 if (!auth) {
@@ -94,7 +92,7 @@ export const updateContact = createAction({
 
                 try {
                     const response = await missiveCommon.apiCall({
-                        auth: auth,
+                        auth: auth as string,
                         method: HttpMethod.GET,
                         resourceUri: '/contact_books',
                     });
@@ -284,7 +282,7 @@ export const updateContact = createAction({
             }
         }),
         memberships: Property.DynamicProperties({
-    auth: missiveAuth,            displayName: 'Memberships',
+            displayName: 'Memberships',
             description: 'Organizations and groups the contact belongs to. Note: When updating memberships, all existing memberships will be replaced with the ones provided here.',
             required: false,
             refreshers: ['contact_book'],
@@ -311,7 +309,7 @@ export const updateContact = createAction({
 
                 try {
                     const orgsResponse = await missiveCommon.apiCall({
-                        auth: auth,
+                        auth: auth as unknown as string,
                         method: HttpMethod.GET,
                         resourceUri: '/organizations',
                     });
@@ -326,7 +324,7 @@ export const updateContact = createAction({
                 if (contact_book) {
                     try {
                         const groupsResponse = await missiveCommon.apiCall({
-                            auth: auth,
+                            auth: auth as unknown as string,
                             method: HttpMethod.GET,
                             resourceUri: `/contact_groups?contact_book=${contact_book}&kind=group`,
                         });

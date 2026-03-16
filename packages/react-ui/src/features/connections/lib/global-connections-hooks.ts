@@ -1,9 +1,8 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { t } from 'i18next';
 import { UseFormReturn } from 'react-hook-form';
-import { toast } from 'sonner';
 
-import { internalErrorToast } from '@/components/ui/sonner';
+import { INTERNAL_ERROR_TOAST, toast } from '@/components/ui/use-toast';
 import {
   AppConnectionWithoutSensitiveData,
   ListGlobalConnectionsRequestQuery,
@@ -50,7 +49,10 @@ export const globalConnectionsMutations = {
         refetch();
       },
       onError: () => {
-        internalErrorToast();
+        toast({
+          title: t('Error deleting connections'),
+          variant: 'destructive',
+        });
       },
     }),
   useUpdateGlobalConnection: (
@@ -93,7 +95,9 @@ export const globalConnectionsMutations = {
       },
       onSuccess: () => {
         refetch();
-        toast.success(t('Connection has been updated.'), {
+        toast({
+          title: t('Success'),
+          description: t('Connection has been updated.'),
           duration: 3000,
         });
         setIsOpen(false);
@@ -108,7 +112,7 @@ export const globalConnectionsMutations = {
             message: error.message,
           });
         } else {
-          internalErrorToast();
+          toast(INTERNAL_ERROR_TOAST);
         }
       },
     }),

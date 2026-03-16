@@ -73,7 +73,6 @@ export const findDocument = createAction({
       },
     }),
     template_id: Property.Dropdown({
-      auth: pandadocAuth,
       displayName: 'Template',
       description: 'Filter by parent template (cannot be used with Form)',
       required: false,
@@ -94,7 +93,7 @@ export const findDocument = createAction({
               name: string;
               date_created: string;
             }>;
-          }>(auth.secret_text, HttpMethod.GET, '/templates?count=100');
+          }>(auth as string, HttpMethod.GET, '/templates?count=100');
 
           const options = response.results.map((template) => ({
             label: `${template.name} - ${template.id.substring(0, 8)}...`,
@@ -235,7 +234,7 @@ export const findDocument = createAction({
     const endpoint = queryString ? `/documents?${queryString}` : '/documents';
 
     return await pandadocClient.makeRequest(
-      auth.secret_text,
+      auth as string,
       HttpMethod.GET,
       endpoint
     );

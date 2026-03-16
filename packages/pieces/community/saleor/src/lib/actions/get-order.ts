@@ -16,7 +16,7 @@ export const getOrder = createAction({
     },
     async run({auth, propsValue}) {
         const orderId = propsValue.orderId
-        const { token, apiUrl } = auth.props;
+        const { token, apiUrl } = auth;
 
         const query = `
             query GetOrder($orderId: ID!) {

@@ -93,7 +93,11 @@ const BranchSingleCondition = ({
         {isInvalid && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <InvalidStepIcon className="h-4 w-4 shrink-0"></InvalidStepIcon>
+              <InvalidStepIcon
+                size={16}
+                viewBox="0 0 16 16"
+                className="stroke-0 animate-fade shrink-0"
+              ></InvalidStepIcon>
             </TooltipTrigger>
             <TooltipContent side="bottom">
               {t('Incomplete condition')}
@@ -201,7 +205,7 @@ const BranchSingleCondition = ({
             )}
           />
         )}
-        <div className="grow"></div>
+        <div className="flex-grow"></div>
         <div>
           {showDelete && (
             <Button

@@ -44,7 +44,7 @@ export const updateContactAction = createAction({
 			updateContactParams.fieldValues?.push({ field: key, value: value });
 		});
 
-		const client = makeClient(context.auth.props);
+		const client = makeClient(context.auth);
 		return await client.updateContact(Number(contactId), updateContactParams);
 	},
 });

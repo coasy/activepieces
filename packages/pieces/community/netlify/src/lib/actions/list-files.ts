@@ -1,6 +1,5 @@
 import { createAction, Property, OAuth2PropertyValue } from "@activepieces/pieces-framework";
 import { httpClient, HttpMethod } from "@activepieces/pieces-common";
-import { netlifyAuth } from "../common/auth";
 
 export const listFiles = createAction({
   name: "list_files",
@@ -8,7 +7,7 @@ export const listFiles = createAction({
   description: "Returns a list of all the files in the current deploy.",
   props: {
     siteId: Property.Dropdown({
-      auth: netlifyAuth,      displayName: "Site",
+      displayName: "Site",
       description: "Select the site to list files for",
       required: true,
       refreshers: ['auth'],

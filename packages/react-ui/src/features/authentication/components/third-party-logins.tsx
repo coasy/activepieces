@@ -2,7 +2,7 @@ import { t } from 'i18next';
 import React from 'react';
 
 import { Button } from '@/components/ui/button';
-import { internalErrorToast } from '@/components/ui/sonner';
+import { INTERNAL_ERROR_TOAST, toast } from '@/components/ui/use-toast';
 import {
   ApFlagId,
   ThirdPartyAuthnProviderEnum,
@@ -40,7 +40,7 @@ const ThirdPartyLogin = React.memo(({ isSignUp }: { isSignUp: boolean }) => {
     );
 
     if (!loginUrl || !thirdPartyRedirectUrl) {
-      internalErrorToast();
+      toast(INTERNAL_ERROR_TOAST);
       return;
     }
     thirdPartyLogin(loginUrl, providerName);

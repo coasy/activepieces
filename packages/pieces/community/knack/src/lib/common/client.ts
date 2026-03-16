@@ -5,8 +5,6 @@ import {
   HttpMessageBody,
   QueryParams,
 } from '@activepieces/pieces-common';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-import { knackAuth } from './auth';
 
 export type KnackAuthProps = {
   apiKey: string;
@@ -18,7 +16,7 @@ export type KnackApiCallParams = {
   resourceUri: string;
   query?: Record<string, string | number | string[] | undefined>;
   body?: any;
-  auth: AppConnectionValueForAuthProperty<typeof knackAuth>;
+  auth: KnackAuthProps;
 };
 
 export async function knackApiCall<T extends HttpMessageBody>({
@@ -28,7 +26,7 @@ export async function knackApiCall<T extends HttpMessageBody>({
   body,
   auth,
 }: KnackApiCallParams): Promise<T> {
-  const { apiKey, applicationId } = auth.props;
+  const { apiKey, applicationId } = auth;
 
   if (!apiKey || !applicationId) {
     throw new Error('Knack API key and Application ID are required for authentication');

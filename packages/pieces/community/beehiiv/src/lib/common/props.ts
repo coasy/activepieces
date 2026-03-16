@@ -1,10 +1,8 @@
 import { DynamicPropsValue, Property } from '@activepieces/pieces-framework';
 import { BeehiivPaginatedApiCall } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { beehiivAuth } from './auth';
 
 export const publicationId = Property.Dropdown({
-	auth: beehiivAuth,
 	displayName: 'Publication',
 	refreshers: [],
 	required: true,
@@ -18,7 +16,7 @@ export const publicationId = Property.Dropdown({
 		}
 
 		const response = await BeehiivPaginatedApiCall<{ id: string; name: string }>({
-			apiKey: auth.secret_text,
+			apiKey: auth as string,
 			method: HttpMethod.GET,
 			resourceUri: '/publications',
 		});
@@ -36,7 +34,6 @@ export const publicationId = Property.Dropdown({
 });
 
 export const subscriptionId =(isRequired=false)=> Property.Dropdown({
-	auth: beehiivAuth,
 	displayName: 'Subscription ID',
 	refreshers: ['publicationId'],
 	required: isRequired,
@@ -50,7 +47,7 @@ export const subscriptionId =(isRequired=false)=> Property.Dropdown({
 		}
 
 		const response = await BeehiivPaginatedApiCall<{ id: string; email: string }>({
-			apiKey: auth.secret_text,
+			apiKey: auth as string,
 			method: HttpMethod.GET,
 			resourceUri: `/publications/${publicationId}/subscriptions`,
 		});
@@ -73,9 +70,8 @@ export const automationId = (
 	isRequired = false,
 	isSingleSelect = true,
 ) => {
-	const fieldType = isSingleSelect ? Property.Dropdown<string, boolean, typeof beehiivAuth> : Property.MultiSelectDropdown<string, boolean, typeof beehiivAuth>;
+	const fieldType = isSingleSelect ? Property.Dropdown : Property.MultiSelectDropdown;
 	return fieldType({
-		auth: beehiivAuth,
 		displayName,
 		description: desc,
 		refreshers: ['publicationId'],
@@ -90,7 +86,7 @@ export const automationId = (
 			}
 
 			const response = await BeehiivPaginatedApiCall<{ id: string; name: string; status: string }>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: `/publications/${publicationId}/automations`,
 			});
@@ -111,7 +107,6 @@ export const automationId = (
 };
 
 export const customFields = Property.DynamicProperties({
-	auth: beehiivAuth,
 	displayName: 'Custom Fields',
 	refreshers: ['publicationId'],
 	required: false,

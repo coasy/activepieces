@@ -2,17 +2,15 @@ import { propsValidation } from '@activepieces/pieces-common';
 import { createAction } from '@activepieces/pieces-framework';
 import { PromptHubClient } from '../common/client';
 import { runPromptProps, runPromptSchema, sanitizeVariables } from '../common/props';
-import { prompthubAuth } from '../..';
 
 export const runPrompt = createAction({
   name: 'run_prompt',
   displayName: 'Run Prompt',
   description: 'Run a PromptHub project with optional variables, branch/hash, and chat payload',
-  props: runPromptProps,  
-  auth: prompthubAuth,
+  props: runPromptProps,
   async run({ auth, propsValue }) {
     await propsValidation.validateZod(propsValue, runPromptSchema);
-    const client = new PromptHubClient(auth.secret_text);
+    const client = new PromptHubClient(auth as string);
     const body: Record<string, any> = {};
     if (propsValue['branch']) body['branch'] = propsValue['branch'];
     if (propsValue['hash']) body['hash'] = propsValue['hash'];

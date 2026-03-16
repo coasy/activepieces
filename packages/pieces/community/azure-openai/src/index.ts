@@ -22,6 +22,11 @@ export const azureOpenaiAuth = PieceAuth.CustomAuth({
   required: true,
 });
 
+export type AzureOpenAIAuth = {
+  endpoint: string;
+  apiKey: string;
+  deploymentId: string;
+};
 
 export const azureOpenai = createPiece({
   displayName: 'Azure OpenAI',

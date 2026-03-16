@@ -1,6 +1,6 @@
 import { createAction } from '@activepieces/pieces-framework';
 import { ApitemplateAuth } from '../common/auth';
-import { ApitemplateRegion, makeRequest } from '../common/client';
+import { ApitemplateAuthConfig, makeRequest } from '../common/client';
 import { HttpMethod } from '@activepieces/pieces-common';
 
 export const getAccountInformation = createAction({
@@ -10,7 +10,7 @@ export const getAccountInformation = createAction({
   description: 'Retrieves account information including usage statistics and account details.',
   props: {},
   async run({ auth }) {
-    const authConfig = auth.props;
+    const authConfig = auth as ApitemplateAuthConfig;
 
     const endpoint = '/account-information';
 
@@ -21,7 +21,7 @@ export const getAccountInformation = createAction({
         endpoint,
         undefined,
         undefined,
-        authConfig.region as ApitemplateRegion
+        authConfig.region
       );
 
       return response;

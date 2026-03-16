@@ -1,6 +1,6 @@
-import { FlowAction, FlowRunStatus } from '@activepieces/shared'
+import { FlowAction } from '@activepieces/shared'
 import { codeExecutor } from '../../src/lib/handler/code-executor'
-import { FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
+import { ExecutionVerdict, FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
 import { flowExecutor } from '../../src/lib/handler/flow-executor'
 import { buildCodeAction, generateMockEngineConstants } from './test-helper'
 
@@ -15,7 +15,7 @@ describe('codeExecutor', () => {
                 },
             }), executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict.status).toBe(FlowRunStatus.RUNNING)
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.echo_step.output).toEqual({ 'key': 3 })
     })
 
@@ -26,14 +26,7 @@ describe('codeExecutor', () => {
                 input: {},
             }), executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.FAILED,
-            failedStep: {
-                name: 'runtime',
-                displayName: 'Your Action Name',
-                message: expect.stringContaining('Custom Runtime Error'),
-            },
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.FAILED)
         expect(result.steps.runtime.status).toEqual('FAILED')
         expect(result.steps.runtime.errorMessage).toContain('Custom Runtime Error')
     })
@@ -46,7 +39,7 @@ describe('codeExecutor', () => {
                 skip: true,
             }), executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict.status).toBe(FlowRunStatus.RUNNING)
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.echo_step).toBeUndefined()
     })
     it('should skip flow action', async () => {
@@ -68,7 +61,7 @@ describe('codeExecutor', () => {
         const result = await flowExecutor.execute({
             action: flow, executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict.status).toBe(FlowRunStatus.RUNNING)
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.echo_step).toBeUndefined()
         expect(result.steps.echo_step_1.output).toEqual({ 'key': 3 })
     })

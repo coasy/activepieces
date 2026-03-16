@@ -15,7 +15,7 @@ export const askAQuestionAboutTheWebPage = createAction({
     ];
 
     const params: any = {
-      apiKey:apiKey.secret_text,
+      apiKey,
       question,
       ...rest,
       format: (format === 'json' || format === 'text') ? format : undefined,

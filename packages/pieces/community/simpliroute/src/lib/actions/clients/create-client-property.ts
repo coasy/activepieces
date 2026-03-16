@@ -28,7 +28,7 @@ export const create_client_property = createAction({
             body,
             headers: {
                 ...commonHeaders,
-                'Authorization': `Token ${context.auth.secret_text}`
+                'Authorization': `Token ${context.auth}`
             }
         });
         return {

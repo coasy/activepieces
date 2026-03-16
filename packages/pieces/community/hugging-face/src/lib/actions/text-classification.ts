@@ -131,7 +131,6 @@ export const textClassification = createAction({
       defaultValue: 'cardiffnlp/twitter-roberta-base-sentiment-latest',
     }),
     searchModel: Property.Dropdown({
-      auth: huggingFaceAuth,
       displayName: 'Search Models',
       description: 'Search from all available text classification models',
       required: false,
@@ -292,7 +291,7 @@ export const textClassification = createAction({
         isZeroShot = true;
     }
 
-    const hf = new InferenceClient(context.auth.secret_text);
+    const hf = new InferenceClient(context.auth as string);
 
     if (isZeroShot) {
       // Handle zero-shot classification

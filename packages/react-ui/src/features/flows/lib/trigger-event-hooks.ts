@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { authenticationSession } from '@/lib/authentication-session';
 import { SeekPage, TriggerEventWithPayload } from '@activepieces/shared';
 
 import { triggerEventsApi } from './trigger-events-api';
@@ -13,7 +12,6 @@ export const triggerEventHooks = {
       queryKey: ['triggerEvents', flowVersionId],
       queryFn: () =>
         triggerEventsApi.list({
-          projectId: authenticationSession.getProjectId()!,
           flowId: flowId,
           limit: 5,
           cursor: undefined,

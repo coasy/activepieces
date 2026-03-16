@@ -9,12 +9,12 @@ import {
   DedupeStrategy,
   pollingHelper,
 } from '@activepieces/pieces-common';
-import { JiraAuth, jiraCloudAuth } from '../../auth';
+import { jiraCloudAuth } from '../../auth';
 import { searchIssuesByJql } from '../common';
 import dayjs from 'dayjs';
 
 const polling: Polling<
-  JiraAuth,
+  PiecePropValueSchema<typeof jiraCloudAuth>,
   { jql?: string; sanitizeJql?: boolean }
 > = {
   strategy: DedupeStrategy.TIMEBASED,

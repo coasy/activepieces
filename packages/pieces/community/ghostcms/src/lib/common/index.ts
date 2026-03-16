@@ -2,13 +2,11 @@ import { HttpMethod, httpClient } from '@activepieces/pieces-common';
 import { Property } from '@activepieces/pieces-framework';
 
 import jwt from 'jsonwebtoken';
-import { ghostAuth } from '../..';
 
 export const common = {
   properties: {
     newsletters: (required = true) => {
       return Property.MultiSelectDropdown({
-        auth: ghostAuth,
         displayName: 'Newsletters',
         required: required,
         refreshers: [],
@@ -37,7 +35,6 @@ export const common = {
     },
     member: (required = true) => {
       return Property.Dropdown({
-        auth: ghostAuth,
         displayName: 'Member',
         required: required,
         refreshers: [],
@@ -65,7 +62,6 @@ export const common = {
       });
     },
     author: Property.Dropdown({
-      auth: ghostAuth,
       displayName: 'Author',
       required: true,
       refreshers: [],
@@ -92,7 +88,6 @@ export const common = {
       },
     }),
     tags: Property.MultiSelectDropdown({
-      auth: ghostAuth,
       displayName: 'Tags',
       required: false,
       refreshers: [],

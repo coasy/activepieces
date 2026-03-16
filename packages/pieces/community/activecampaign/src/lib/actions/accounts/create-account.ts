@@ -31,7 +31,7 @@ export const createAccountAction = createAction({
 			createAccountParams.fields?.push({ customFieldId: Number(key), fieldValue: value });
 		});
 
-		const client = makeClient(context.auth.props);
+		const client = makeClient(context.auth);
 		return await client.createAccount(createAccountParams);
 	},
 });

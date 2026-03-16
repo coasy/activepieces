@@ -17,10 +17,14 @@ import {
   PiecePropertyMap,
   PieceProperty,
 } from '@activepieces/pieces-framework';
-import { FlowTrigger, McpPropertyType } from '@activepieces/shared';
+import {
+  FlowTrigger,
+  McpPropertyType,
+  mcpToolNaming,
+} from '@activepieces/shared';
 
-import { GenericPropertiesForm } from '../../piece-properties/generic-properties-form';
-import { testStepHooks } from '../utils/test-step-hooks';
+import { AutoPropertiesFormComponent } from '../../piece-properties/auto-properties-form';
+import { testStepHooks } from '../test-step-hooks';
 
 type McpToolTestingDialogProps = {
   open: boolean;
@@ -100,10 +104,6 @@ function McpToolTestingDialog({
     mode: 'onChange',
   });
 
-  function fixProperty(key: string): string {
-    return key.replace(/[\s/@-]+/g, '_');
-  }
-
   const pieceProps = formProps.reduce((acc, field: McpFormField) => {
     const pieceProperty = {
       displayName: field.name,
@@ -136,7 +136,10 @@ function McpToolTestingDialog({
               const cleanedData = Object.fromEntries(
                 Object.entries(data)
                   .filter(([key, _]) => key.trim() !== '')
-                  .map(([key, value]) => [fixProperty(key), value]),
+                  .map(([key, value]) => [
+                    mcpToolNaming.fixProperty(key),
+                    value,
+                  ]),
               );
               saveMockAsSampleData(cleanedData);
             })}
@@ -155,10 +158,9 @@ function McpToolTestingDialog({
                             key={fieldName}
                             className="grid space-y-2 px-0.5"
                           >
-                            <GenericPropertiesForm
+                            <AutoPropertiesFormComponent
                               props={{ [fieldName]: fieldProps }}
-                              propertySettings={null}
-                              dynamicPropsInfo={null}
+                              allowDynamicValues={false}
                               prefixValue=""
                               useMentionTextInput={false}
                               disabled={false}

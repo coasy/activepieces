@@ -25,7 +25,7 @@ export const updateUserAction = createAction({
       method: HttpMethod.PUT,
       url: 'https://api.zoo.dev/user',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
       body: {
         ...(propsValue.name && { name: propsValue.name }),

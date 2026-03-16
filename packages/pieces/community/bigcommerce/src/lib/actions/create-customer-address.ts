@@ -52,7 +52,7 @@ export const createCustomerAddress = createAction({
   },
   async run(context) {
     return await bigCommerceApiService.createCustomerAddress({
-      auth: context.auth.props,
+      auth: context.auth,
       payload: [
         {
           customer_id: context.propsValue.customer_id,

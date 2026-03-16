@@ -5,7 +5,6 @@ import {
   tableDropdown,
   recordDropdown,
   createServiceNowClient,
-  servicenowAuth,
 } from '../common/props';
 
 const AttachFileInputSchema = z
@@ -26,7 +25,6 @@ export const attachFileToRecordAction = createAction({
   name: 'attach_file_to_record',
   displayName: 'Attach File to Record',
   description: 'Upload and attach a file to a record',
-  auth: servicenowAuth,
   props: {
     table: tableDropdown,
     record: recordDropdown,

@@ -2,7 +2,6 @@ import {
 	createTrigger,
 	TriggerStrategy,
 	PiecePropValueSchema,
-	AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import {
 	DedupeStrategy,
@@ -15,7 +14,7 @@ import dayjs from 'dayjs';
 import { pdfmonkeyAuth } from '../common/auth';
 import { makeRequest } from '../common/client';
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof pdfmonkeyAuth>, Record<string, never>> = {
+const polling: Polling<PiecePropValueSchema<typeof pdfmonkeyAuth>, Record<string, never>> = {
 	strategy: DedupeStrategy.TIMEBASED,
 	items: async ({ auth, lastFetchEpochMS }) => {
 		let page = 1;
@@ -35,7 +34,7 @@ const polling: Polling<AppConnectionValueForAuthProperty<typeof pdfmonkeyAuth>, 
 			const response = await makeRequest<{
 				document_cards: Array<{ id: string; created_at: string }>;
 				meta: { total_pages: number; current_page: number };
-			}>(auth, HttpMethod.GET, '/document_cards', qs);
+			}>(auth as string, HttpMethod.GET, '/document_cards', qs);
 
 			const items = response.document_cards ?? [];
 

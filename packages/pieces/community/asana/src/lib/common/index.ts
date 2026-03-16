@@ -7,11 +7,9 @@ import {
   httpClient,
   AuthenticationType,
 } from '@activepieces/pieces-common';
-import { asanaAuth } from '../..';
 
 export const asanaCommon = {
   workspace: Property.Dropdown({
-    auth: asanaAuth,
     description: 'Asana workspace to create the task in',
     displayName: 'Workspace',
     required: true,
@@ -45,7 +43,6 @@ export const asanaCommon = {
     },
   }),
   project: Property.Dropdown({
-    auth: asanaAuth,
     description: 'Asana Project to create the task in',
     displayName: 'Project',
     required: true,
@@ -90,8 +87,7 @@ export const asanaCommon = {
       };
     },
   }),
-  assignee: Property.Dropdown<string,false,typeof asanaAuth>({
-    auth: asanaAuth,
+  assignee: Property.Dropdown<string>({
     description: 'Assignee for the task',
     displayName: 'Assignee',
     required: false,
@@ -124,8 +120,7 @@ export const asanaCommon = {
       };
     },
   }),
-  tags: Property.MultiSelectDropdown<string,false,typeof asanaAuth>({
-    auth: asanaAuth,
+  tags: Property.MultiSelectDropdown<string>({
     description: 'Tags to add to the task',
     displayName: 'Tags',
     required: false,

@@ -45,7 +45,6 @@ export const GetPieceRequestParams = Type.Object({
 export type GetPieceRequestParams = Static<typeof GetPieceRequestParams>
 
 export const ListPiecesRequestQuery = Type.Object({
-    projectId: Type.Optional(Type.String()),
     release: Type.Optional(ExactVersionType),
     includeTags: Type.Optional(Type.Boolean()),
     includeHidden: Type.Optional(Type.Boolean()),
@@ -68,16 +67,26 @@ export const RegistryPiecesRequestQuery = Type.Object({
 
 export type RegistryPiecesRequestQuery = Static<typeof RegistryPiecesRequestQuery>
 
+export const ListVersionRequestQuery = Type.Object({
+    release: ExactVersionType,
+    name: Type.String(),
+    edition: Type.Optional(Type.Enum(ApEdition)),
+})
+
+export type ListVersionRequestQuery = Static<typeof ListVersionRequestQuery>
+
 export const GetPieceRequestQuery = Type.Object({
     version: Type.Optional(VersionType),
     projectId: Type.Optional(Type.String()),
     locale: Type.Optional(Type.String()),
 })
 
+export const ListVersionsResponse = Type.Record(ExactVersionType, Type.Object({}))
+export type ListVersionsResponse = Static<typeof ListVersionsResponse>
+
 export type GetPieceRequestQuery = Static<typeof GetPieceRequestQuery>
 
 export const PieceOptionRequest = Type.Object({
-    projectId: Type.String(),
     pieceName: Type.String({}),
     pieceVersion: VersionType,
     actionOrTriggerName: Type.String({}),
@@ -92,6 +101,10 @@ export type PieceOptionRequest = Static<typeof PieceOptionRequest>
 
 export enum PieceScope {
     PLATFORM = 'PLATFORM',
+    // TODO: all users have their own platform, so we can remove this
+    // @deprecated
+    PROJECT = 'PROJECT',
+
 }
 
 export const AddPieceRequestBody = Type.Union([
@@ -107,7 +120,6 @@ export const AddPieceRequestBody = Type.Union([
         title: 'Private Piece',
     }),
     Type.Object({
-        projectId: Type.String(),
         packageType: Type.Literal(PackageType.REGISTRY),
         scope: Type.Literal(PieceScope.PLATFORM),
         pieceName: Type.String({

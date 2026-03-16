@@ -57,7 +57,7 @@ export const createDocument = createAction({
   async run({ auth: apiKey, propsValue }) {
     const { message_headers, ...rest } = propsValue;
     return await parseurCommon.createDocument({
-      apiKey:apiKey.secret_text,
+      apiKey,
       ...rest,
       message_headers: message_headers
         ? Object.fromEntries(

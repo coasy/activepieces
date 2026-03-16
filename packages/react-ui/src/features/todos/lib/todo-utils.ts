@@ -46,13 +46,4 @@ export const todoUtils = {
     }
     return undefined;
   },
-  getAuthorId: (todo: PopulatedTodo | TodoActivityWithUser) => {
-    if ('createdByUser' in todo && todo.createdByUser) {
-      return todo.createdByUser?.id;
-    }
-    if ('user' in todo && todo.user) {
-      return todo.user?.id;
-    }
-    return undefined;
-  },
 };

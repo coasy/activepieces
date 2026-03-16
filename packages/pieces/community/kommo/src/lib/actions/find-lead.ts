@@ -16,7 +16,7 @@ export const findLeadAction = createAction({
     }),
   },
   async run(context) {
-    const { subdomain, apiToken } = context.auth.props
+    const { subdomain, apiToken } = context.auth
 
     const result = await makeRequest(
       { apiToken, subdomain },

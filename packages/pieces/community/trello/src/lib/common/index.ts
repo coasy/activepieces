@@ -1,6 +1,5 @@
 import { BasicAuthPropertyValue, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpRequest, HttpMethod } from '@activepieces/pieces-common';
-import { trelloAuth } from '../..';
 
 export interface WebhookInformation {
 	id: string;
@@ -14,9 +13,7 @@ export interface WebhookInformation {
 
 export const trelloCommon = {
 	baseUrl: 'https://api.trello.com/1/',
-	board_id:  Property.Dropdown({
-		auth: trelloAuth,
-
+	board_id: Property.Dropdown({
 		displayName: 'Boards',
 		description: 'List of boards',
 		required: true,
@@ -46,9 +43,7 @@ export const trelloCommon = {
 			};
 		},
 	}),
-	list_id:  Property.Dropdown({
-		auth: trelloAuth,
-
+	list_id: Property.Dropdown({
 		displayName: 'Lists',
 		description: 'Get lists from a board',
 		required: true,
@@ -77,9 +72,7 @@ export const trelloCommon = {
 			};
 		},
 	}),
-	list_id_opt:  Property.Dropdown({
-		auth: trelloAuth,
-
+	list_id_opt: Property.Dropdown({
 		displayName: 'Lists',
 		description: 'Get lists from a board',
 		required: false,
@@ -107,9 +100,7 @@ export const trelloCommon = {
 			};
 		},
 	}),
-	board_id_opt:  Property.Dropdown({
-		auth: trelloAuth,
-
+	board_id_opt: Property.Dropdown({
 		displayName: 'Boards',
 		description: 'List of boards',
 		required: false,
@@ -140,7 +131,6 @@ export const trelloCommon = {
 		},
 	}),
 	board_labels: Property.MultiSelectDropdown({
-		auth: trelloAuth,
 		displayName: 'Labels',
 		description: 'Assign labels to the card',
 		required: false,

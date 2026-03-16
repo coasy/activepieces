@@ -46,8 +46,8 @@ export const twilio = createPiece({
       auth: twilioAuth,
       authMapping: async (auth) => ({
         Authorization: `Basic ${Buffer.from(
-          `${auth.username}:${
-            auth.password
+          `${(auth as { username: string }).username}:${
+            (auth as { password: string }).password
           }`
         ).toString('base64')}`,
       }),

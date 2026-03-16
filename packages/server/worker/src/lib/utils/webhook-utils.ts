@@ -31,10 +31,11 @@ export const webhookUtils = (log: FastifyBaseLogger) => ({
     savePayloadsAsSampleData({
         flowVersion,
         projectId,
+        workerToken,
         payloads,
     }: SaveSampleDataParams): void {
         rejectedPromiseHandler(
-            workerApiService().savePayloadsAsSampleData({
+            workerApiService(workerToken).savePayloadsAsSampleData({
                 flowId: flowVersion.flowId,
                 projectId,
                 payloads,
@@ -58,5 +59,6 @@ type GetWebhookUrlParams = {
 type SaveSampleDataParams = {
     flowVersion: FlowVersion
     projectId: string
+    workerToken: string
     payloads: unknown[]
 }

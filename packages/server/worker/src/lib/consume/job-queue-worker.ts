@@ -3,6 +3,9 @@ import {
     assertNotNullOrUndefined,
     ConsumeJobResponseStatus,
     ExecutionType,
+    FlowExecutionState,
+    flowExecutionStateKey,
+    FlowStatus,
     isNil,
     JOB_PRIORITY,
     JobData,
@@ -10,7 +13,7 @@ import {
     RATE_LIMIT_PRIORITY,
     WorkerJobType,
 } from '@activepieces/shared'
-import { DelayedError, Worker } from 'bullmq'
+import { DelayedError, Job, Worker } from 'bullmq'
 import { BullMQOtel } from 'bullmq-otel'
 import dayjs from 'dayjs'
 import { FastifyBaseLogger } from 'fastify'
@@ -23,7 +26,7 @@ import { workerJobRateLimiter } from './worker-job-rate-limiter'
 let worker: Worker<JobData>
 
 export const jobQueueWorker = (log: FastifyBaseLogger) => ({
-    async start(): Promise<void> {
+    async start(workerToken: string): Promise<void> {
         if (!isNil(worker)) {
             return
         }
@@ -31,36 +34,27 @@ export const jobQueueWorker = (log: FastifyBaseLogger) => ({
         const queueName = getWorkerQueueName()
         worker = new Worker<JobData>(queueName, async (job, token) => {
             try {
-
-                const deprecatedJobs = ['DELAYED_FLOW']
-                if (deprecatedJobs.includes(job.data.jobType)) {
+                const jobId = job.id
+                const { shouldSkip } = await preHandler(workerToken, job)
+                if (shouldSkip) {
                     log.info({
                         jobId: job.id,
                         jobData: job.data,
-                    }, '[jobQueueWorker] Skipping deprecated job')
+                    }, '[jobQueueWorker] Skipping job')
                     return
                 }
-                const isOldSchemaVersion = ('schemaVersion' in job.data ? job.data.schemaVersion : 0) !== LATEST_JOB_DATA_SCHEMA_VERSION
-                if (isOldSchemaVersion) {
-                    const newJobData = await workerApiService().migrateJob({ jobData: job.data  }) as JobData
-                    await job.updateData(newJobData)
-                }
 
-                const jobId = job.id
                 assertNotNullOrUndefined(jobId, 'jobId')
                 const { shouldRateLimit } = await workerJobRateLimiter(log).shouldBeLimited(jobId, job.data)
                 if (shouldRateLimit) {
-                    const baseDelay = Math.min(600, 20 * Math.pow(2, job.attemptsStarted))
-                    const randomFactor = 0.6 + Math.random() * 0.4
-                    const delayInSeconds = Math.round(baseDelay * randomFactor)
                     await job.moveToDelayed(
-                        dayjs().add(delayInSeconds, 'seconds').valueOf(),
+                        dayjs().add(Math.min(240, 20 * (job.attemptsStarted + 1)), 'seconds').valueOf(),
                         token,
                     )
                     log.info({
                         message: '[jobQueueWorker] Job is throttled and will be retried',
                         jobId,
-                        delayInSeconds,
+                        delayInSeconds: Math.min(240, 20 * (job.attemptsStarted + 1)),
                     })
                     await job.changePriority({
                         priority: JOB_PRIORITY[RATE_LIMIT_PRIORITY],
@@ -69,7 +63,7 @@ export const jobQueueWorker = (log: FastifyBaseLogger) => ({
                         'Thie job is rate limited and will be retried',
                     )
                 }
-                const response = await jobConsmer(log).consumeJob(job)
+                const response = await jobConsmer(log).consumeJob(job, workerToken)
                 log.info({
                     message: '[jobQueueWorker] Consumed job',
                     response,
@@ -120,7 +114,52 @@ export const jobQueueWorker = (log: FastifyBaseLogger) => ({
     },
 })
 
+async function preHandler(workerToken: string, job: Job<JobData>): Promise<{
+    shouldSkip: boolean
+}> {
 
+    const skipFlow = await shouldSkipDisabledFlow(job.data)
+    if (skipFlow) {
+        return {
+            shouldSkip: true,
+        }
+    }
+    const deprecatedJobs = ['DELAYED_FLOW']
+    if (deprecatedJobs.includes(job.data.jobType)) {
+        return {
+            shouldSkip: true,
+        }
+    }
+    const schemaVersion = 'schemaVersion' in job.data ? job.data.schemaVersion : 0
+    if (schemaVersion === LATEST_JOB_DATA_SCHEMA_VERSION) {
+        return {
+            shouldSkip: false,
+        }
+    }
+    const newJobData = await workerApiService(workerToken).migrateJob({
+        jobData: job.data,
+    })
+    await job.updateData(newJobData)
+    return {
+        shouldSkip: false,
+    }
+}
+
+async function shouldSkipDisabledFlow(data: JobData): Promise<boolean> {
+    if ('flowId' in data) {
+        const flowId = data.flowId
+        const redisConnection = await workerRedisConnections.useExisting()
+        const flowExecutionStateString = await redisConnection.get(flowExecutionStateKey(flowId))
+        if (isNil(flowExecutionStateString)) {
+            return false
+        }
+        const flowExecutionState = JSON.parse(flowExecutionStateString) as FlowExecutionState
+        if (!flowExecutionState.exists || flowExecutionState.flow.status === FlowStatus.DISABLED) {
+            return true
+        }
+    }
+    return false
+}
 
 function getWorkerQueueName(): string {
     const platformIdForDedicatedWorker = workerMachine.getSettings().PLATFORM_ID_FOR_DEDICATED_WORKER

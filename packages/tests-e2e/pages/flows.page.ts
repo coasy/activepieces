@@ -13,6 +13,7 @@ export class FlowsPage extends BasePage {
 
   async newFlowFromScratch() {
     await this.page.getByTestId('new-flow-button').click();
+    await this.page.getByTestId('new-flow-from-scratch-button').click();
   }
 
   async cleanupExistingFlows() {

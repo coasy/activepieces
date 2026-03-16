@@ -30,10 +30,6 @@ export const ApiKeyEntity = new EntitySchema<ApiKeySchema>({
             type: String,
             nullable: false,
         },
-        lastUsedAt: {
-            type: String,
-            nullable: true,
-        },
     },
     indices: [],
     relations: {

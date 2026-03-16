@@ -1,13 +1,11 @@
 import { Property, OAuth2PropertyValue } from '@activepieces/pieces-framework';
 import { gcsCommon } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { googleCloudStorageAuth } from './auth';
 
-export const bucketDropdown = Property.Dropdown<string,true,typeof googleCloudStorageAuth>({
+export const bucketDropdown = Property.Dropdown<string>({
   displayName: 'Bucket',
   required: true,
   refreshers: ['projectId'],
-  auth: googleCloudStorageAuth,
   options: async ({ auth, projectId }) => {
     if (!auth || !projectId) {
       return {
@@ -46,10 +44,9 @@ export const bucketDropdown = Property.Dropdown<string,true,typeof googleCloudSt
 });
 
 export const objectDropdown = (bucketProperty: string) =>
-  Property.Dropdown<string,true,typeof googleCloudStorageAuth>({
+  Property.Dropdown<string>({
     displayName: 'Object',
-    required: true,   
-    auth: googleCloudStorageAuth,
+    required: true,
     refreshers: [bucketProperty],
     options: async ({ auth, [bucketProperty]: bucket }) => {
       if (!auth || !bucket) {
@@ -88,10 +85,9 @@ export const objectDropdown = (bucketProperty: string) =>
     },
   });
 
-export const projectIdProperty = Property.Dropdown<string,true,typeof googleCloudStorageAuth>({
+export const projectIdProperty = Property.Dropdown<string>({
   displayName: 'Project',
   required: true,
-  auth: googleCloudStorageAuth,
   refreshers: [],
   options: async ({ auth }) => {
     if (!auth) {

@@ -32,16 +32,16 @@ export const addFragmentToConversation = createAction({
         mime.lookup(propsValue.fragment.filename)
       : mime.lookup(propsValue.fragment.filename);
 
-    const dustAuth = auth.props;
+    const dustAuth = auth as DustAuthType;
 
     const request: HttpRequest = {
       method: HttpMethod.POST,
-      url: `${DUST_BASE_URL[dustAuth.region ?? 'us']}/${
+      url: `${DUST_BASE_URL[dustAuth.region || 'us']}/${
         dustAuth.workspaceId
       }/assistant/conversations/${propsValue.conversationId}/content_fragments`,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${auth.props.apiKey}`,
+        Authorization: `Bearer ${auth.apiKey}`,
       },
       body: JSON.stringify(
         {

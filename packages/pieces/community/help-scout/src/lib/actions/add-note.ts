@@ -20,10 +20,8 @@ export const addNote = createAction({
   async run({ auth, propsValue }) {
     const payload: Record<string, any> = {
       text: propsValue.text,
+      ...(propsValue.userId && { user: Number(propsValue.userId) }),
     };
-    if(propsValue.userId) {
-      payload['user'] = Number(propsValue.userId);
-    }
     Object.keys(payload).forEach((key) => {
       if (payload[key] === undefined || payload[key] === null) {
         delete payload[key];

@@ -1,7 +1,7 @@
 import { useEffect, useId } from 'react';
 
 import { useEmbedding } from '@/components/embed-provider';
-import { projectCollectionUtils } from '@/hooks/project-collection';
+import { projectHooks } from '@/hooks/project-hooks';
 import { CustomProperty as CustomPropertyType } from '@activepieces/pieces-framework';
 const CUSTOM_PROPERTY_CONTAINER_ID = 'custom-property-container';
 
@@ -28,7 +28,7 @@ const CustomProperty = ({
   disabled,
   property,
 }: CustomPropertyParams) => {
-  const { project } = projectCollectionUtils.useCurrentProject();
+  const { project } = projectHooks.useCurrentProject();
   const { embedState } = useEmbedding();
   const id = useId();
   const containerId = CUSTOM_PROPERTY_CONTAINER_ID + '-' + id;

@@ -75,7 +75,7 @@ export const sendChat = createAction({
     };
 
     const response = await makeRequest(
-      auth.secret_text,
+      auth as string,
       HttpMethod.POST,
       '/chat',
       body

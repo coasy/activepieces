@@ -538,7 +538,7 @@ export const googleTrendsSearch = createAction({
       });
 
       const searchConfig: GoogleTrendsSearchConfig = {
-        api_key: auth.secret_text,
+        api_key: auth,
         engine: SerpApiEngine.GOOGLE_TRENDS,
         q: propsValue.query,
         hl: propsValue.hl,

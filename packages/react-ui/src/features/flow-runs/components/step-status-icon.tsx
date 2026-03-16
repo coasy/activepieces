@@ -9,12 +9,12 @@ import {
 } from '@/components/ui/tooltip';
 import { flowRunUtils } from '@/features/flow-runs/lib/flow-run-utils';
 import { cn } from '@/lib/utils';
-import { StepOutputStatus } from '@activepieces/shared';
+import { FlowRunStatus, StepOutputStatus } from '@activepieces/shared';
 
 type StepStatusIconProps = {
   status: StepOutputStatus;
-  size: '3' | '4' | '5' | '4.5';
-  hideTooltip?: boolean;
+  runStatus?: FlowRunStatus;
+  size: '3' | '4' | '5';
 };
 
 const statusText = {
@@ -26,30 +26,33 @@ const statusText = {
 };
 
 const StepStatusIcon = React.memo(
-  ({ status, size, hideTooltip = false }: StepStatusIconProps) => {
+  ({ status, size, runStatus }: StepStatusIconProps) => {
     const { variant, Icon } = flowRunUtils.getStatusIconForStep(status);
 
-    if (status === StepOutputStatus.RUNNING) {
-      return <LoadingSpinner className="w-3 h-3 "></LoadingSpinner>;
+    if (
+      runStatus === FlowRunStatus.RUNNING &&
+      status === StepOutputStatus.RUNNING
+    ) {
+      return <LoadingSpinner className="w-4 h-4 "></LoadingSpinner>;
     }
     return (
       <Tooltip>
         <TooltipTrigger asChild>
           <Icon
             className={cn('', {
-              'size-3': size === '3',
-              'size-4.5': size === '4.5',
-              'size-4': size === '4',
-              'size-5': size === '5',
-              'text-green-700 dark:text-green-200': variant === 'success',
-              'text-red-700 dark:text-red-200': variant === 'error',
+              'w-3': size === '3',
+              'w-4': size === '4',
+              'h-3': size === '3',
+              'h-4': size === '4',
+              'w-5': size === '5',
+              'h-5': size === '5',
+              'text-success': variant === 'success',
+              'text-destructive': variant === 'error',
               'text-foreground': variant === 'default',
             })}
           ></Icon>
         </TooltipTrigger>
-        {!hideTooltip && (
-          <TooltipContent side="bottom">{statusText[status]}</TooltipContent>
-        )}
+        <TooltipContent side="bottom">{statusText[status]}</TooltipContent>
       </Tooltip>
     );
   },

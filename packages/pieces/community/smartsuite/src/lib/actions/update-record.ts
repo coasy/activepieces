@@ -21,8 +21,8 @@ export const updateRecord = createAction({
 		const tableResponse = await smartSuiteApiCall<{
 			structure: TableStucture[];
 		}>({
-			apiKey: auth.props.apiKey,
-			accountId: auth.props.accountId,
+			apiKey: auth.apiKey,
+			accountId: auth.accountId,
 			method: HttpMethod.GET,
 			resourceUri: `/applications/${tableId}`,
 		});
@@ -32,8 +32,8 @@ export const updateRecord = createAction({
 
 		try {
 			const response = await smartSuiteApiCall<Record<string, any>>({
-				apiKey: auth.props.apiKey,
-				accountId: auth.props.accountId,
+				apiKey: auth.apiKey,
+				accountId: auth.accountId,
 				method: HttpMethod.PATCH,
 				resourceUri: `/applications/${tableId}/records/${recordId}/`,
 				body: formattedFields,

@@ -116,7 +116,6 @@ export const updateCertificationFolder = createAction({
       },
     }),
     dynamicFields: Property.DynamicProperties({
-      auth: wedofAuth,
       displayName: 'Champs sélectionnés',
       refreshers: ['fieldsToUpdate'],
       required: false,
@@ -469,7 +468,7 @@ export const updateCertificationFolder = createAction({
           context.propsValue['externalId'],
         headers: {
           'Content-Type': 'application/json',
-          'X-Api-Key': context.auth.secret_text,
+          'X-Api-Key': context.auth as string,
         },
       })
     ).body;

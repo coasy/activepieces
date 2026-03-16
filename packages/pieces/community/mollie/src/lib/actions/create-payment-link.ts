@@ -323,7 +323,6 @@ export const mollieCreatePaymentLink = createAction({
     }),
 
     allowedMethods: Property.MultiSelectDropdown({
-      auth: mollieAuth,
       displayName: 'Allowed Payment Methods',
       description:
         'Payment methods allowed for this link (empty = all enabled methods)',
@@ -389,7 +388,7 @@ export const mollieCreatePaymentLink = createAction({
   },
 
   async run({ auth, propsValue }) {
-    const apiKey = auth;
+    const apiKey = auth as string;
 
     const paymentLinkData: Record<string, unknown> = {
       description: propsValue.description,

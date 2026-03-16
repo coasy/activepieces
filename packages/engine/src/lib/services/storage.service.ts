@@ -1,7 +1,9 @@
 import { URL } from 'node:url'
 import { Store, StoreScope } from '@activepieces/pieces-framework'
-import { DeleteStoreEntryRequest, ExecutionError, FetchError, FlowId, isNil, PutStoreEntryRequest, StorageError, StorageInvalidKeyError, StorageLimitError, STORE_KEY_MAX_LENGTH, STORE_VALUE_MAX_SIZE, StoreEntry } from '@activepieces/shared'
+import { DeleteStoreEntryRequest, FlowId, isNil, PutStoreEntryRequest, STORE_KEY_MAX_LENGTH, STORE_VALUE_MAX_SIZE, StoreEntry } from '@activepieces/shared'
 import { StatusCodes } from 'http-status-codes'
+import sizeof from 'object-sizeof'
+import { ExecutionError, FetchError, StorageError, StorageInvalidKeyError, StorageLimitError } from '../helper/execution-errors'
 import { utils } from '../utils'
 
 export const createStorageService = ({ engineToken, apiUrl }: CreateStorageServiceParams): StorageService => {
@@ -38,7 +40,7 @@ export const createStorageService = ({ engineToken, apiUrl }: CreateStorageServi
             const url = buildUrl(apiUrl)
 
             const { data: storeEntry, error: storeEntryError } = await utils.tryCatchAndThrowOnEngineError((async () => {
-                const sizeOfValue = utils.sizeof(request.value)
+                const sizeOfValue = sizeof(request.value)
                 if (sizeOfValue > STORE_VALUE_MAX_SIZE) {
                     throw new StorageLimitError(request.key, STORE_VALUE_MAX_SIZE)
                 }

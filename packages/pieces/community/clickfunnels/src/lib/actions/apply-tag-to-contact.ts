@@ -27,7 +27,7 @@ export const applyTagToContact = createAction({
     };
 
     const response = await clickfunnelsApiService.createAppliedTag(
-      auth.props,
+      auth,
       propsValue.contactId as string,
       payload
     );

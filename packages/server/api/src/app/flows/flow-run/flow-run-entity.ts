@@ -4,12 +4,15 @@ import {
     FlowRun,
     FlowVersion,
     Project,
-    User,
 } from '@activepieces/shared'
 import { EntitySchema } from 'typeorm'
 import {
     ApIdSchema,
+    ARRAY_COLUMN_TYPE,
     BaseColumnSchemaPart,
+    isPostgres,
+    JSONB_COLUMN_TYPE,
+    TIMESTAMP_COLUMN_TYPE,
 } from '../../database/database-common'
 
 type FlowRunSchema = FlowRun & {
@@ -17,7 +20,6 @@ type FlowRunSchema = FlowRun & {
     flow: Flow
     flowVersion: FlowVersion
     logsFile: File
-    triggeredByUser?: User
 }
 
 export const FlowRunEntity = new EntitySchema<FlowRunSchema>({
@@ -31,8 +33,8 @@ export const FlowRunEntity = new EntitySchema<FlowRunSchema>({
             type: String,
             nullable: true,
         },
-        logsFileId: {
-            ...ApIdSchema,
+        logsFileId: { 
+            ...ApIdSchema, 
             nullable: true,
         },
         parentRunId: {
@@ -48,61 +50,50 @@ export const FlowRunEntity = new EntitySchema<FlowRunSchema>({
             type: String,
         },
         tags: {
-            type: String,
-            array: true,
+            type: ARRAY_COLUMN_TYPE,
+            array: isPostgres(),
             nullable: true,
+        },
+        duration: {
+            nullable: true,
+            type: Number,
         },
         startTime: {
-            type: 'timestamp with time zone',
-            nullable: true,
-        },
-        triggeredBy: {
-            type: String,
-            nullable: true,
+            type: TIMESTAMP_COLUMN_TYPE,
         },
         finishTime: {
             nullable: true,
-            type: 'timestamp with time zone',
+            type: TIMESTAMP_COLUMN_TYPE,
         },
         pauseMetadata: {
-            type: 'jsonb',
+            type: JSONB_COLUMN_TYPE,
             nullable: true,
         },
-        failedStep: {
-            type: 'jsonb',
-            nullable: true,
-        },
-        archivedAt: {
+        failedStepName: {
             type: String,
             nullable: true,
-            default: null,
         },
         stepNameToTest: {
             type: String,
             nullable: true,
         },
-        stepsCount: {
-            type: Number,
-            nullable: false,
-            default: 0,
-        },
     },
     indices: [
         {
-            name: 'idx_run_project_id_environment_flow_id_status_created_archived_',
-            columns: ['projectId', 'environment', 'flowId', 'status', 'created', 'archivedAt'],
+            name: 'idx_run_project_id_environment_created_desc',
+            columns: ['projectId', 'environment', 'created'],
         },
         {
-            name: 'idx_run_project_id_environment_status_created_archived_at',
-            columns: ['projectId', 'environment', 'status', 'created', 'archivedAt'],
+            name: 'idx_run_project_id_environment_status_created_desc',
+            columns: ['projectId', 'environment', 'status', 'created'],
         },
         {
-            name: 'idx_run_project_id_environment_created_archived_at',
-            columns: ['projectId', 'environment', 'created', 'archivedAt'],
+            name: 'idx_run_project_id_flow_id_environment_created_desc',
+            columns: ['projectId', 'flowId', 'environment', 'created'],
         },
         {
-            name: 'idx_run_project_id_environment_flow_id_created_archived_at',
-            columns: ['projectId', 'environment', 'flowId', 'created', 'archivedAt'],
+            name: 'idx_run_project_id_flow_id_environment_status_created_desc',
+            columns: ['projectId', 'flowId', 'environment', 'status', 'created'],
         },
         {
             name: 'idx_run_flow_id',
@@ -111,6 +102,10 @@ export const FlowRunEntity = new EntitySchema<FlowRunSchema>({
         {
             name: 'idx_run_logs_file_id',
             columns: ['logsFileId'],
+        },
+        {
+            name: 'idx_flow_run_flow_failed_step',
+            columns: ['flowId', 'failedStepName'],
         },
         {
             name: 'idx_run_parent_run_id',
@@ -122,16 +117,6 @@ export const FlowRunEntity = new EntitySchema<FlowRunSchema>({
         },
     ],
     relations: {
-        triggeredByUser: {
-            type: 'many-to-one',
-            target: 'user',
-            cascade: true,
-            onDelete: 'SET NULL',
-            joinColumn: {
-                name: 'triggeredBy',
-                foreignKeyConstraintName: 'fk_flow_run_triggered_by_user_id',
-            },
-        },
         project: {
             type: 'many-to-one',
             target: 'project',

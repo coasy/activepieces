@@ -26,10 +26,9 @@ export const searchCompanyRecord = createAction({
     }),
   },
   async run({ auth, propsValue }) {
-    const { companyName, mode } = propsValue;
+    const { companyName, mode } = propsValue as any;
 
-    const { access_token, data } = auth;
-    const api_domain = data['api_domain'];
+    const { access_token, api_domain } = auth as any;
 
     try {
       const response = await biginApiService.searchRecords(

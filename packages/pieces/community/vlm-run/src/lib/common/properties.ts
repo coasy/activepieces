@@ -1,5 +1,5 @@
 import { Property } from '@activepieces/pieces-framework';
-import { vlmRunAuth, vlmRunCommon } from '.';
+import { vlmRunCommon } from '.';
 
 // Action Properties
 export const analyzeAudioProperties = {
@@ -92,7 +92,6 @@ export const analyzeVideoProperties = {
 
 export const getFileProperties = {
   fileId: Property.Dropdown({
-  auth: vlmRunAuth,
     displayName: 'File',
     description: 'Select a file to retrieve its details.',
     required: true,
@@ -105,7 +104,7 @@ export const getFileProperties = {
           options: [],
         };
       }
-      const files = await vlmRunCommon.listFiles(auth.secret_text);
+      const files = await vlmRunCommon.listFiles(auth as string);
       return {
         disabled: false,
         options: files.map((file) => ({

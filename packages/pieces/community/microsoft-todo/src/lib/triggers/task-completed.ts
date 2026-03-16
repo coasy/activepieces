@@ -22,7 +22,6 @@ export const taskCompletedTrigger = createTrigger({
     description: 'Triggers when a task is completed in a specific list.',
     props: {
         task_list_id: Property.Dropdown({
-   auth: microsoftToDoAuth,
             displayName: 'Task List',
             description: 'The list to watch for completed tasks.',
             required: true,

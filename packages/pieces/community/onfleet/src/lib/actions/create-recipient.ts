@@ -43,7 +43,7 @@ export const createRecipient = createAction({
     }),
   },
   async run(context) {
-    const onfleetApi = new Onfleet(context.auth.secret_text);
+    const onfleetApi = new Onfleet(context.auth);
     const recipient: any = {
       name: context.propsValue['name'],
       phone: context.propsValue['phone'],

@@ -34,7 +34,7 @@ export const getDocument = createAction({
       url: `${BASE_URL}/get-document`,
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': auth.secret_text,
+        'x-api-key': auth as string,
       },
       queryParams: {
         DocumentId: documentId,

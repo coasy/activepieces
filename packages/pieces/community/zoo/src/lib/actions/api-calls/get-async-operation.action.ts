@@ -20,7 +20,7 @@ export const getAsyncOperationAction = createAction({
       method: HttpMethod.GET,
       url: `https://api.zoo.dev/async/operations/${propsValue.operationId}`,
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
     });
     return response.body;

@@ -37,7 +37,7 @@ export const aidbase = createPiece({
       baseUrl: () => API_BASE_URL,
       authMapping: async (auth) => {
         return {
-          Authorization: `Bearer ${auth.secret_text}`,
+          Authorization: `Bearer ${auth as string}`,
         };
       },
     }),

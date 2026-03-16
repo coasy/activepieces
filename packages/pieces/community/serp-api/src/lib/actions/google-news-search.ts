@@ -87,7 +87,7 @@ export const googleNewsSearch = createAction({
       });
 
       const searchConfig: GoogleNewsSearchConfig = {
-        api_key: auth.secret_text,
+        api_key: auth,
         engine: SerpApiEngine.GOOGLE_NEWS,
         q: propsValue.query,
         hl: propsValue.hl,

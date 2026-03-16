@@ -47,6 +47,7 @@ describe('Project Member API', () => {
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: mockUserOne.id,
+                projectId: mockProjectOne.id,
                 platform: { id: mockPlatformOne.id },
             })
 
@@ -97,6 +98,7 @@ describe('Project Member API', () => {
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: viewerUser.id,
+                projectId: mockProjectTwo.id,
                 platform: { id: mockPlatformOne.id },
             })
 
@@ -126,7 +128,7 @@ describe('Project Member API', () => {
                 },
             })
 
-            expect(response?.statusCode).toBe(StatusCodes.FORBIDDEN)
+            expect(response?.statusCode).toBe(StatusCodes.NOT_FOUND)
         })
 
         it('should fail to update project role when user is admin of another project', async () => {
@@ -155,6 +157,7 @@ describe('Project Member API', () => {
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: adminOfProjectTwo.id,
+                projectId: projectTwo.id,
                 platform: { id: mockPlatform.id },
             })
 
@@ -190,7 +193,7 @@ describe('Project Member API', () => {
                     authorization: `Bearer ${testToken}`,
                 },
             })
-            expect(response?.statusCode).toBe(StatusCodes.FORBIDDEN)
+            expect(response?.statusCode).toBe(StatusCodes.NOT_FOUND)
         })
     })
 
@@ -281,6 +284,7 @@ describe('Project Member API', () => {
                 const mockToken = await generateMockToken({
                     id: mockMember.id,
                     type: PrincipalType.USER,
+                    projectId: mockProject.id,
                     platform: {
                         id: mockPlatform.id,
                     },
@@ -350,6 +354,7 @@ describe('Project Member API', () => {
             const mockToken = await generateMockToken({
                 id: mockMember.id,
                 type: PrincipalType.USER,
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -455,6 +460,7 @@ async function createBasicEnvironment(): Promise<{
     const mockOwnerToken = await generateMockToken({
         id: mockOwner.id,
         type: PrincipalType.USER,
+        projectId: mockProject.id,
         platform: {
             id: mockPlatform.id,
         },

@@ -25,7 +25,6 @@ export const addTagToContact = createAction({
       },
     }),
     existingTagId: Property.Dropdown({
-      auth: systemeIoAuth,
       displayName: 'Existing Tag',
       description: 'Select an existing tag',
       required: false,
@@ -41,7 +40,7 @@ export const addTagToContact = createAction({
 
         try {
           const response = await systemeIoCommon.getTags({
-            auth: auth.secret_text,
+            auth: auth as string,
           });
 
           let tags: any[] = [];
@@ -103,7 +102,7 @@ export const addTagToContact = createAction({
           body: {
             name: newTagName.trim(),
           },
-          auth: context.auth.secret_text,
+          auth: context.auth,
         });
         
         tagId = newTag.id;
@@ -124,7 +123,7 @@ export const addTagToContact = createAction({
       body: {
         tagId: tagId,
       },
-      auth: context.auth.secret_text,
+      auth: context.auth,
     });
 
     return {

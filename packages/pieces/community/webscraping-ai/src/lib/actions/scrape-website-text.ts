@@ -16,7 +16,7 @@ export const scrapeWebsiteText = createAction({
     ];
 
     const params: any = {
-      apiKey:apiKey.secret_text,
+      apiKey,
       ...rest,
       textFormat: (textFormat === 'json' || textFormat === 'plain' || textFormat === 'xml')
         ? textFormat

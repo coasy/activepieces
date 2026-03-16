@@ -13,7 +13,7 @@ export const pieceMetadataOperation = {
         const input = operation as ExecuteExtractPieceMetadataOperation
         const output = await pieceHelper.extractPieceMetadata({
             params: input,
-            devPieces: EngineConstants.DEV_PIECES,
+            pieceSource: EngineConstants.PIECE_SOURCES,
         })
         return {
             status: EngineResponseStatus.OK,

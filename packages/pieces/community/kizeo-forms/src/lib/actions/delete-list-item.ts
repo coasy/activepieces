@@ -26,7 +26,7 @@ export const deleteListItem = createAction({
         `public/v4/lists/${listId}/items/${itemId}?used-with-active-pieces=`,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: context.auth.secret_text,
+        Authorization: context.auth,
       },
     });
 

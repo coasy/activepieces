@@ -3,7 +3,7 @@ import {
   Property,
   createPiece,
 } from '@activepieces/pieces-framework';
-import { AppConnectionType, PieceCategory } from '@activepieces/shared';
+import { PieceCategory } from '@activepieces/shared';
 import { runQuery } from './lib/actions/run-query';
 import { newRow } from './lib/triggers/new-row';
 import { pgClient } from './lib/common';
@@ -65,10 +65,7 @@ export const postgresAuth = PieceAuth.CustomAuth({
   required: true,
   validate: async ({ auth }) => {
     try {
-      const client = await pgClient({
-        type: AppConnectionType.CUSTOM_AUTH,
-        props: auth,
-      });
+      const client = await pgClient(auth);
       await client.end();
     }
     catch (e) {

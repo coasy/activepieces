@@ -41,7 +41,7 @@ export const stripeNewPaymentLink = createTrigger({
     const webhook = await stripeCommon.subscribeWebhook(
       'payment_link.created',
       context.webhookUrl,
-      context.auth.secret_text
+      context.auth
     );
     await context.store.put<StripeWebhookInformation>(
       '_new_payment_link_trigger',
@@ -58,16 +58,16 @@ export const stripeNewPaymentLink = createTrigger({
     if (webhookInfo !== null && webhookInfo !== undefined) {
       await stripeCommon.unsubscribeWebhook(
         webhookInfo.webhookId,
-        context.auth.secret_text
+        context.auth
       );
     }
   },
   async test(context) {
     const response = await httpClient.sendRequest<{ data: { id: string }[] }>({
       method: HttpMethod.GET,
-      url: 'https://api.stripe.com/v1/payment_links',
+      url: 'https://api.stripe.com/v1/checkout/payment_links',
       headers: {
-        Authorization: 'Bearer ' + context.auth.secret_text,
+        Authorization: 'Bearer ' + context.auth,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       queryParams: {

@@ -11,7 +11,6 @@ export const languageTranslation = createAction({
     'Translate text between languages using specialized Hugging Face translation models',
   props: {
     model: Property.Dropdown({
-      auth: huggingFaceAuth,
       displayName: 'Translation Model',
       description:
         'Select a translation model or search from 7000+ available models',
@@ -206,7 +205,7 @@ export const languageTranslation = createAction({
       );
     }
 
-    const hf = new InferenceClient(context.auth.secret_text);
+    const hf = new InferenceClient(context.auth as string);
 
     const args: TranslationArgs = {
       model: modelToUse,

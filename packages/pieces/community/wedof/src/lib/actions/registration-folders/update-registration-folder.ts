@@ -67,8 +67,7 @@ export const updateRegistrationFolder = createAction({
         ],
       },
     }),
-    dynamicFields: Property.DynamicProperties(  {
-      auth: wedofAuth,
+    dynamicFields: Property.DynamicProperties({
       displayName: 'Champs sélectionnés',
       refreshers: ['fieldsToUpdate'],
       required: false,
@@ -235,7 +234,7 @@ export const updateRegistrationFolder = createAction({
           context.propsValue.externalId,
         headers: {
           'Content-Type': 'application/json',
-          'X-Api-Key': context.auth.secret_text,
+          'X-Api-Key': context.auth as string,
         },
       })
     ).body;

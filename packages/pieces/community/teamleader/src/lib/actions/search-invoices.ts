@@ -31,7 +31,6 @@ export const searchInvoices = createAction({
             }
         }),
         customer_id: Property.Dropdown({
-          auth:teamleaderAuth,
             displayName: 'Customer',
             description: 'Filter invoices by specific customer',
             required: false,
@@ -52,7 +51,7 @@ export const searchInvoices = createAction({
                 try {
                     if (customer_type === 'company') {
                         const response = await teamleaderCommon.apiCall({
-                            auth,
+                            auth: auth as any,
                             method: HttpMethod.POST,
                             resourceUri: '/companies.list',
                             body: {}
@@ -67,7 +66,7 @@ export const searchInvoices = createAction({
                         };
                     } else {
                         const response = await teamleaderCommon.apiCall({
-                            auth,
+                            auth: auth as any,
                             method: HttpMethod.POST,
                             resourceUri: '/contacts.list',
                             body: {}
@@ -91,7 +90,6 @@ export const searchInvoices = createAction({
             }
         }),
         department_id: Property.Dropdown({
-          auth:teamleaderAuth,
             displayName: 'Department',
             description: 'Filter by department (company entity)',
             required: false,
@@ -105,7 +103,7 @@ export const searchInvoices = createAction({
 
                 try {
                     const response = await teamleaderCommon.apiCall({
-                        auth,
+                        auth: auth as any,
                         method: HttpMethod.POST,
                         resourceUri: '/departments.list',
                         body: {
@@ -132,7 +130,6 @@ export const searchInvoices = createAction({
             }
         }),
         deal_id: Property.Dropdown({
-          auth:teamleaderAuth,
             displayName: 'Deal',
             description: 'Filter by associated deal',
             required: false,
@@ -146,7 +143,7 @@ export const searchInvoices = createAction({
 
                 try {
                     const response = await teamleaderCommon.apiCall({
-                        auth,
+                        auth: auth as any,
                         method: HttpMethod.POST,
                         resourceUri: '/deals.list',
                         body: {}
@@ -169,7 +166,6 @@ export const searchInvoices = createAction({
             }
         }),
         project_id: Property.Dropdown({
-          auth:teamleaderAuth,
             displayName: 'Project',
             description: 'Filter by associated project',
             required: false,
@@ -183,7 +179,7 @@ export const searchInvoices = createAction({
 
                 try {
                     const response = await teamleaderCommon.apiCall({
-                        auth,
+                        auth: auth as any,
                         method: HttpMethod.POST,
                         resourceUri: '/projects.list',
                         body: {}
@@ -206,7 +202,6 @@ export const searchInvoices = createAction({
             }
         }),
         subscription_id: Property.Dropdown({
-          auth:teamleaderAuth,
             displayName: 'Subscription',
             description: 'Filter by associated subscription',
             required: false,
@@ -220,7 +215,7 @@ export const searchInvoices = createAction({
 
                 try {
                     const response = await teamleaderCommon.apiCall({
-                        auth,
+                        auth: auth as any,
                         method: HttpMethod.POST,
                         resourceUri: '/subscriptions.list',
                         body: {}

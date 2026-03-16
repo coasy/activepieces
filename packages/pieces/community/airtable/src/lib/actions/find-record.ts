@@ -29,7 +29,7 @@ export const airtableFindRecordAction = createAction({
     } = context.propsValue;
 
     return await airtableCommon.findRecord({
-      personalToken: personalToken.secret_text,
+      personalToken,
       baseId: baseId as string,
       tableId: tableId as string,
       searchField: searchField as string,

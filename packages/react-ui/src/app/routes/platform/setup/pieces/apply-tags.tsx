@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { t } from 'i18next';
 import { useState, useEffect, useRef } from 'react';
-import { toast } from 'sonner';
 
 import { CreateTagDialog } from '@/app/routes/platform/setup/pieces/create-tag-dialog';
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,7 @@ import {
 } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { toast } from '@/components/ui/use-toast';
 import { piecesTagsApi } from '@/features/platform-admin/lib/pieces-tags';
 import { PieceMetadataModelSummary } from '@activepieces/pieces-framework';
 
@@ -55,14 +55,20 @@ const ApplyTags = ({ selectedPieces, onApplyTags }: ApplyTagsProps) => {
   const { mutate: applyTags } = useMutation({
     mutationFn: async (tags: string[]) => {
       setSelectedTags(new Set(tags));
-      toast(t('Applying Tags...'), {});
+      toast({
+        title: t('Applying Tags...'),
+        variant: 'default',
+      });
       await piecesTagsApi.tagPieces({
         piecesName: selectedPieces.map((piece) => piece.name),
         tags,
       });
     },
     onSuccess: () => {
-      toast(t('Tags applied.'), {});
+      toast({
+        title: t('Tags applied.'),
+        variant: 'default',
+      });
       onApplyTags();
     },
   });

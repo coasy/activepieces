@@ -1,22 +1,22 @@
-import { EntitySourceType, ProjectResourceType, securityAccess } from '@activepieces/server-shared'
-import { CreateFieldRequest, Field, ListFieldsRequestQuery, PrincipalType, UpdateFieldRequest } from '@activepieces/shared'
+import { CreateFieldRequest, Field, PlatformUsageMetric, PrincipalType, UpdateFieldRequest } from '@activepieces/shared'
 import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'
 import { StatusCodes } from 'http-status-codes'
-import { TableEntity } from '../table/table.entity'
-import { FieldEntity } from './field.entity'
+import { PlatformPlanHelper } from '../../ee/platform/platform-plan/platform-plan-helper'
 import { fieldService } from './field.service'
 
 export const fieldController: FastifyPluginAsyncTypebox = async (fastify) => {
 
     fastify.post('/', CreateRequest, async (request, reply) => {
-        const response = await fieldService.create({ request: request.body, projectId: request.projectId })
+        await PlatformPlanHelper.checkResourceLocked({ resource: PlatformUsageMetric.TABLES, platformId: request.principal.platform.id })
+
+        const response = await fieldService.create({ request: request.body, projectId: request.principal.projectId })
         await reply.status(StatusCodes.CREATED).send(response)
     },
     )
 
     fastify.get('/', GetFieldsRequest, async (request) => {
         return fieldService.getAll({
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
             tableId: request.query.tableId,
         })
     },
@@ -25,7 +25,7 @@ export const fieldController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.get('/:id', GetFieldByIdRequest, (request) => {
         return fieldService.getById({
             id: request.params.id,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
         })
     },
     )
@@ -33,7 +33,7 @@ export const fieldController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.delete('/:id', DeleteFieldRequest, async (request) => {
         return fieldService.delete({
             id: request.params.id,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
         })
     },
     )
@@ -41,7 +41,7 @@ export const fieldController: FastifyPluginAsyncTypebox = async (fastify) => {
     fastify.post('/:id', UpdateRequest, async (request) => {
         return fieldService.update({
             id: request.params.id,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
             request: request.body,
         })
     },
@@ -49,15 +49,7 @@ export const fieldController: FastifyPluginAsyncTypebox = async (fastify) => {
 }
 const CreateRequest = {
     config: {
-        security: securityAccess.project([PrincipalType.USER, PrincipalType.ENGINE], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: TableEntity,
-            entitySourceType: EntitySourceType.BODY,
-            lookup: {
-                paramKey: 'tableId',
-                entityField: 'id',
-            },
-        }),
+        allowedPrincipals: [PrincipalType.ENGINE, PrincipalType.USER] as const,
     },
     schema: {
         body: CreateFieldRequest,
@@ -69,10 +61,7 @@ const CreateRequest = {
 
 const GetFieldByIdRequest = {
     config: {
-        security: securityAccess.project([PrincipalType.USER, PrincipalType.ENGINE], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: FieldEntity,
-        }),
+        allowedPrincipals: [PrincipalType.ENGINE, PrincipalType.USER] as const,
     },
     schema: {
         params: Type.Object({
@@ -83,10 +72,7 @@ const GetFieldByIdRequest = {
 
 const DeleteFieldRequest = {
     config: {
-        security: securityAccess.project([PrincipalType.USER, PrincipalType.ENGINE], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: FieldEntity,
-        }),
+        allowedPrincipals: [PrincipalType.ENGINE, PrincipalType.USER] as const,
     },
     schema: {
         params: Type.Object({
@@ -97,27 +83,18 @@ const DeleteFieldRequest = {
 
 const GetFieldsRequest = {
     config: {
-        security: securityAccess.project([PrincipalType.USER, PrincipalType.ENGINE], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: TableEntity,
-            entitySourceType: EntitySourceType.QUERY,
-            lookup: {
-                paramKey: 'tableId',
-                entityField: 'id',
-            },
-        }),
+        allowedPrincipals: [PrincipalType.ENGINE, PrincipalType.USER] as const,
     },
     schema: {
-        querystring: ListFieldsRequestQuery,
+        querystring: Type.Object({
+            tableId: Type.String(),
+        }),
     },
 }
 
 const UpdateRequest = {
     config: {
-        security: securityAccess.project([PrincipalType.USER, PrincipalType.ENGINE], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: FieldEntity,
-        }),
+        allowedPrincipals: [PrincipalType.ENGINE, PrincipalType.USER] as const,
     },
     schema: {
         params: Type.Object({

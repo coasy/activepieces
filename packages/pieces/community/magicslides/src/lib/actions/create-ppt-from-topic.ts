@@ -130,8 +130,8 @@ export const createPptFromTopic = createAction({
 
     const payload: any = {
       topic,
-      accessId: context.auth.props.accessId,
-      email: context.auth.props.email,
+      accessId: context.auth.accessId,
+      email: context.auth.email,
       slideCount,
       language,
       template,

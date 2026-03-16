@@ -24,7 +24,6 @@ import {
   AirtableView,
 } from './models';
 import { isNil } from '@activepieces/shared';
-import { airtableAuth } from '../..';
 
 
 interface Params {
@@ -422,8 +421,7 @@ async function createTable({
 }
 
 export const airtableCommon = {
-  base: Property.Dropdown<string,true,typeof airtableAuth>({
-    auth: airtableAuth,
+  base: Property.Dropdown({
     displayName: 'Base',
     required: true,
     refreshers: [],
@@ -438,7 +436,7 @@ export const airtableCommon = {
 
       try {
         const bases: AirtableBase[] = await fetchAllBases({
-          token: auth.secret_text,
+          token: auth as string,
         });
         return {
           disabled: false,
@@ -457,8 +455,7 @@ export const airtableCommon = {
     },
   }),
 
-  workspaceId: Property.Dropdown<string,true,typeof airtableAuth>({
-    auth: airtableAuth,
+  workspaceId: Property.Dropdown<string>({
     displayName: 'Workspace',
     required: true,
     refreshers: [],
@@ -473,11 +470,11 @@ export const airtableCommon = {
       // Although there is no direct way to get a list of workspaces,
       // we can get a list of bases and then fetch each base to get the workspace id.
       const bases = await fetchAllBases({
-        token: auth.secret_text,
+        token: auth as string,
       });
 
       const workspacePromises = bases.map((base) =>
-        fetchBase({ token: auth.secret_text, baseId: base.id })
+        fetchBase({ token: auth as string, baseId: base.id })
       );
       const basesWithWorkspaces = await Promise.all(workspacePromises);
 
@@ -499,8 +496,7 @@ export const airtableCommon = {
     },
   }),
 
-  tableId: Property.Dropdown<string,true,typeof airtableAuth>({
-    auth: airtableAuth,
+  tableId: Property.Dropdown<string>({
     displayName: 'Table',
     required: true,
     refreshers: ['base'],
@@ -522,7 +518,7 @@ export const airtableCommon = {
 
       try {
         const tables: AirtableTable[] = await fetchTableList({
-          token: auth.secret_text,
+          token: auth as string,
           baseId: base as string,
         });
 
@@ -544,8 +540,7 @@ export const airtableCommon = {
     },
   }),
 
-  views: Property.Dropdown<string,false,typeof airtableAuth>({
-    auth: airtableAuth,
+  views: Property.Dropdown<string>({
     displayName: 'View',
     required: false,
     refreshers: ['base', 'tableId'],
@@ -573,7 +568,7 @@ export const airtableCommon = {
       }
 
       const views: AirtableView[] = await fetchViews({
-        token: auth.secret_text,
+        token: auth as string,
         baseId: base as string,
         tableId: tableId as string,
       });
@@ -595,7 +590,6 @@ export const airtableCommon = {
   }),
 
   fields: Property.DynamicProperties({
-    auth: airtableAuth,
     displayName: 'Table',
     required: true,
     refreshers: ['base', 'tableId'],
@@ -606,7 +600,7 @@ export const airtableCommon = {
       if (!tableId) return {};
 
       const airtable: AirtableTable = await fetchTable({
-        token: auth.secret_text,
+        token: auth as unknown as string,
         baseId: base as unknown as string,
         tableId: tableId as unknown as string,
       });
@@ -655,8 +649,7 @@ export const airtableCommon = {
     },
   }),
 
-  recordIdDropdown: Property.Dropdown<string,true,typeof airtableAuth>({
-      auth: airtableAuth,
+  recordIdDropdown: Property.Dropdown<string>({
       displayName: 'Record',
       required: true,
       refreshers: ['base', 'tableId'],
@@ -671,7 +664,7 @@ export const airtableCommon = {
 
 
         const table = await fetchTable({
-          token: auth.secret_text,
+          token: auth as string,
           baseId: base as string,
           tableId: tableId as string,
         });
@@ -682,7 +675,7 @@ export const airtableCommon = {
 
 
         const records = await listRecords({
-          token: auth.secret_text,
+          token: auth as string,
           baseId: base as string,
           tableId: tableId as string,
         });
@@ -707,7 +700,6 @@ export const airtableCommon = {
   }),
 
   fieldNames: Property.Dropdown({
-    auth: airtableAuth,
     displayName: 'Search Field',
     required: true,
     refreshers: ['base', 'tableId'],
@@ -734,9 +726,9 @@ export const airtableCommon = {
         };
       }
       const airtable: AirtableTable = await fetchTable({
-        token: auth.secret_text,
-        baseId: base as string,
-        tableId: tableId as string,
+        token: auth as unknown as string,
+        baseId: base as unknown as string,
+        tableId: tableId as unknown as string,
       });
       return {
         disabled: false,
@@ -803,9 +795,9 @@ export const airtableCommon = {
         .select(params.limitToView ? { view: params.limitToView } : {})
         .all()
     )
-      .map((r: any) => r._rawJson)
+      .map((r) => r._rawJson)
       .sort(
-        (x: any, y: any) =>
+        (x, y) =>
           new Date(x.createdTime).getTime() - new Date(y.createdTime).getTime()
       );
     return currentTableSnapshot;

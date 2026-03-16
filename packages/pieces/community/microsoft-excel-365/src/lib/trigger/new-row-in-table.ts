@@ -1,5 +1,4 @@
 import {
-    AppConnectionValueForAuthProperty,
     OAuth2PropertyValue,
     Property,
     createTrigger,
@@ -40,7 +39,7 @@ async function getTableRows(auth: OAuth2PropertyValue, workbookId: string, table
 }
 
 const polling: Polling<
-    AppConnectionValueForAuthProperty<typeof excelAuth>,
+    OAuth2PropertyValue,
     {
         workbook_id: string;
         worksheet_id: string;

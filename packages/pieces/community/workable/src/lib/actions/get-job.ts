@@ -18,7 +18,7 @@ export const getJob = createAction({
   async run(context) {
     // Action logic here
     const shortcode = context.propsValue?.shortcode;
-    const accessToken = context.auth.secret_text;
+    const accessToken = context.auth;
 
     // get account subdomain
     const account = await getAccountSubdomain(accessToken);

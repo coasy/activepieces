@@ -30,9 +30,10 @@ export const crisp = createPiece({
 			auth: crispAuth,
 			baseUrl: () => BASE_URL,
 			authMapping: async (auth) => {
+				const authValue = auth as PiecePropValueSchema<typeof crispAuth>;
 				return {
 					Authorization: `Basic ${Buffer.from(
-						`${auth.props.identifier}:${auth.props.token}`,
+						`${authValue.identifier}:${authValue.token}`,
 					).toString('base64')}`,
 					'X-Crisp-Tier': 'plugin',
 					'Content-Type': 'application/json',

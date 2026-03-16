@@ -6,11 +6,8 @@ import {
   OpenPhoneCallsListResponse,
   OpenPhoneNumbersListResponse,
 } from './index';
-import { openPhoneAuth } from '../..';
 
 export const contactDropdown = Property.Dropdown({
-  auth: openPhoneAuth,
-
   displayName: 'Contact',
   description: 'Select a contact',
   required: true,
@@ -29,7 +26,7 @@ export const contactDropdown = Property.Dropdown({
         await openPhoneCommon.makeRequest<OpenPhoneContactsListResponse>(
           HttpMethod.GET,
           '/v1/contacts?maxResults=50',
-          auth
+          auth as string
         );
 
       const options = response.data.map((contact) => {
@@ -62,7 +59,6 @@ export const contactDropdown = Property.Dropdown({
 });
 
 export const phoneNumberDropdown = Property.Dropdown({
-  auth: openPhoneAuth,
   displayName: 'Phone Number',
   description: 'Select a phone number to get calls from',
   required: true,
@@ -81,7 +77,7 @@ export const phoneNumberDropdown = Property.Dropdown({
         await openPhoneCommon.makeRequest<OpenPhoneNumbersListResponse>(
           HttpMethod.GET,
           '/v1/phone-numbers',
-          auth
+          auth as string
         );
 
       if (
@@ -124,7 +120,6 @@ export const phoneNumberDropdown = Property.Dropdown({
 });
 
 export const participantDropdown = Property.Dropdown({
-  auth: openPhoneAuth,
   displayName: 'Participant Phone Number',
   description: 'Select a participant phone number to filter calls',
   required: true,
@@ -143,7 +138,7 @@ export const participantDropdown = Property.Dropdown({
         await openPhoneCommon.makeRequest<OpenPhoneContactsListResponse>(
           HttpMethod.GET,
           '/v1/contacts?maxResults=50',
-          auth
+          auth as string
         );
 
       const phoneNumbers = new Set<string>();
@@ -196,7 +191,6 @@ export const participantDropdown = Property.Dropdown({
 });
 
 export const callDropdown = Property.Dropdown({
-  auth: openPhoneAuth,
   displayName: 'Call',
   description: 'Select a call',
   required: true,
@@ -234,7 +228,7 @@ export const callDropdown = Property.Dropdown({
         await openPhoneCommon.makeRequest<OpenPhoneCallsListResponse>(
           HttpMethod.GET,
           `/v1/calls?phoneNumberId=${phoneNumberId}&participants=${encodedParticipant}&maxResults=50`,
-          auth
+          auth as string
         );
 
       if (!callsResponse.data || callsResponse.data.length === 0) {

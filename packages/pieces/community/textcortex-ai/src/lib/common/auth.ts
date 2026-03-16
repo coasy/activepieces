@@ -21,7 +21,7 @@ Your API key should start with 'gAAAAAB...'`,
         },
         authentication: {
           type: AuthenticationType.BEARER_TOKEN,
-          token: auth,
+          token: auth as string,
         },
         body: {
           text: 'test',

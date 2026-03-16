@@ -116,7 +116,7 @@ export const newTranscriptionCompletedTrigger = createTrigger({
 				method: HttpMethod.POST,
 				authentication: {
 					type: AuthenticationType.BEARER_TOKEN,
-					token: context.auth.secret_text,
+					token: context.auth,
 				},
 				body: {
 					query,
@@ -140,7 +140,7 @@ export const newTranscriptionCompletedTrigger = createTrigger({
 			method: HttpMethod.POST,
 			authentication: {
 				type: AuthenticationType.BEARER_TOKEN,
-				token: context.auth.secret_text,
+				token: context.auth,
 			},
 			body: {
 				query: getTranscript,

@@ -82,7 +82,7 @@ export const importTransaction = createAction({
       imported_payee,
     };
 
-    await initializeAndDownloadBudget(api, auth.props)
+    await initializeAndDownloadBudget(api, auth)
     const res = await api.importTransactions(account_id,[transaction]);
     await api.shutdown();
     return res;

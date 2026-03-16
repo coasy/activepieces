@@ -1,10 +1,8 @@
 import { Property } from '@activepieces/pieces-framework';
 import { systemeIoCommon } from './client';
-import { systemeIoAuth } from './auth';
 
 export const systemeIoProps = {
   contactDropdown: Property.Dropdown({
-    auth: systemeIoAuth,
     displayName: 'Contact',
     description: 'Select a contact',
     required: true,
@@ -20,7 +18,7 @@ export const systemeIoProps = {
 
       try {
         const response = await systemeIoCommon.getContacts({
-          auth: auth.secret_text,
+          auth: auth as string,
           limit: 100,
         });
 
@@ -61,7 +59,6 @@ export const systemeIoProps = {
   }),
 
   tagDropdown: Property.Dropdown({
-    auth: systemeIoAuth,
     displayName: 'Tag',
     description: 'Select a tag',
     required: true,
@@ -77,7 +74,7 @@ export const systemeIoProps = {
 
       try {
         const response = await systemeIoCommon.getTags({
-          auth: auth.secret_text,
+          auth: auth as string,
         });
 
         let tags: any[] = [];
@@ -117,7 +114,6 @@ export const systemeIoProps = {
   }),
 
   tagsMultiSelectDropdown: Property.MultiSelectDropdown({
-    auth: systemeIoAuth,
     displayName: 'Tags',
     description: 'Select tags to assign to the contact',
     required: false,
@@ -133,7 +129,7 @@ export const systemeIoProps = {
 
       try {
         const response = await systemeIoCommon.getTags({
-          auth: auth.secret_text,
+          auth: auth as string,
         });
 
         let tags: any[] = [];
@@ -173,7 +169,6 @@ export const systemeIoProps = {
   }),
 
   contactIdDropdown: Property.Dropdown({
-    auth: systemeIoAuth,
     displayName: 'Contact ID',
     description: 'Select a contact by ID',
     required: true,
@@ -189,7 +184,7 @@ export const systemeIoProps = {
 
       try {
         const response = await systemeIoCommon.getContacts({
-          auth: auth.secret_text,
+          auth: auth as string,
           limit: 100,
         });
 
@@ -230,7 +225,6 @@ export const systemeIoProps = {
   }),
 
   tagNameDropdown: Property.Dropdown({
-    auth: systemeIoAuth,
     displayName: 'Tag Name',
     description: 'Select a tag by name',
     required: true,
@@ -246,7 +240,7 @@ export const systemeIoProps = {
 
       try {
         const response = await systemeIoCommon.getTags({
-          auth: auth.secret_text,
+          auth: auth as string,
         });
 
         let tags: any[] = [];
@@ -304,7 +298,6 @@ export const systemeIoProps = {
   }),
 
   contactFieldDropdown: Property.Dropdown({
-    auth: systemeIoAuth,
     displayName: 'Contact Field',
     description: 'Select a contact field',
     required: false,
@@ -320,7 +313,7 @@ export const systemeIoProps = {
 
       try {
         const response = await systemeIoCommon.getContactFields({
-          auth: auth.secret_text,
+          auth: auth as string,
         });
 
         let fields: any[] = [];

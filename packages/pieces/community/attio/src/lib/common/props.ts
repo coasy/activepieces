@@ -3,7 +3,6 @@ import { attioApiCall, attioPaginatedApiCall } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { AttributeResponse, ListResponse, ObjectResponse, SelectOptionResponse } from './types';
 import { isNil } from '@activepieces/shared';
-import { attioAuth } from '../..';
 
 interface DropdownParams {
 	displayName: string;
@@ -13,7 +12,6 @@ interface DropdownParams {
 
 export const objectTypeIdDropdown = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: attioAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -28,7 +26,7 @@ export const objectTypeIdDropdown = (params: DropdownParams) =>
 			}
 
 			const response = await attioApiCall<{ data: Array<ObjectResponse> }>({
-				accessToken: auth.secret_text,
+				accessToken: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: '/objects',
 			});
@@ -45,7 +43,6 @@ export const objectTypeIdDropdown = (params: DropdownParams) =>
 
 export const listIdDropdown = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: attioAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -60,7 +57,7 @@ export const listIdDropdown = (params: DropdownParams) =>
 			}
 
 			const response = await attioApiCall<{ data: Array<ListResponse> }>({
-				accessToken: auth.secret_text,
+				accessToken: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: '/lists',
 			});
@@ -77,7 +74,6 @@ export const listIdDropdown = (params: DropdownParams) =>
 
 export const listParentObjectIdDropdown = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: attioAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -100,7 +96,7 @@ export const listParentObjectIdDropdown = (params: DropdownParams) =>
 			}
 
 			const response = await attioApiCall<{ data: ListResponse }>({
-				accessToken: auth.secret_text,
+				accessToken: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: `/lists/${listId}`,
 			});
@@ -210,14 +206,13 @@ async function createPropertyDefinition(
 }
 
 export const objectFields =(isSearch=false)=> Property.DynamicProperties({
-	auth: attioAuth,
 	displayName: 'Object Attributes',
 	refreshers: ['objectTypeId'],
 	required: false,
 	props: async ({ auth, objectTypeId }) => {
 		if (!auth || !objectTypeId) return {};
 
-		const accessToken = auth.secret_text;
+		const accessToken = auth as unknown as string;
 		const objectId = objectTypeId as unknown as string;
 		const props: DynamicPropsValue = {};
 
@@ -240,14 +235,13 @@ export const objectFields =(isSearch=false)=> Property.DynamicProperties({
 });
 
 export const listFields =(isSearch=false)=> Property.DynamicProperties({
-	auth: attioAuth,
 	displayName: 'List Attributes',
 	refreshers: ['listId'],
 	required: false,
 	props: async ({ auth, listId }) => {
 		if (!auth || !listId) return {};
 
-		const accessToken = auth.secret_text;
+		const accessToken = auth as unknown as string;
 		const list_id = listId as unknown as string;
 		const props: DynamicPropsValue = {};
 

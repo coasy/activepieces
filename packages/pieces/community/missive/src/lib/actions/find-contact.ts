@@ -17,7 +17,7 @@ export const findContact = createAction({
             required: false,
         }),
         search_options: Property.DynamicProperties({
-    auth: missiveAuth,            displayName: 'Search & Filter Options',
+            displayName: 'Search & Filter Options',
             description: 'Configure how to search and filter contacts',
             required: false,
             refreshers: [],

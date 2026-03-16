@@ -9,7 +9,6 @@ export const phoneCallEnded = createTrigger({
     description: 'Triggers when a phone call ends, with extracted variables.',
     props: {
         assistant: Property.Dropdown({
-            auth: autocallsAuth,
             displayName: 'Assistant',
             description: 'Select an assistant',
             required: true,
@@ -20,7 +19,7 @@ export const phoneCallEnded = createTrigger({
                     method: HttpMethod.GET,
                     url: baseApiUrl + 'api/user/assistants',
                     headers: {
-                        Authorization: "Bearer " + auth?.secret_text,
+                        Authorization: "Bearer " + auth,
                     },
                 });
 
@@ -92,7 +91,7 @@ export const phoneCallEnded = createTrigger({
                 webhook_url: context.webhookUrl,
             },
             headers: {
-                Authorization: "Bearer " + context.auth.secret_text,
+                Authorization: "Bearer " + context.auth,
             },
         });
     },
@@ -104,7 +103,7 @@ export const phoneCallEnded = createTrigger({
                 assistant_id: context.propsValue['assistant'],
             },
             headers: {
-                Authorization: "Bearer " + context.auth.secret_text,
+                Authorization: "Bearer " + context.auth,
             },
         });
     },

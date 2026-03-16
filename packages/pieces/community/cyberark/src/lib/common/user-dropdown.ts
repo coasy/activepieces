@@ -1,14 +1,12 @@
 import { Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { getAuthToken, CyberArkAuth } from './auth-helper';
-import { cyberarkAuth } from '../..';
 
 export const userIdDropdown = Property.Dropdown({
   displayName: 'User',
   description: 'Select a user from the Vault (shows username, ID, type, and status)',
   required: true,
   refreshers: [],
-  auth: cyberarkAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -19,7 +17,7 @@ export const userIdDropdown = Property.Dropdown({
     }
 
     try {
-      const authData = await getAuthToken(auth);
+      const authData = await getAuthToken(auth as CyberArkAuth);
 
       const response = await httpClient.sendRequest({
         method: HttpMethod.GET,

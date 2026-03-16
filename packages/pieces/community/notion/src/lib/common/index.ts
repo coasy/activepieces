@@ -5,12 +5,10 @@ import {
 } from '@activepieces/pieces-framework';
 import { Client } from '@notionhq/client';
 import { NotionFieldMapping } from './models';
-import { notionAuth } from '../..';
 
 export const notionCommon = {
   baseUrl: 'https://api.notion.com/v1',
-  database_id: Property.Dropdown<string, true, typeof notionAuth>({
-    auth: notionAuth,
+  database_id: Property.Dropdown<string>({
     displayName: 'Database',
     required: true,
     description:
@@ -46,7 +44,6 @@ export const notionCommon = {
     },
   }),
   database_item_id: Property.Dropdown({
-    auth: notionAuth,
     displayName: 'Database Item',
     description: 'Select the item you want to update',
     required: true,
@@ -81,7 +78,6 @@ export const notionCommon = {
     },
   }),
   archived_database_item_id: Property.Dropdown({
-    auth: notionAuth,
     displayName: 'Archived Item',
     description:
       'Choose which archived item to restore from the selected database',
@@ -140,7 +136,6 @@ export const notionCommon = {
     },
   }),
   databaseFields: Property.DynamicProperties({
-    auth: notionAuth,
     displayName: 'Fields',
     required: true,
     refreshers: ['database_id'],
@@ -221,7 +216,6 @@ export const notionCommon = {
     },
   }),
   filterDatabaseFields: Property.DynamicProperties({
-    auth: notionAuth,
     displayName: 'Fields',
     required: true,
     refreshers: ['database_id'],
@@ -276,8 +270,7 @@ export const notionCommon = {
     },
   }),
 
-  page: Property.Dropdown({
-    auth: notionAuth,
+  page: Property.Dropdown<string>({
     displayName: 'Page',
     required: true,
     description:

@@ -21,7 +21,7 @@ export const newFormSubmission = createTrigger({
     const response = await paperformCommon.createWebhook({
       formId,
       webhookUrl: context.webhookUrl,
-      auth: context.auth.secret_text,
+      auth: context.auth,
       eventType: 'submission',
     });
 
@@ -32,7 +32,7 @@ export const newFormSubmission = createTrigger({
     if (webhookId) {
       await paperformCommon.deleteWebhook({
         webhookId,
-        auth: context.auth.secret_text,
+        auth: context.auth,
       });
     }
   },
@@ -42,14 +42,14 @@ export const newFormSubmission = createTrigger({
 
     const response = await paperformCommon.getSubmission({
       submissionId: payload.submission_id,
-      auth: context.auth.secret_text,
+      auth: context.auth,
     });
 
     const submission = response.results.submission;
 
     const fields = await paperformCommon.getFormFields({
       formSlugOrId: formId as string,
-      auth: context.auth.secret_text,
+      auth: context.auth as string,
     });
 
     const transformedFields = paperformCommon.transformSubmissionData(
@@ -69,7 +69,7 @@ export const newFormSubmission = createTrigger({
 
     const response = await paperformCommon.getSubmissions({
       formId,
-      auth: context.auth.secret_text,
+      auth: context.auth,
       limit: 10,
     });
 
@@ -77,7 +77,7 @@ export const newFormSubmission = createTrigger({
 
     const fields = await paperformCommon.getFormFields({
       formSlugOrId: formId as string,
-      auth: context.auth.secret_text,
+      auth: context.auth as string,
     });
 
     return response.results.submissions.map((submission) => {

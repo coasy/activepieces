@@ -29,7 +29,7 @@ export const findConnectionsByDomainAction = createAction({
     const limit = context.propsValue.limit ?? 1000;
 
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof PredictLeadsAuth>
     );
 
     try {
@@ -60,7 +60,7 @@ export const findConnectionsAction = createAction({
   },
   async run(context) {
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof PredictLeadsAuth>
     );
     const page = context.propsValue.page ?? 1;
     const limit = context.propsValue.limit ?? 1000;

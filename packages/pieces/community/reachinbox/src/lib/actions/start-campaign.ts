@@ -10,21 +10,13 @@ export const startCampaign = createAction({
   description: 'Starts a Campaign',
   props: {
     campaignId: Property.Dropdown({
-  auth: ReachinboxAuth,
       displayName: 'Select Campaign',
       description:
         'Choose a campaign from the list or enter the campaign ID manually.',
       required: true,
       refreshers: ['auth'],
       options: async ({ auth }) => {
-        if (!auth) {
-          return {
-            disabled: true,
-            options: [],
-            placeholder: 'Please connect your account first',
-          };
-        }
-        const campaigns = await fetchCampaigns(auth.secret_text);
+        const campaigns = await fetchCampaigns(auth as string);
 
         return {
           options: campaigns.map((campaign) => ({
@@ -50,7 +42,7 @@ export const startCampaign = createAction({
         method: HttpMethod.POST,
         url: url,
         headers: {
-          Authorization: `Bearer ${context.auth.secret_text}`,
+          Authorization: `Bearer ${context.auth as string}`,
           'Content-Type': 'application/json',
         },
         body: {

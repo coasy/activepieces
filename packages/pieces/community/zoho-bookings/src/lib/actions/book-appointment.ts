@@ -10,7 +10,6 @@ export const bookAppointment = createAction({
   description: 'Book an appointment for a customer for a desired service',
   props: {
     workspace_id: Property.Dropdown({
-      auth: zohoBookingsAuth,
       displayName: 'Workspace',
       description: 'Select the workspace for the appointment',
       required: true,
@@ -47,7 +46,6 @@ export const bookAppointment = createAction({
       },
     }),
     service_id: Property.Dropdown({
-      auth: zohoBookingsAuth,
       displayName: 'Service',
       description: 'Select the service for which the appointment is booked',
       required: true,
@@ -85,7 +83,6 @@ export const bookAppointment = createAction({
       },
     }),
     staff_id: Property.Dropdown({
-      auth: zohoBookingsAuth,
       displayName: 'Staff',
       description:
         'Select the staff member (use this OR resource_id OR group_id)',
@@ -124,7 +121,6 @@ export const bookAppointment = createAction({
       },
     }),
     resource_id: Property.Dropdown({
-      auth: zohoBookingsAuth,
       displayName: 'Resource',
       description: 'Select the resource (use this OR staff_id OR group_id)',
       required: false,
@@ -139,9 +135,9 @@ export const bookAppointment = createAction({
         }
 
         try {
-          const location = auth.props?.['location'] as string || 'zoho.com';
+          const location = (auth as any).props?.['location'] || 'zoho.com';
           const resources = await zohoBookingsCommon.fetchResources(
-            auth.access_token,
+            (auth as any).access_token,
             location,
             service_id as string
           );
@@ -217,7 +213,7 @@ export const bookAppointment = createAction({
   },
   async run(context) {
     const { auth, propsValue } = context;
-    const location = auth.props?.['location'] as string || 'zoho.com';
+    const location = auth.props?.['location'] || 'zoho.com';
 
     // Validate props using Zod schema
     await propsValidation.validateZod(

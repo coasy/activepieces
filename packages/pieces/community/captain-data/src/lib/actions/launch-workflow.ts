@@ -1,6 +1,14 @@
-import { createAction, Property } from '@activepieces/pieces-framework';
+import {
+  createAction,
+  DynamicPropsValue,
+  Property,
+} from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
-import { CAPTAIN_DATA_BASE_URL, captainDataAuth } from '../..';
+import {
+  CAPTAIN_DATA_BASE_URL,
+  captainDataAuth,
+  CaptainDataAuthType,
+} from '../..';
 import { workflowProp } from '../common';
 
 export const launchWorkflow = createAction({
@@ -50,8 +58,8 @@ export const launchWorkflow = createAction({
       method: HttpMethod.POST,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `x-api-key ${auth.props.apiKey}`,
-        'x-project-id': auth.props.projectId,
+        Authorization: `x-api-key ${(auth as CaptainDataAuthType).apiKey}`,
+        'x-project-id': (auth as CaptainDataAuthType).projectId,
       },
       body: JSON.stringify(payload),
     });

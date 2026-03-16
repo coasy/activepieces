@@ -18,7 +18,7 @@ export const addContactToAccountAction = createAction({
 	async run(context) {
 		const { contactId, accountId, jobTitle } = context.propsValue;
 
-		const client = makeClient(context.auth.props);
+		const client = makeClient(context.auth);
 
 		return await client.createAccountContactAssociation(
 			Number(contactId),

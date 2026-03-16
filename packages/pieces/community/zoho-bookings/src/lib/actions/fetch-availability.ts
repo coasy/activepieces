@@ -10,7 +10,6 @@ export const fetchAvailability = createAction({
   description: 'Fetch availability of appointments across services',
   props: {
     workspace_id: Property.Dropdown({
-      auth: zohoBookingsAuth,
       displayName: 'Workspace',
       description: 'Select the workspace to fetch availability for',
       required: true,
@@ -47,7 +46,6 @@ export const fetchAvailability = createAction({
       },
     }),
     service_id: Property.Dropdown({
-      auth: zohoBookingsAuth,
       displayName: 'Service',
       description: 'Select the service for which availability is to be fetched',
       required: true,
@@ -85,7 +83,6 @@ export const fetchAvailability = createAction({
       },
     }),
     staff_id: Property.Dropdown({
-      auth: zohoBookingsAuth,
       displayName: 'Staff',
       description: 'Select the staff member (use this OR group_id OR resource_id)',
       required: false,
@@ -128,7 +125,6 @@ export const fetchAvailability = createAction({
       required: false,
     }),
     resource_id: Property.Dropdown({
-      auth: zohoBookingsAuth,
       displayName: 'Resource',
       description: 'Select the resource (use this OR staff_id OR group_id)',
       required: false,
@@ -173,7 +169,7 @@ export const fetchAvailability = createAction({
   },
   async run(context) {
     const { auth, propsValue } = context;
-    const location = auth.props?.['location'] as string || 'zoho.com';
+    const location = auth.props?.['location'] || 'zoho.com';
 
     // Validate props using Zod schema
     await propsValidation.validateZod(propsValue, zohoBookingsCommon.fetchAvailabilitySchema);

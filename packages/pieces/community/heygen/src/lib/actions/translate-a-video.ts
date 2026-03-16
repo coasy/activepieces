@@ -71,7 +71,7 @@ export const translateVideoAction = createAction({
 		if (callbackUrl) body['callback_url'] = callbackUrl;
 
 		const response = await heygenApiCall({
-			apiKey: auth.secret_text,
+			apiKey: auth as string,
 			method: HttpMethod.POST,
 			resourceUri: '/video_translate',
 			body,

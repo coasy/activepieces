@@ -30,7 +30,6 @@ export const createCustomVerificationEmailTemplate = createAction({
       required: true,
     }),
     fromEmailAddress: Property.Dropdown({
-      auth: amazonSesAuth,
       displayName: 'From Email',
       description: 'Verified sender email address',
       required: true,
@@ -86,7 +85,7 @@ export const createCustomVerificationEmailTemplate = createAction({
       validateUrls,
     } = context.propsValue;
 
-    const { accessKeyId, secretAccessKey, region } = context.auth.props;
+    const { accessKeyId, secretAccessKey, region } = context.auth;
 
     validateCustomVerificationTemplateName(templateName);
 

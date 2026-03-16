@@ -1,7 +1,6 @@
 import { Property, DropdownOption } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { makeRequest } from './index';
-import { kommoAuth } from '../..';
 
 interface KommoAuth {
   subdomain: string;
@@ -9,7 +8,6 @@ interface KommoAuth {
 }
 
 export const pipelineDropdown = (required = false) => Property.Dropdown({
-  auth: kommoAuth,
   displayName: 'Pipeline',
   required,
   refreshers: [],
@@ -22,7 +20,7 @@ export const pipelineDropdown = (required = false) => Property.Dropdown({
       };
     }
 
-    const { subdomain, apiToken } = auth.props;
+    const { subdomain, apiToken } = auth as KommoAuth;
     const pipelines = await makeRequest({ subdomain, apiToken }, HttpMethod.GET, '/leads/pipelines');
 
     const options: DropdownOption<number>[] = (pipelines._embedded?.pipelines || []).map(
@@ -40,7 +38,6 @@ export const pipelineDropdown = (required = false) => Property.Dropdown({
 });
 
 export const statusDropdown = (required = false) => Property.Dropdown({
-  auth: kommoAuth,
   displayName: 'Status',
   required,
   refreshers: ['pipelineId'],
@@ -53,7 +50,7 @@ export const statusDropdown = (required = false) => Property.Dropdown({
       };
     }
 
-    const { subdomain, apiToken } = auth.props;
+    const { subdomain, apiToken } = auth as KommoAuth;
     const statuses = await makeRequest(
       { subdomain, apiToken },
       HttpMethod.GET,
@@ -75,7 +72,6 @@ export const statusDropdown = (required = false) => Property.Dropdown({
 });
 
 export const userDropdown = (required = false) => Property.Dropdown({
-  auth: kommoAuth,
   displayName: 'Unique identified of a responsible user',
   required,
   refreshers: [],
@@ -88,7 +84,7 @@ export const userDropdown = (required = false) => Property.Dropdown({
       };
     }
 
-    const { subdomain, apiToken } = auth.props;
+    const { subdomain, apiToken } = auth as KommoAuth;
     const users = await makeRequest({ subdomain, apiToken }, HttpMethod.GET, '/users');
 
     const options: DropdownOption<number>[] = (users._embedded?.users || []).map((user: any) => ({
@@ -104,7 +100,6 @@ export const userDropdown = (required = false) => Property.Dropdown({
 });
 
 export const lossReasonDropdown = (required = false) => Property.Dropdown({
-  auth: kommoAuth,
   displayName: 'Loss Reason',
   required,
   refreshers: [],
@@ -117,7 +112,7 @@ export const lossReasonDropdown = (required = false) => Property.Dropdown({
       };
     }
 
-    const { subdomain, apiToken } = auth.props;
+    const { subdomain, apiToken } = auth as KommoAuth;
     const reasons = await makeRequest({ subdomain, apiToken }, HttpMethod.GET, '/leads/loss_reasons');
 
     const options: DropdownOption<number>[] = (reasons._embedded?.loss_reasons || []).map(
@@ -135,7 +130,6 @@ export const lossReasonDropdown = (required = false) => Property.Dropdown({
 });
 
 export const leadDropdown = Property.Dropdown({
-  auth: kommoAuth,
   displayName: 'Lead',
   required: true,
   refreshers: [],
@@ -148,7 +142,7 @@ export const leadDropdown = Property.Dropdown({
       };
     }
 
-    const { subdomain, apiToken } = auth.props;
+    const { subdomain, apiToken } = auth as KommoAuth;
     const leads = await makeRequest({ subdomain, apiToken }, HttpMethod.GET, '/leads');
 
     const options: DropdownOption<number>[] = (leads._embedded?.leads || []).map((lead: any) => ({
@@ -164,7 +158,6 @@ export const leadDropdown = Property.Dropdown({
 });
 
 export const companyDropdown = Property.Dropdown({
-  auth: kommoAuth,
   displayName: 'Company',
   required: false,
   refreshers: [],
@@ -177,7 +170,7 @@ export const companyDropdown = Property.Dropdown({
       };
     }
 
-    const { subdomain, apiToken } = auth.props;
+    const { subdomain, apiToken } = auth as KommoAuth;
     const companies = await makeRequest({ subdomain, apiToken }, HttpMethod.GET, '/companies');
 
     const options: DropdownOption<string>[] = (companies._embedded?.companies || []).map(
@@ -195,8 +188,7 @@ export const companyDropdown = Property.Dropdown({
 });
 
 export const contactDropdown = Property.Dropdown({
-  auth: kommoAuth,
-    displayName: 'Contact',
+  displayName: 'Contact',
   required: false,
   refreshers: [],
   options: async ({ auth }) => {
@@ -208,7 +200,7 @@ export const contactDropdown = Property.Dropdown({
       };
     }
 
-    const { subdomain, apiToken } = auth.props;
+    const { subdomain, apiToken } = auth as KommoAuth;
     const contacts = await makeRequest({ subdomain, apiToken }, HttpMethod.GET, '/contacts');
 
     const options: DropdownOption<number>[] = (contacts._embedded?.contacts || []).map(

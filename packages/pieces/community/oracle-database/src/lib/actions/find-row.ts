@@ -35,7 +35,7 @@ export const findRowAction = createAction({
     }
 
     try {
-      const client = new OracleDbClient(context.auth.props);
+      const client = new OracleDbClient(context.auth);
       return await client.findRow(
         tableName,
         filter as Record<string, unknown>

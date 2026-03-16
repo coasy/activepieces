@@ -24,8 +24,7 @@
           }
         ],
         "buildableProjectDepsInPackageJsonType": "dependencies",
-        "updateBuildableProjectDepsInPackageJson": true,
-        "clean": false
+        "updateBuildableProjectDepsInPackageJson": true
       },
       "dependsOn": [
         "^build",
@@ -48,7 +47,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/pieces/community/microsoft-dynamics-crm",
-        "command": "bun install --no-save --silent"
+        "command": "bun install --no-save"
       },
       "dependsOn": [
         "^build"

@@ -1,6 +1,6 @@
 import { PieceMetadataModel } from '@activepieces/pieces-framework'
 import { MigrateJobsRequest, SavePayloadRequest, SubmitPayloadsRequest } from '@activepieces/server-shared'
-import { ExecutioOutputFile, FlowRun, FlowVersion, GetFlowVersionForWorkerRequest, GetPieceRequestQuery, JobData, tryCatch } from '@activepieces/shared'
+import { ExecutioOutputFile, FlowRun, FlowVersion, GetFlowVersionForWorkerRequest, GetPieceRequestQuery, JobData } from '@activepieces/shared'
 import { trace } from '@opentelemetry/api'
 import fetchRetry from 'fetch-retry'
 import pLimit from 'p-limit'
@@ -15,49 +15,40 @@ const removeTrailingSlash = (url: string): string => {
     return url.endsWith('/') ? url.slice(0, -1) : url
 }
 
-
 export const flowRunLogs = {
     async get(fullUrl: string): Promise<ExecutioOutputFile | null> {
-        const { data, error } = await tryCatch<ExecutioOutputFile | null, Error>(
-            async () => {
-                const response = await fetchWithRetry(fullUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    retries: 3,
-                    retryDelay: 3000,
-                    retryOn: (status: number) => Math.floor(status / 100) === 5,
-                })
-
-                if (response.status === 404) {
-                    return null
-                }
-                return (await response.json()) as ExecutioOutputFile
+        const response = await fetchWithRetry(fullUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
             },
-        )
-        if (error) {
-            if (error instanceof SyntaxError) {
+            retries: 3,
+            retryDelay: 3000,
+            retryOn: (status: number) => Math.floor(status / 100) === 5,
+        })
+        if (response.status === 404) {
+            return null
+        }
+        try {
+            return await response.json() as unknown as ExecutioOutputFile
+        }
+        catch (e) {
+            if (e instanceof SyntaxError) {
                 return null
             }
-            throw error
+            throw e
         }
-        return data
     },
 }
 
-export const workerApiService = () => {
+export const workerApiService = (workerToken: string) => {
+    const apiUrl = removeTrailingSlash(workerMachine.getInternalApiUrl())
 
-    const client = new ApAxiosClient(removeTrailingSlash(workerMachine.getInternalApiUrl()), workerMachine.getWorkerToken())
+    const client = new ApAxiosClient(apiUrl, workerToken)
 
     return {
         async savePayloadsAsSampleData(request: SavePayloadRequest): Promise<void> {
             await client.post('/v1/workers/save-payloads', request)
-        },
-        async getPieceArchive(fileId: string): Promise<Buffer> {
-            return client.get<Buffer>(`/v1/workers/archive/${fileId}`, {
-                responseType: 'arraybuffer',
-            }) 
         },
         async migrateJob(request: MigrateJobsRequest): Promise<JobData> {
             return client.post<JobData>('/v1/workers/migrate-job', request)
@@ -138,7 +129,11 @@ export const engineApiService = (engineToken: string) => {
     const client = new ApAxiosClient(apiUrl, engineToken)
 
     return {
-       
+        async getFile(fileId: string): Promise<Buffer> {
+            return client.get<Buffer>(`/v1/engine/files/${fileId}`, {
+                responseType: 'arraybuffer',
+            })
+        },
         async getPiece(name: string, options: GetPieceRequestQuery): Promise<PieceMetadataModel> {
             return client.get<PieceMetadataModel>(`/v1/pieces/${encodeURIComponent(name)}`, {
                 params: options,

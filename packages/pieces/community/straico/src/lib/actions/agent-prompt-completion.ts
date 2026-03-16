@@ -110,7 +110,7 @@ export const agentPromptCompletion = createAction({
       body: requestBody,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: auth.secret_text,
+        token: auth as string,
       },
     });
 

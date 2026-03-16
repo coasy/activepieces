@@ -17,7 +17,7 @@ export const reprocessDocument = createAction({
       throw new Error('Document ID is required');
     }
     return await parseurCommon.reprocessDocument({
-      apiKey:apiKey.secret_text,
+      apiKey,
       documentId,
     });
   },

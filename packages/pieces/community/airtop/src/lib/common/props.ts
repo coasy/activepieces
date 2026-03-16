@@ -1,11 +1,9 @@
 import { HttpMethod } from '@activepieces/pieces-common';
 import { Property } from '@activepieces/pieces-framework';
 import { airtopApiCall, extractApiData, AirtopSession, AirtopWindow, AirtopFile } from './client';
-import { airtopAuth } from './auth';
 
 
 export const sessionId = Property.Dropdown({
-	auth: airtopAuth,
 	displayName: 'Session',
 	description: 'Select an active Airtop session to use for browser automation',
 	refreshers: [],
@@ -21,7 +19,7 @@ export const sessionId = Property.Dropdown({
 
 		try {
 			const response = await airtopApiCall<any>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: '/sessions',
 			});
@@ -62,7 +60,6 @@ export const sessionId = Property.Dropdown({
 
 
 export const windowId = Property.Dropdown({
-	auth: airtopAuth,
 	displayName: 'Window',
 	description: 'Select a browser window within the chosen session',
 	required: true,
@@ -86,7 +83,7 @@ export const windowId = Property.Dropdown({
 
 		try {
 			const response = await airtopApiCall<any>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: `/sessions/${sessionId}/windows`,
 			});
@@ -121,7 +118,6 @@ export const windowId = Property.Dropdown({
 
 
 export const fileId = Property.Dropdown({
-	auth: airtopAuth,
 	displayName: 'File',
 	description: 'Select a file that has been uploaded to Airtop',
 	required: true,
@@ -137,7 +133,7 @@ export const fileId = Property.Dropdown({
 
 		try {
 			const response = await airtopApiCall<any>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: '/files',
 			});
@@ -187,7 +183,6 @@ export const fileId = Property.Dropdown({
 
 export const createSessionSelector = (displayName: string, description: string) => {
 	return Property.Dropdown({
-		auth: airtopAuth,
 		displayName,
 		description,
 		refreshers: [],
@@ -203,7 +198,7 @@ export const createSessionSelector = (displayName: string, description: string) 
 
 			try {
 				const response = await airtopApiCall<any>({
-					apiKey: auth.secret_text,
+					apiKey: auth as string,
 					method: HttpMethod.GET,
 					resourceUri: '/sessions',
 				});

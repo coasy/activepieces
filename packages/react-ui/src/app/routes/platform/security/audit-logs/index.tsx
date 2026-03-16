@@ -10,15 +10,11 @@ import {
   Users,
   Wand,
   Workflow,
-  Database,
-  FileText,
-  User,
-  Clock,
 } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-import { DashboardPageHeader } from '@/app/components/dashboard-page-header';
 import LockedFeatureGuard from '@/app/components/locked-feature-guard';
+import { DashboardPageHeader } from '@/components/custom/dashboard-page-header';
 import {
   CURSOR_QUERY_PARAM,
   DataTable,
@@ -26,7 +22,6 @@ import {
   LIMIT_QUERY_PARAM,
 } from '@/components/ui/data-table';
 import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
-import { FormattedDate } from '@/components/ui/formatted-date';
 import {
   Tooltip,
   TooltipContent,
@@ -35,7 +30,7 @@ import {
 import { auditEventsApi } from '@/features/platform-admin/lib/audit-events-api';
 import { platformHooks } from '@/hooks/platform-hooks';
 import { platformUserHooks } from '@/hooks/platform-user-hooks';
-import { projectCollectionUtils } from '@/hooks/project-collection';
+import { projectHooks } from '@/hooks/project-hooks';
 import { formatUtils } from '@/lib/utils';
 import {
   ApplicationEvent,
@@ -47,7 +42,7 @@ import { isNil } from '@activepieces/shared';
 export default function AuditLogsPage() {
   const { platform } = platformHooks.useCurrentPlatform();
   const [searchParams] = useSearchParams();
-  const { data: projects } = projectCollectionUtils.useAll();
+  const { data: projects } = projectHooks.useProjects();
   const { data: users } = platformUserHooks.useUsers();
 
   const filters: DataTableFilters<keyof ApplicationEvent>[] = [
@@ -144,13 +139,8 @@ export default function AuditLogsPage() {
           columns={[
             {
               accessorKey: 'resource',
-              size: 120,
               header: ({ column }) => (
-                <DataTableColumnHeader
-                  column={column}
-                  title={t('Resource')}
-                  icon={Database}
-                />
+                <DataTableColumnHeader column={column} title={t('Resource')} />
               ),
               cell: ({ row }) => {
                 const icon = convertToIcon(row.original);
@@ -173,13 +163,8 @@ export default function AuditLogsPage() {
             },
             {
               accessorKey: 'details',
-              size: 200,
               header: ({ column }) => (
-                <DataTableColumnHeader
-                  column={column}
-                  title={t('Details')}
-                  icon={FileText}
-                />
+                <DataTableColumnHeader column={column} title={t('Details')} />
               ),
               cell: ({ row }) => {
                 return (
@@ -191,12 +176,10 @@ export default function AuditLogsPage() {
             },
             {
               accessorKey: 'userId',
-              size: 180,
               header: ({ column }) => (
                 <DataTableColumnHeader
                   column={column}
                   title={t('Performed By')}
-                  icon={User}
                 />
               ),
               cell: ({ row }) => {
@@ -207,13 +190,8 @@ export default function AuditLogsPage() {
             },
             {
               accessorKey: 'action',
-              size: 150,
               header: ({ column }) => (
-                <DataTableColumnHeader
-                  column={column}
-                  title={t('Action')}
-                  icon={Wand}
-                />
+                <DataTableColumnHeader column={column} title={t('Action')} />
               ),
               cell: ({ row }) => {
                 return (
@@ -227,13 +205,8 @@ export default function AuditLogsPage() {
             },
             {
               accessorKey: 'projectId',
-              size: 150,
               header: ({ column }) => (
-                <DataTableColumnHeader
-                  column={column}
-                  title={t('Project')}
-                  icon={Folder}
-                />
+                <DataTableColumnHeader column={column} title={t('Project')} />
               ),
               cell: ({ row }) => {
                 return row.original.projectId &&
@@ -250,18 +223,13 @@ export default function AuditLogsPage() {
             },
             {
               accessorKey: 'created',
-              size: 150,
               header: ({ column }) => (
-                <DataTableColumnHeader
-                  column={column}
-                  title={t('Created')}
-                  icon={Clock}
-                />
+                <DataTableColumnHeader column={column} title={t('Created')} />
               ),
               cell: ({ row }) => {
                 return (
                   <div className="text-left">
-                    <FormattedDate date={new Date(row.original.created)} />
+                    {formatUtils.formatDate(new Date(row.original.created))}
                   </div>
                 );
               },

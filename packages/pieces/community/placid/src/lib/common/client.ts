@@ -7,11 +7,9 @@ import {
 	PlacidCreatePdfRequest,
 	PlacidCreateVideoRequest,
 } from './index';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-import { placidAuth } from '../..';
 
 export class PlacidClient {
-	constructor(private apiKey: AppConnectionValueForAuthProperty<typeof placidAuth>) {}
+	constructor(private apiKey: string) {}
 
 	async listTemplates(): Promise<PlacidTemplate[]> {
 		const templates = [];
@@ -23,7 +21,7 @@ export class PlacidClient {
 				url: nextUrl,
 				authentication: {
 					type: AuthenticationType.BEARER_TOKEN,
-					token: this.apiKey.secret_text,
+					token: this.apiKey,
 				},
 			});
 
@@ -42,7 +40,7 @@ export class PlacidClient {
 			url: `${PLACID_BASE_URL}/templates/${templateId}`,
 			authentication: {
 				type: AuthenticationType.BEARER_TOKEN,
-				token: this.apiKey.secret_text,
+				token: this.apiKey,
 			},
 		});
 
@@ -56,7 +54,7 @@ export class PlacidClient {
 			body: request,
 			authentication: {
 				type: AuthenticationType.BEARER_TOKEN,
-				token: this.apiKey.secret_text,
+				token: this.apiKey,
 			},
 		});
 
@@ -77,7 +75,7 @@ export class PlacidClient {
 				url: `${PLACID_BASE_URL}/images/${imageId}`,
 				authentication: {
 					type: AuthenticationType.BEARER_TOKEN,
-					token: this.apiKey.secret_text,
+					token: this.apiKey,
 				},
 			});
 			return response.body;
@@ -107,7 +105,7 @@ export class PlacidClient {
 			url: `${PLACID_BASE_URL}/images/${imageId}`,
 			authentication: {
 				type: AuthenticationType.BEARER_TOKEN,
-				token: this.apiKey.secret_text,
+				token: this.apiKey,
 			},
 		});
 	}
@@ -119,7 +117,7 @@ export class PlacidClient {
 			body: request,
 			authentication: {
 				type: AuthenticationType.BEARER_TOKEN,
-				token: this.apiKey.secret_text,
+				token: this.apiKey,
 			},
 		});
 
@@ -140,7 +138,7 @@ export class PlacidClient {
 			body: request,
 			authentication: {
 				type: AuthenticationType.BEARER_TOKEN,
-				token: this.apiKey.secret_text,
+				token: this.apiKey,
 			},
 		});
 
@@ -209,7 +207,7 @@ export class PlacidClient {
 				url: `${PLACID_BASE_URL}/pdfs/${pdfId}`,
 				authentication: {
 					type: AuthenticationType.BEARER_TOKEN,
-					token: this.apiKey.secret_text,
+					token: this.apiKey,
 				},
 			});
 			return response.body;
@@ -240,7 +238,7 @@ export class PlacidClient {
 				url: `${PLACID_BASE_URL}/videos/${videoId}`,
 				authentication: {
 					type: AuthenticationType.BEARER_TOKEN,
-					token: this.apiKey.secret_text,
+					token: this.apiKey,
 				},
 			});
 			return response.body;

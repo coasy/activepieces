@@ -22,7 +22,7 @@ export const renameSpace = createAction({
       method: HttpMethod.PATCH,
       url: `${medullarCommon.aiUrl}/spaces/${context.propsValue.spaceId}/`,
       headers: {
-        Authorization: `Bearer ${context.auth.secret_text}`,
+        Authorization: `Bearer ${context.auth}`,
       },
       body: {
         name: context.propsValue.space_name,

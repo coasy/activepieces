@@ -1,18 +1,15 @@
-import { AppConnectionValueForAuthProperty, DynamicPropsValue, Property } from '@activepieces/pieces-framework';
+import { DynamicPropsValue, Property } from '@activepieces/pieces-framework';
 import { mondayClient } from './client';
 import { MondayColumnType, MondayNotWritableColumnType } from './constants';
 import { convertMondayColumnToActivepiecesProp } from './helper';
-import { mondayAuth } from '../..';
 
-export function makeClient(auth: AppConnectionValueForAuthProperty<typeof mondayAuth>): mondayClient {
-  return new mondayClient(auth.secret_text);
+export function makeClient(apiKey: string): mondayClient {
+  return new mondayClient(apiKey);
 }
 
 export const mondayCommon = {
   workspace_id: (required = true) =>
-    Property.Dropdown({    
-auth: mondayAuth,
-  
+    Property.Dropdown({
       displayName: 'Workspace ID',
       required: required,
       refreshers: [],
@@ -25,7 +22,7 @@ auth: mondayAuth,
           };
         }
 
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const res = await client.listWorkspcaes();
         return {
           disabled: false,
@@ -39,8 +36,7 @@ auth: mondayAuth,
       },
     }),
   board_id: (required = true) =>
-    Property.Dropdown({    
-auth: mondayAuth,
+    Property.Dropdown({
       displayName: 'Board ID',
       required: required,
       refreshers: ['workspace_id'],
@@ -54,7 +50,7 @@ auth: mondayAuth,
           };
         }
 
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const res = await client.listWorkspaceBoards({
           workspaceId: workspace_id as string,
         });
@@ -73,8 +69,7 @@ auth: mondayAuth,
       },
     }),
   group_id: (required = false) =>
-    Property.Dropdown({    
-auth: mondayAuth,
+    Property.Dropdown({
       displayName: 'Board Group ID',
       required: required,
       refreshers: ['board_id'],
@@ -87,7 +82,7 @@ auth: mondayAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const res = await client.listBoardGroups({
           boardId: board_id as string,
         });
@@ -104,8 +99,7 @@ auth: mondayAuth,
       },
     }),
   item_id: (required = true) =>
-    Property.Dropdown({    
-auth: mondayAuth,
+    Property.Dropdown({
       displayName: 'Item ID',
       required: required,
       refreshers: ['board_id'],
@@ -118,7 +112,7 @@ auth: mondayAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const res = await client.listBoardItems({
           boardId: board_id as string,
         });
@@ -137,7 +131,6 @@ auth: mondayAuth,
     }),
   columnIds: (required = true) =>
     Property.MultiSelectDropdown({
-      auth: mondayAuth,
       displayName: 'Column IDs',
       description:
         'Limit data output by specifying column IDs; leave empty to display all columns.',
@@ -152,7 +145,7 @@ auth: mondayAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const res = await client.listBoardColumns({
           boardId: board_id as string,
         });
@@ -168,7 +161,6 @@ auth: mondayAuth,
       },
     }),
   columnValues: Property.DynamicProperties({
-    auth: mondayAuth,
     displayName: 'Columns',
     required: true,
     refreshers: ['board_id'],
@@ -182,7 +174,7 @@ auth: mondayAuth,
       }
       const fields: DynamicPropsValue = {};
       try {
-        const client = makeClient(auth);
+        const client = makeClient(auth as unknown as string);
         const res = await client.listBoardColumns({
           boardId: board_id as unknown as string,
         });

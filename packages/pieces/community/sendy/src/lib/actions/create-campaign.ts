@@ -50,7 +50,6 @@ export const createCampaignAction = createAction({
       required: true,
     }),
     lists: Property.MultiSelectDropdown({
-      auth: sendyAuth,
       displayName: 'Lists',
       description: 'Select lists to send the campaign to',
       required: false,
@@ -59,7 +58,6 @@ export const createCampaignAction = createAction({
         await buildListDropdown(auth as SendyAuthType),
     }),
     excludeLists: Property.MultiSelectDropdown({
-      auth: sendyAuth,
       displayName: 'Exclude Lists',
       description: 'Select lists to exclude from the campaign send',
       required: false,

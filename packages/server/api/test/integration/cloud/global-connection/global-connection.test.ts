@@ -1,16 +1,13 @@
 import {
     apId,
-    AppConnectionScope,
-    AppConnectionType,
     PackageType,
     PlatformRole,
     PrincipalType,
-    UpdateGlobalConnectionValueRequestBody,
-    UpsertGlobalConnectionRequestBody,
 } from '@activepieces/shared'
-import { FastifyInstance } from 'fastify'
+import { FastifyBaseLogger, FastifyInstance } from 'fastify'
 import { StatusCodes } from 'http-status-codes'
 import { databaseConnection } from '../../../../src/app/database/database-connection'
+import { pieceMetadataService } from '../../../../src/app/pieces/piece-metadata-service'
 import { setupServer } from '../../../../src/app/server'
 import { generateMockToken } from '../../../helpers/auth'
 import {
@@ -20,10 +17,12 @@ import {
 } from '../../../helpers/mocks'
 
 let app: FastifyInstance | null = null
+let mockLog: FastifyBaseLogger
 
 beforeAll(async () => {
     await databaseConnection().initialize()
     app = await setupServer()
+    mockLog = app!.log!
 })
 
 afterAll(async () => {
@@ -48,34 +47,33 @@ describe('GlobalConnection API', () => {
             const { mockPlatform, mockProject, mockOwner } = await setupWithGlobalConnections()
 
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
                 packageType: PackageType.REGISTRY,
             })
             await databaseConnection().getRepository('piece_metadata').save([mockPieceMetadata])
 
-            
+            pieceMetadataService(mockLog).getOrThrow = jest.fn().mockResolvedValue(mockPieceMetadata)
 
             const mockToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
-            const mockUpsertGlobalConnectionRequest: UpsertGlobalConnectionRequestBody = {
-                pieceVersion: mockPieceMetadata.version,
-                displayName: 'test global connection',
+            const mockUpsertGlobalConnectionRequest = {
+                displayName: 'test-global-connection',
                 pieceName: mockPieceMetadata.name,
                 projectIds: [mockProject.id],
-                scope: AppConnectionScope.PLATFORM,
-                type: AppConnectionType.SECRET_TEXT,
+                scope: 'PLATFORM',
+                type: 'SECRET_TEXT',
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
-               
             }
 
             // act
@@ -87,8 +85,7 @@ describe('GlobalConnection API', () => {
                 },
                 body: mockUpsertGlobalConnectionRequest,
             })
-            const responseBody = response?.json()
-            expect(responseBody.pieceVersion).toEqual(mockPieceMetadata.version)
+
             // assert
             expect(response?.statusCode).toBe(StatusCodes.CREATED)
         })
@@ -104,33 +101,32 @@ describe('GlobalConnection API', () => {
                 },
             })
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
             })
             await databaseConnection().getRepository('piece_metadata').save([mockPieceMetadata])
 
-            
+            pieceMetadataService(mockLog).getOrThrow = jest.fn().mockResolvedValue(mockPieceMetadata)
 
             const mockToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
-            const mockUpsertGlobalConnectionRequest: UpsertGlobalConnectionRequestBody = {
-                pieceVersion: mockPieceMetadata.version,
-                displayName: 'test global connection',
+            const mockUpsertGlobalConnectionRequest = {
+                displayName: 'test-global-connection',
                 pieceName: mockPieceMetadata.name,
-                scope: AppConnectionScope.PLATFORM,
-                projectIds: [mockProject.id],
-                type: AppConnectionType.SECRET_TEXT,
+                scope: 'PLATFORM',
+                projectIds: [],
+                type: 'SECRET_TEXT',
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
-               
             }
 
             // act
@@ -150,37 +146,36 @@ describe('GlobalConnection API', () => {
 
         it('Fails if project ids are invalid', async () => {
             // arrange
-            const { mockPlatform, mockOwner } = await setupWithGlobalConnections()
+            const { mockPlatform, mockProject, mockOwner } = await setupWithGlobalConnections()
 
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
                 packageType: PackageType.REGISTRY,
             })
             await databaseConnection().getRepository('piece_metadata').save([mockPieceMetadata])
 
-            
+            pieceMetadataService(mockLog).getOrThrow = jest.fn().mockResolvedValue(mockPieceMetadata)
 
             const mockToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
-            const mockUpsertGlobalConnectionRequest: UpsertGlobalConnectionRequestBody = {
-                pieceVersion: mockPieceMetadata.version,
-                displayName: 'test global connection',
+            const mockUpsertGlobalConnectionRequest = {
+                displayName: 'test-global-connection',
                 pieceName: mockPieceMetadata.name,
                 projectIds: [apId()], // Invalid project ID
-                scope: AppConnectionScope.PLATFORM,
-                type: AppConnectionType.SECRET_TEXT,
+                scope: 'PLATFORM',
+                type: 'SECRET_TEXT',
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
-               
             }
 
             // act
@@ -192,6 +187,7 @@ describe('GlobalConnection API', () => {
                 },
                 body: mockUpsertGlobalConnectionRequest,
             })
+
             // assert
             expect(response?.statusCode).toBe(StatusCodes.NOT_FOUND)
         })
@@ -200,12 +196,12 @@ describe('GlobalConnection API', () => {
     describe('List GlobalConnections endpoint', () => {
         it('Succeeds if user is platform owner', async () => {
             // arrange
-            const { mockPlatform, mockOwner } = await setupWithGlobalConnections()
+            const { mockPlatform, mockProject, mockOwner } = await setupWithGlobalConnections()
 
             const mockToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -225,7 +221,7 @@ describe('GlobalConnection API', () => {
 
         it('Fails if user is not platform owner', async () => {
             // arrange
-            const { mockPlatform } = await setupWithGlobalConnections()
+            const { mockPlatform, mockProject } = await setupWithGlobalConnections()
 
             const { mockUser } = await mockBasicUser({
                 user: {
@@ -236,7 +232,7 @@ describe('GlobalConnection API', () => {
             const mockToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -262,32 +258,33 @@ describe('GlobalConnection API', () => {
             const { mockPlatform, mockProject, mockOwner } = await setupWithGlobalConnections()
 
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
                 packageType: PackageType.REGISTRY,
             })
             await databaseConnection().getRepository('piece_metadata').save([mockPieceMetadata])
 
+            pieceMetadataService(mockLog).getOrThrow = jest.fn().mockResolvedValue(mockPieceMetadata)
+
             const mockToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
-            const mockUpsertGlobalConnectionRequest: UpsertGlobalConnectionRequestBody = {
-                pieceVersion: mockPieceMetadata.version,
-                displayName: 'test global connection',
+            const mockUpsertGlobalConnectionRequest = {
+                displayName: 'test-global-connection',
                 pieceName: mockPieceMetadata.name,
-                scope: AppConnectionScope.PLATFORM,
+                scope: 'PLATFORM',
                 projectIds: [mockProject.id],
-                type: AppConnectionType.SECRET_TEXT,
+                type: 'SECRET_TEXT',
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
-               
             }
 
             const upsertResponse = await app?.inject({
@@ -298,7 +295,9 @@ describe('GlobalConnection API', () => {
                 },
                 body: mockUpsertGlobalConnectionRequest,
             })
+
             const connectionId = upsertResponse?.json().id
+
             // act
             const response = await app?.inject({
                 method: 'DELETE',
@@ -307,6 +306,7 @@ describe('GlobalConnection API', () => {
                     authorization: `Bearer ${mockToken}`,
                 },
             })
+
             // assert
             expect(response?.statusCode).toBe(StatusCodes.NO_CONTENT)
         })
@@ -321,34 +321,33 @@ describe('GlobalConnection API', () => {
                 },
             })
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
                 packageType: PackageType.REGISTRY,
             })
             await databaseConnection().getRepository('piece_metadata').save([mockPieceMetadata])
 
-            
+            pieceMetadataService(mockLog).getOrThrow = jest.fn().mockResolvedValue(mockPieceMetadata)
 
             const mockOwnerToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
-            const mockUpsertGlobalConnectionRequest: UpsertGlobalConnectionRequestBody = {
-                pieceVersion: mockPieceMetadata.version,
-                displayName: 'test global connection',
+            const mockUpsertGlobalConnectionRequest = {
+                displayName: 'test-global-connection',
                 pieceName: mockPieceMetadata.name,
-                scope: AppConnectionScope.PLATFORM,
+                scope: 'PLATFORM',
                 projectIds: [mockProject.id],
-                type: AppConnectionType.SECRET_TEXT,
+                type: 'SECRET_TEXT',
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
-               
             }
 
             const upsertResponse = await app?.inject({
@@ -359,17 +358,17 @@ describe('GlobalConnection API', () => {
                 },
                 body: mockUpsertGlobalConnectionRequest,
             })
+
             const connectionId = upsertResponse?.json().id
 
             const mockUserToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
-
 
             // act
             const response = await app?.inject({
@@ -379,6 +378,7 @@ describe('GlobalConnection API', () => {
                     authorization: `Bearer ${mockUserToken}`,
                 },
             })
+
             // assert
             expect(response?.statusCode).toBe(StatusCodes.FORBIDDEN)
         })
@@ -390,34 +390,33 @@ describe('GlobalConnection API', () => {
             const { mockPlatform, mockProject, mockOwner } = await setupWithGlobalConnections()
 
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
                 packageType: PackageType.REGISTRY,
             })
             await databaseConnection().getRepository('piece_metadata').save([mockPieceMetadata])
 
-            
+            pieceMetadataService(mockLog).getOrThrow = jest.fn().mockResolvedValue(mockPieceMetadata)
 
             const mockToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
-            const mockUpsertGlobalConnectionRequest: UpsertGlobalConnectionRequestBody = {
-                pieceVersion: mockPieceMetadata.version,
-                displayName: 'test global connection',
+            const mockUpsertGlobalConnectionRequest = {
+                displayName: 'test-global-connection',
                 pieceName: mockPieceMetadata.name,
-                scope: AppConnectionScope.PLATFORM,
-                type: AppConnectionType.SECRET_TEXT,
+                scope: 'PLATFORM',
+                type: 'SECRET_TEXT',
                 projectIds: [mockProject.id],
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
-               
             }
 
             const upsertResponse = await app?.inject({
@@ -430,10 +429,10 @@ describe('GlobalConnection API', () => {
             })
 
             const connectionId = upsertResponse?.json().id
-            const mockUpdateGlobalConnectionRequest: UpdateGlobalConnectionValueRequestBody = {
+
+            const mockUpdateGlobalConnectionRequest = {
                 displayName: 'updated-global-connection',
             }
-            
 
             // act
             const response = await app?.inject({
@@ -444,6 +443,7 @@ describe('GlobalConnection API', () => {
                 },
                 body: mockUpdateGlobalConnectionRequest,
             })
+
             // assert
             expect(response?.statusCode).toBe(StatusCodes.OK)
             expect(response?.json().displayName).toBe('updated-global-connection')
@@ -461,35 +461,33 @@ describe('GlobalConnection API', () => {
             })
 
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
                 packageType: PackageType.REGISTRY,
             })
             await databaseConnection().getRepository('piece_metadata').save([mockPieceMetadata])
 
-            
+            pieceMetadataService(mockLog).getOrThrow = jest.fn().mockResolvedValue(mockPieceMetadata)
 
             const mockOwnerToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
-            const mockUpsertGlobalConnectionRequest: UpsertGlobalConnectionRequestBody = {
-                pieceVersion: mockPieceMetadata.version,
-                displayName: 'test global connection',
+            const mockUpsertGlobalConnectionRequest = {
+                displayName: 'test-global-connection',
                 pieceName: mockPieceMetadata.name,
-                scope: AppConnectionScope.PLATFORM,
-                type: AppConnectionType.SECRET_TEXT,
+                scope: 'PLATFORM',
+                type: 'SECRET_TEXT',
                 projectIds: [mockProject.id],
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
-               
-                
             }
 
             const upsertResponse = await app?.inject({
@@ -502,10 +500,11 @@ describe('GlobalConnection API', () => {
             })
 
             const connectionId = upsertResponse?.json().id
+
             const mockUserToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -519,7 +518,7 @@ describe('GlobalConnection API', () => {
             const response = await app?.inject({
                 method: 'POST',
                 url: `/v1/global-connections/${connectionId}`,
-                headers: {  
+                headers: {
                     authorization: `Bearer ${mockUserToken}`,
                 },
                 body: mockUpdateGlobalConnectionRequest,
@@ -534,35 +533,34 @@ describe('GlobalConnection API', () => {
             const { mockPlatform, mockProject, mockOwner } = await setupWithGlobalConnections()
 
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
                 packageType: PackageType.REGISTRY,
             })
             await databaseConnection().getRepository('piece_metadata').save([mockPieceMetadata])
 
-            
+            pieceMetadataService(mockLog).getOrThrow = jest.fn().mockResolvedValue(mockPieceMetadata)
 
             const mockToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
 
-            const mockUpsertGlobalConnectionRequest: UpsertGlobalConnectionRequestBody = {
-                pieceVersion: mockPieceMetadata.version,
-                displayName: 'test global connection',
+            const mockUpsertGlobalConnectionRequest = {
+                displayName: 'test-global-connection',
                 pieceName: mockPieceMetadata.name,
-                scope: AppConnectionScope.PLATFORM,
-                type: AppConnectionType.SECRET_TEXT,
+                scope: 'PLATFORM',
+                type: 'SECRET_TEXT',
                 projectIds: [mockProject.id],
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
-               
             }
 
             const upsertResponse = await app?.inject({
@@ -576,7 +574,7 @@ describe('GlobalConnection API', () => {
 
             const connectionId = upsertResponse?.json().id
 
-            const mockUpdateGlobalConnectionRequest: UpdateGlobalConnectionValueRequestBody = {
+            const mockUpdateGlobalConnectionRequest = {
                 projectIds: [apId()], // Invalid project ID
                 displayName: 'updated-global-connection',
             }
@@ -590,6 +588,7 @@ describe('GlobalConnection API', () => {
                 },
                 body: mockUpdateGlobalConnectionRequest,
             })
+
 
             // assert
             expect(response?.statusCode).toBe(StatusCodes.NOT_FOUND)

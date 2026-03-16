@@ -1,12 +1,12 @@
 import { performance } from 'node:perf_hooks'
-import { EngineGenericError, ExecuteFlowOperation, ExecutionType, FlowAction, FlowActionType, FlowRunStatus, isNil } from '@activepieces/shared'
-import dayjs from 'dayjs'
+import { ExecuteFlowOperation, ExecutionType, FlowAction, FlowActionType, isNil } from '@activepieces/shared'
+import { EngineGenericError } from '../helper/execution-errors'
 import { triggerHelper } from '../helper/trigger-helper'
 import { progressService } from '../services/progress.service'
 import { BaseExecutor } from './base-executor'
 import { codeExecutor } from './code-executor'
 import { EngineConstants } from './context/engine-constants'
-import { FlowExecutorContext } from './context/flow-execution-context'
+import { ExecutionVerdict, FlowExecutorContext } from './context/flow-execution-context'
 import { loopExecutor } from './loop-executor'
 import { pieceExecutor } from './piece-executor'
 import { routerExecuter } from './router-executor'
@@ -39,12 +39,6 @@ export const flowExecutor = {
         const trigger = input.flowVersion.trigger
         if (input.executionType === ExecutionType.BEGIN) {
             await triggerHelper.executeOnStart(trigger, constants, input.triggerPayload)
-            await progressService.sendUpdate({
-                engineConstants: constants,
-                flowExecutorContext: executionState,
-                stepNameToUpdate: trigger.name,
-                startTime: dayjs().toISOString(),
-            })
         }
         return flowExecutor.execute({
             action: trigger.nextAction,
@@ -59,22 +53,19 @@ export const flowExecutor = {
     }): Promise<FlowExecutorContext> {
         const flowStartTime = performance.now()
         let flowExecutionContext = executionState
-        let previousAction: FlowAction | null | undefined = action
         let currentAction: FlowAction | null | undefined = action
-        const testSingleStepMode = !isNil(constants.stepNameToTest)
 
         while (!isNil(currentAction)) {
+            const testSingleStepMode = !isNil(constants.stepNameToTest)
             if (currentAction.skip && !testSingleStepMode) {
-                previousAction = currentAction
                 currentAction = currentAction.nextAction
                 continue
             }
             const handler = this.getExecutorForAction(currentAction.type)
 
-            await progressService.sendUpdate({
+            progressService.sendUpdate({
                 engineConstants: constants,
                 flowExecutorContext: flowExecutionContext,
-                stepNameToUpdate: previousAction?.name,
             }).catch(error => {
                 console.error('Error sending update:', error)
             })
@@ -84,23 +75,14 @@ export const flowExecutor = {
                 executionState: flowExecutionContext,
                 constants,
             })
-            const shouldBreakExecution = flowExecutionContext.verdict.status !== FlowRunStatus.RUNNING || testSingleStepMode
-            previousAction = currentAction
-            currentAction = currentAction.nextAction
+            const shouldBreakExecution = flowExecutionContext.verdict !== ExecutionVerdict.RUNNING || testSingleStepMode
 
             if (shouldBreakExecution) {
                 break
             }
 
+            currentAction = currentAction.nextAction
         }
-
-        await progressService.sendUpdate({
-            engineConstants: constants,
-            flowExecutorContext: flowExecutionContext,
-            stepNameToUpdate: previousAction?.name,
-        }).catch(error => {
-            console.error('Error sending update:', error)
-        })
 
         const flowEndTime = performance.now()
         return flowExecutionContext.setDuration(flowEndTime - flowStartTime)

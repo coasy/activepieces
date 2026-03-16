@@ -22,8 +22,7 @@ export const createCredential = createAction({
   displayName: 'Create Credential',
   description: 'Create a credential',
   props: {
-    organisation: Property.Dropdown({
-      auth: certopusAuth,
+    organisation: Property.Dropdown<string>({
       displayName: 'Organisations',
       refreshers: [],
       required: true,
@@ -35,8 +34,9 @@ export const createCredential = createAction({
             placeholder: 'Please enter your API key first.',
           };
         }
-        const client = makeClient(auth.secret_text);
+        const client = makeClient(auth as string);
         const res = await client.listOrganisations();
+        console.log(res);
 
         return {
           disabled: false,
@@ -47,8 +47,7 @@ export const createCredential = createAction({
         };
       },
     }),
-    event: Property.Dropdown({
-      auth: certopusAuth,
+    event: Property.Dropdown<string>({
       displayName: 'Event',
       refreshers: ['organisation'],
       required: true,
@@ -67,7 +66,7 @@ export const createCredential = createAction({
             placeholder: 'Please select an organisation first.',
           };
         }
-        const client = makeClient(auth.secret_text);
+        const client = makeClient(auth as string);
         const res = await client.listEvents(organisation as string);
         console.log(res);
 
@@ -80,8 +79,7 @@ export const createCredential = createAction({
         };
       },
     }),
-    category: Property.Dropdown({
-      auth: certopusAuth,
+    category: Property.Dropdown<string>({
       displayName: 'Category',
       refreshers: ['organisation', 'event'],
       required: true,
@@ -107,7 +105,7 @@ export const createCredential = createAction({
             placeholder: 'Please select an event first.',
           };
         }
-        const client = makeClient(auth.secret_text);
+        const client = makeClient(auth as string);
         const res = await client.listCategories(
           organisation as string,
           event as string
@@ -141,7 +139,6 @@ export const createCredential = createAction({
       required: true,
     }),
     fields: Property.DynamicProperties({
-      auth: certopusAuth,
       displayName: 'Recipient Data',
       required: true,
       refreshers: ['organisation', 'event', 'category'],
@@ -154,7 +151,7 @@ export const createCredential = createAction({
 
         const fields: DynamicPropsValue = {};
         try {
-          const client = makeClient(auth.secret_text);
+          const client = makeClient(auth.toString());
           const recipientFields: RecipientField[] =
             await client.listRecipientFields(
               organisation.toString(),
@@ -200,7 +197,7 @@ export const createCredential = createAction({
         ],
       },
       headers: {
-        'x-api-key': context.auth.secret_text,
+        'x-api-key': context.auth,
       },
       queryParams: {},
     };

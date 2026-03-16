@@ -7,14 +7,14 @@ import {
 	HttpRequest,
 	QueryParams,
 } from '@activepieces/pieces-common';
-import { AppConnectionValueForAuthProperty, PiecePropValueSchema } from '@activepieces/pieces-framework';
+import { PiecePropValueSchema } from '@activepieces/pieces-framework';
 import { crispAuth } from './auth';
 
 
 export const BASE_URL = 'https://api.crisp.chat/v1'
 
 export type CrispApiCallParams = {
-	auth: AppConnectionValueForAuthProperty<typeof crispAuth>;
+	auth: PiecePropValueSchema<typeof crispAuth>;
 	method: HttpMethod;
 	resourceUri: string;
 	query?: Record<string, string | number | string[] | undefined>;
@@ -43,8 +43,8 @@ export async function crispApiCall<T extends HttpMessageBody>({
 		url: BASE_URL + resourceUri,
 		authentication:{
             type:AuthenticationType.BASIC,
-            username:auth.props.identifier,
-            password:auth.props.token
+            username:auth.identifier,
+            password:auth.token
         },
         headers:{
             'X-Crisp-Tier':'plugin'

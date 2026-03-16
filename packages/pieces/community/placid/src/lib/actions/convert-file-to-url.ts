@@ -40,7 +40,7 @@ export const convertFileToUrl = createAction({
 				body: formData,
 				authentication: {
 					type: AuthenticationType.BEARER_TOKEN,
-					token: context.auth.secret_text,
+					token: context.auth,
 				},
 				headers: {
 					...formData.getHeaders(),

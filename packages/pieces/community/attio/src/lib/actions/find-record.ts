@@ -17,7 +17,7 @@ export const findRecordAction = createAction({
 		attributes: objectFields(true),
 	},
 	async run(context) {
-		const accessToken = context.auth.secret_text;
+		const accessToken = context.auth;
 		const objectTypeId = context.propsValue.objectTypeId;
 		const inputFields = context.propsValue.attributes ?? {};
 

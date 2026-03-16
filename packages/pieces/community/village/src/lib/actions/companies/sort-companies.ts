@@ -23,7 +23,7 @@ export const sortCompanies = createAction({
     const { companies, user_identifier } = context.propsValue;
     
     const headers: Record<string, string> = {
-      'secret-key': context.auth.secret_text,
+      'secret-key': context.auth,
     };
     
     if (user_identifier) {

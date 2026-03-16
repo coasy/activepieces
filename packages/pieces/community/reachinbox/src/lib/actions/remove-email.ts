@@ -16,7 +16,6 @@ export const removeEmail = createAction({
   description: 'Remove an email account from the system.',
   props: {
     accountId: Property.Dropdown({
-  auth: ReachinboxAuth,
       displayName: 'Select Email Account to Remove',
       description: 'Choose an email account to remove.',
       required: true,
@@ -60,7 +59,7 @@ export const removeEmail = createAction({
         method: HttpMethod.DELETE,
         url: `${reachinboxCommon.baseUrl}account/delete/${accountId}`,
         headers: {
-          Authorization: `Bearer ${context.auth.secret_text}`,
+          Authorization: `Bearer ${context.auth}`,
         },
       });
 

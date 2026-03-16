@@ -57,7 +57,7 @@ export const trackEvent = createAction({
       },
       authentication: {
         type: AuthenticationType.BASIC,
-        username: projectToken.secret_text,
+        username: projectToken,
         password: '',
       },
     });

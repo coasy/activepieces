@@ -21,7 +21,7 @@ export const realTimeWebSearch = createAction({
       method: HttpMethod.POST,
       url: `${dappierCommon.baseUrl}/app/aimodel/am_01j0rzq4tvfscrgzwac7jv1p4c`,
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
         'Content-Type': 'application/json',
       },
       body: {

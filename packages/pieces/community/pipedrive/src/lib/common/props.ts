@@ -288,8 +288,7 @@ export async function retrieveObjectCustomProperties(
  * @param objectType The type of object (e.g., 'deal', 'person').
  */
 export const searchFieldProp = (objectType: string) =>
-		Property.Dropdown({
-		auth: pipedriveAuth,
+	Property.Dropdown({
 		displayName: 'Field to search by',
 		required: true,
 		refreshers: [],
@@ -353,7 +352,6 @@ export const searchFieldProp = (objectType: string) =>
  */
 export const searchFieldValueProp = (objectType: string) =>
 	Property.DynamicProperties({
-		auth: pipedriveAuth,
 		displayName: 'Field Value',
 		required: true,
 		refreshers: ['searchField'],
@@ -420,8 +418,7 @@ export const searchFieldValueProp = (objectType: string) =>
 	});
 
 export const ownerIdProp = (displayName: string, required = false) =>
-		Property.Dropdown({
-		auth: pipedriveAuth,
+	Property.Dropdown({
 		displayName,
 		refreshers: [],
 		required,
@@ -444,8 +441,7 @@ export const ownerIdProp = (displayName: string, required = false) =>
 	});
 
 export const filterIdProp = (type: string, required = false) =>
-		Property.Dropdown({
-		auth: pipedriveAuth,
+	Property.Dropdown({
 		displayName: 'Filter',
 		refreshers: [],
 		required,
@@ -475,8 +471,7 @@ export const organizationIdProp = (required = false) =>
 	});
 
 export const dealPipelineIdProp = (required = false) =>
-		Property.Dropdown({
-		auth: pipedriveAuth,
+	Property.Dropdown({
 		displayName: 'Pipeline',
 		refreshers: [],
 		required,
@@ -499,8 +494,7 @@ export const dealPipelineIdProp = (required = false) =>
 	});
 
 export const dealStageIdProp = (required = false) =>
-		Property.Dropdown({
-		auth: pipedriveAuth,
+	Property.Dropdown({
 		displayName: 'Stage',
 		description: 'If a stage is chosen above, the pipeline field will be ignored.',
 		required,
@@ -547,7 +541,6 @@ export const personIdProp = (required = false) =>
 
 export const labelIdsProp = (objectType: string, labelFieldName: string, required = false) =>
 	Property.MultiSelectDropdown({
-		auth: pipedriveAuth,
 		displayName: 'Label',
 		required,
 		refreshers: [],
@@ -604,7 +597,6 @@ export const labelIdsProp = (objectType: string, labelFieldName: string, require
 
 export const leadLabelIdsProp = (required = false) =>
 	Property.MultiSelectDropdown({
-		auth: pipedriveAuth,
 		displayName: 'Label',
 		required,
 		refreshers: [],
@@ -677,8 +669,7 @@ export const leadIdProp = (required = false) =>
 	});
 
 export const activityTypeIdProp = (required = false) =>
-		Property.Dropdown({
-		auth: pipedriveAuth,
+	Property.Dropdown({
 		displayName: 'Activity Type',
 		refreshers: [],
 		required,
@@ -779,8 +770,7 @@ export const leadCommonProps = {
 		description: 'Please enter date in YYYY-MM-DD format.',
 	}),
 	visibleTo: visibleToProp,
-	channel: 	Property.Dropdown({
-		auth: pipedriveAuth,
+	channel: Property.Dropdown({
 		displayName: 'Channel',
 		required: false,
 		refreshers: [],
@@ -950,13 +940,12 @@ export const activityCommonProps = {
 // Helper function for custom fields property definition
 export function customFieldsProp(objectType: string) {
 	return Property.DynamicProperties({
-		auth: pipedriveAuth,
 		displayName: 'Custom Fields',
 		required: false,
 		refreshers: [],
 		props: async ({ auth }) => {
 			if (!auth) return {};
-			const authValue = auth;
+			const authValue = auth as PiecePropValueSchema<typeof pipedriveAuth>;
 			return await retrieveObjectCustomProperties(authValue, objectType);
 		},
 	});

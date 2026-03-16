@@ -19,7 +19,7 @@ export const retrieveVideoStatusAction = createAction({
     const { videoId } = propsValue;
 
     const response = await heygenApiCall({
-			apiKey: auth.secret_text,
+      apiKey: auth as string,
       method: HttpMethod.GET,
       resourceUri: `/video_status.get`,
       query: { video_id: videoId },

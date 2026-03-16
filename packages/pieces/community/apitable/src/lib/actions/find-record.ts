@@ -58,7 +58,7 @@ export const findRecordAction = createAction({
     const filter = context.propsValue.filter;
 
     const client = makeClient(
-      context.auth.props
+      context.auth as PiecePropValueSchema<typeof APITableAuth>
     );
     const response: any = await client.listRecords(
       datasheetId as string,

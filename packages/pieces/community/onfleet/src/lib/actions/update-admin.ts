@@ -18,7 +18,7 @@ export const updateAdmin = createAction({
     }),
   },
   async run(context) {
-    const onfleetApi = new Onfleet(context.auth.secret_text);
+    const onfleetApi = new Onfleet(context.auth);
 
     const options: any = {};
 

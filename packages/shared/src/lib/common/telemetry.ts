@@ -37,6 +37,15 @@ type SignedUp = {
     projectId: ProjectId
 }
 
+export type ClickedTutorialTelemetryParams = {
+    tab: 'flows'
+    | 'mcpServers'
+    | 'tables'
+    | 'agents'
+    | 'todos'
+    | 'gettingStarted'
+    location: 'tutorials-sidebar-item' | 'table-title' | 'small-button-inside-sidebar-item'
+}
 type QuotaAlert = {
     percentageUsed: number
 }
@@ -141,11 +150,6 @@ type McpToolCalled = {
     toolName: string
 }
 
-type PieceSelectorSearch = {
-    search: string
-    isTrigger: boolean
-    selectedActionOrTriggerName: string | null
-}
 export enum TelemetryEventName {
     SIGNED_UP = 'signed.up',
     QUOTA_ALERT = 'quota.alert',
@@ -181,7 +185,7 @@ export enum TelemetryEventName {
     UPGRADE_POPUP_OPENED = 'upgrade.popup.opened',
     UPGRADE_CLICKED = 'upgrade.clicked',
     OPENED_PRICING_FROM_DASHBOARD = 'opened.pricing.from.dashboard',
-    PIECE_SELECTOR_SEARCH = 'piece.selector.search',
+    CLICKED_TUTORIAL = 'clicked.tutorial',
 }
 
 type BaseTelemetryEvent<T, P> = {
@@ -250,4 +254,4 @@ export type TelemetryEvent =
   AiProviderConfiguredOrUsed
   >
   | BaseTelemetryEvent<TelemetryEventName.MCP_TOOL_CALLED, McpToolCalled>
-  | BaseTelemetryEvent<TelemetryEventName.PIECE_SELECTOR_SEARCH, PieceSelectorSearch>
+  | BaseTelemetryEvent<TelemetryEventName.CLICKED_TUTORIAL, ClickedTutorialTelemetryParams>

@@ -1,7 +1,5 @@
 import Avatar from 'boring-avatars';
 
-import { cn } from '@/lib/utils';
-
 import { Tooltip, TooltipTrigger, TooltipContent } from './tooltip';
 
 type UserAvatarProps = {
@@ -9,7 +7,6 @@ type UserAvatarProps = {
   email: string;
   size: number;
   disableTooltip?: boolean;
-  imageUrl?: string | null;
 };
 
 export function UserAvatar({
@@ -17,27 +14,17 @@ export function UserAvatar({
   email,
   size,
   disableTooltip = false,
-  imageUrl,
 }: UserAvatarProps) {
   const tooltip = `${name} (${email})`;
 
-  const avatarElement = imageUrl ? (
-    <img
-      src={imageUrl}
-      alt={name}
-      width={size}
-      height={size}
-      className={cn('rounded-full object-cover')}
-      style={{ width: size, height: size }}
-    />
-  ) : (
+  const avatarElement = (
     <Avatar
       name={email}
       size={size}
       colors={['#0a0310', '#49007e', '#ff005b', '#ff7d10', '#ffb238']}
-      variant="beam"
+      variant="bauhaus"
       square
-      className="rounded-full"
+      className="rounded-lg"
     />
   );
 

@@ -16,7 +16,7 @@ export const airtableGetBaseSchemaAction = createAction({
     const { base: baseId } = propsValue;
 
     return await airtableCommon.fetchTableList({
-      token: personalToken.secret_text,
+      token: personalToken,
       baseId: baseId as string,
     });
   },

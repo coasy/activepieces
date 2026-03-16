@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { t } from 'i18next';
 import { useState, ReactNode } from 'react';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { toast } from '@/components/ui/use-toast';
 import { projectRoleApi } from '@/features/platform-admin/lib/project-role-api';
 import { Permission, ProjectRole, RoleType } from '@activepieces/shared';
 
@@ -48,6 +48,12 @@ const initialPermissions = [
     description: 'Read and write runs',
     read: [Permission.READ_RUN],
     write: [Permission.READ_RUN, Permission.WRITE_RUN],
+  },
+  {
+    name: 'Issues',
+    description: 'Read and write issues',
+    read: [Permission.READ_ISSUES],
+    write: [Permission.READ_ISSUES, Permission.WRITE_ISSUES],
   },
   {
     name: 'Alerts',
@@ -151,8 +157,9 @@ export const ProjectRoleDialog = ({
       onSave();
     },
     onError: (error) => {
-      toast.error(t('Role name already exists'), {
-        duration: 3000,
+      toast({
+        title: 'Error',
+        description: 'Role name already exists',
       });
     },
   });

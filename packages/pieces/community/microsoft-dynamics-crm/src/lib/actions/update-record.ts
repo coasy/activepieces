@@ -23,7 +23,7 @@ export const updateRecordAction = createAction({
     const entityUrlPath = entityType as string;
 
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof dynamicsCRMAuth>
     );
 
     return await client.updatedRecord(entityUrlPath, recordId, fields);

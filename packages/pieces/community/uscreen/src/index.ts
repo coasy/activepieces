@@ -31,7 +31,7 @@ export const uscreen = createPiece({
             baseUrl: () => uscreenPublisherApiUrl,
             authMapping: async (auth) => {
                 return {
-                    'X-Store-Token': `${auth.secret_text}`,
+                    'X-Store-Token': `${auth}`,
                     'Accept': 'application/json'
                 }
             }

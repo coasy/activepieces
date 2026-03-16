@@ -12,7 +12,6 @@ export const updateItemAction = createAction({
     appId: dynamicAppProperty,
     itemId: dynamicItemProperty,
     appFields: Property.DynamicProperties({
-      auth: podioAuth,
       displayName: 'App Fields',
       description: 'Configure values for the fields you want to update in the selected app',
       required: false,

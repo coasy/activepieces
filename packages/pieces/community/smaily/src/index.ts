@@ -68,15 +68,12 @@ export const smaily = createPiece({
     createCustomApiCallAction({
       auth:smailyAuth,
       baseUrl: (auth)=>{
-        if (!auth) {
-          return '';
-        }
-        return `https://${auth.props.domain}.sendsmaily.net/api`
+        return `https://${(auth as PiecePropValueSchema<typeof smailyAuth>).domain}.sendsmaily.net/api`
       },
       authMapping: async (auth) => ({
         Authorization: `Basic ${Buffer.from(
-          `${auth.props.username}:${
-            auth.props.password
+          `${(auth as { username: string }).username}:${
+            (auth as { password: string }).password
           }`
         ).toString('base64')}`,
       }),

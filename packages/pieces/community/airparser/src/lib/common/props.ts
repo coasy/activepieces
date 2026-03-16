@@ -2,10 +2,8 @@ import { HttpMethod } from '@activepieces/pieces-common';
 import { Property } from '@activepieces/pieces-framework';
 import { isNil } from '@activepieces/shared';
 import { airparserApiCall } from './index';
-import { airparserAuth } from '../..';
 
-export const inboxIdDropdown = Property.Dropdown<string,true,typeof airparserAuth>({
-	auth: airparserAuth,
+export const inboxIdDropdown = Property.Dropdown({
 	displayName: 'Inbox',
 	required: true,
 	refreshers: [],
@@ -18,7 +16,7 @@ export const inboxIdDropdown = Property.Dropdown<string,true,typeof airparserAut
 			};
 		}
 		const response = await airparserApiCall<{ _id: string; name: string }[]>({
-			apiKey: auth.secret_text,
+			apiKey: auth as string,
 			resourceUri: '/inboxes',
 			method: HttpMethod.GET,
 		});
@@ -33,8 +31,7 @@ export const inboxIdDropdown = Property.Dropdown<string,true,typeof airparserAut
 	},
 });
 
-export const documentIdDropdown = Property.Dropdown<string,true,typeof airparserAuth>({
-	auth: airparserAuth,
+export const documentIdDropdown = Property.Dropdown({
 	displayName: 'Document',
 	required: true,
 	refreshers: ['inboxId'],
@@ -58,7 +55,7 @@ export const documentIdDropdown = Property.Dropdown<string,true,typeof airparser
 				hasNextPage: boolean;
 				docs: { _id: string; name: string }[];
 			}>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: `/inboxes/${inboxId}/docs`,
 				query: {

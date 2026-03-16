@@ -38,7 +38,7 @@ export const verifyEmail = createAction({
     return verifySingleEmail(
       context.propsValue.email,
       context.propsValue.mode,
-      context.auth.secret_text
+      context.auth
     ).then((res) => res.body);
   },
 });

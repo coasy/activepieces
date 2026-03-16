@@ -1,5 +1,4 @@
 import { Property } from '@activepieces/pieces-framework';
-import { qdrantAuth } from '../..';
 
 export const decodeEmbeddings = (embeddingsString: Buffer) => {
   let embeddings = embeddingsString.toString('utf-8') as
@@ -69,7 +68,6 @@ export const seclectPointsProps = {
     required: true,
   }),
   infosToGetPoint: Property.DynamicProperties({
-    auth: qdrantAuth,
     displayName: 'By ids or filtering',
     description: 'The infos to select points',
     refreshers: ['getPointsBy'],

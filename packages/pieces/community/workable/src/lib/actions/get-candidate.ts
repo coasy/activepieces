@@ -17,7 +17,7 @@ export const getCandidate = createAction({
   async run(context) {
     // Action logic here
     const candidateId = context.propsValue.id;
-    const accessToken = context.auth.secret_text;
+    const accessToken = context.auth;
     const account = await getAccountSubdomain(accessToken);
 
     //get candidate information

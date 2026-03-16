@@ -25,7 +25,6 @@ export const createTranscription = createAction({
             },
         }),
         media: Property.DynamicProperties({
-            auth: cambaiAuth,
             displayName: 'Media',
             required: true,
             refreshers: ['source_type'],
@@ -83,7 +82,7 @@ export const createTranscription = createAction({
 
         const requestBody = await formData.getBuffer();
         const headers: HttpHeaders = {
-            'x-api-key': auth.secret_text,
+            'x-api-key': auth,
             ...formData.getHeaders(),
         };
 
@@ -101,7 +100,7 @@ export const createTranscription = createAction({
             const statusResponse = await httpClient.sendRequest<{ status: string; run_id?: string }>({
                 method: HttpMethod.GET,
                 url: `${API_BASE_URL}/transcribe/${taskId}`,
-                headers: { 'x-api-key': auth.secret_text },
+                headers: { 'x-api-key': auth },
             });
 
             if (statusResponse.body.status === 'SUCCESS') {
@@ -121,7 +120,7 @@ export const createTranscription = createAction({
         const resultResponse = await httpClient.sendRequest<{ transcriptions: string[] }>({
             method: HttpMethod.GET,
             url: `${API_BASE_URL}/transcription-result/${run_id}`,
-            headers: { 'x-api-key': auth.secret_text },
+            headers: { 'x-api-key': auth },
         });
 
         return resultResponse.body;

@@ -22,7 +22,7 @@ export const deleteRecordAction = createAction({
     const entityUrlPath = entityType as string;
 
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof dynamicsCRMAuth>
     );
 
     return await client.deleteRecord(entityUrlPath, recordId);

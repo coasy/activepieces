@@ -1,18 +1,18 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { areSheetIdsValid, googleSheetsCommon } from '../common/common';
-import { googleSheetsAuth } from '../common/common';
+import { googleSheetsAuth } from '../../';
 import { commonProps } from '../common/props';
 
 export const deleteRowAction = createAction({
   auth: googleSheetsAuth,
   name: 'delete_row',
-  description: 'Delete a specific row from the selected sheet.',
+  description: 'Delete a row on an existing sheet you have access to',
   displayName: 'Delete Row',
   props: {
     ...commonProps,
     rowId: Property.Number({
       displayName: 'Row Number',
-      description: 'The number of the row you want to delete.',
+      description: 'The row number to remove',
       required: true,
     }),
   },
@@ -29,7 +29,7 @@ export const deleteRowAction = createAction({
       spreadsheetId as string,
       sheetId as number,
       adjustedRowIndex,
-      context.auth,
+      context.auth.access_token
     );
 
     return {

@@ -73,7 +73,6 @@ export const createCall = createAction({
       },
     }),
     relatedTo: Property.Dropdown({
-      auth: biginAuth,
       displayName: 'Related To',
       description: 'Select the specific record the call is related to.',
       required: false,
@@ -83,8 +82,7 @@ export const createCall = createAction({
         if (!auth) return handleDropdownError('Please connect first');
         if (!relatedModule) return { options: [] };
 
-        const { access_token, data } = auth;
-        const api_domain = data['api_domain'];
+        const { access_token, api_domain } = auth as any;
 
         const fetchMap: Record<string, () => Promise<any>> = {
           Pipelines: () =>
@@ -111,8 +109,8 @@ export const createCall = createAction({
   },
   async run({ auth, propsValue }) {
     try {
-      const { access_token, data } = auth;
-      const api_domain = data['api_domain'];
+      const { access_token, api_domain } = auth as any;
+
       const payload: any = {
         Call_Start_Time: formatDateTime(propsValue.callStartTime),
         Call_Duration: Number(propsValue.callDuration),

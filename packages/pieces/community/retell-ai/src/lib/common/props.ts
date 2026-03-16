@@ -90,8 +90,7 @@ interface RetellAiVoice {
 }
 
 // --- Agent Dropdown ---
-export const agentIdDropdown = (displayName:string,required=false)=>  Property.Dropdown({
-  auth: retellAiAuth,
+export const agentIdDropdown = (displayName:string,required=false)=> Property.Dropdown({
   displayName,
   description: 'Select the Retell AI agent.',
   required,
@@ -106,7 +105,7 @@ export const agentIdDropdown = (displayName:string,required=false)=>  Property.D
     }
     try {
       const agents = await retellAiApiCall<RetellAiAgentListResponse>({
-       auth,
+        auth: auth as PiecePropValueSchema<typeof retellAiAuth>,
         method: HttpMethod.GET,
         url: '/list-agents',
         body: {
@@ -141,8 +140,7 @@ export const agentIdDropdown = (displayName:string,required=false)=>  Property.D
 });
 
 // --- Call ID Dropdown ---
-export const callIdDropdown =  Property.Dropdown({
-  auth: retellAiAuth,
+export const callIdDropdown = Property.Dropdown({
   displayName: 'Call ID',
   required: true,
   refreshers: ['auth'],
@@ -156,7 +154,7 @@ export const callIdDropdown =  Property.Dropdown({
     }
     try {
       const response = await retellAiApiCall<RetellAiCall[]>({
-       auth,
+        auth: auth as PiecePropValueSchema<typeof retellAiAuth>,
         method: HttpMethod.POST,
         url: '/v2/list-calls',
         body: {
@@ -193,8 +191,7 @@ export const callIdDropdown =  Property.Dropdown({
 });
 
 // --- Voice Dropdown ---
-export const voiceIdDropdown =  Property.Dropdown({
-  auth: retellAiAuth,
+export const voiceIdDropdown = Property.Dropdown({
   displayName: 'Voice',
   required: true,
   refreshers: ['auth'],
@@ -208,7 +205,7 @@ export const voiceIdDropdown =  Property.Dropdown({
     }
     try {
       const response = await retellAiApiCall<RetellAiVoice[]>({
-       auth,
+        auth: auth as PiecePropValueSchema<typeof retellAiAuth>,
         method: HttpMethod.GET,
         url: '/list-voices',
       });

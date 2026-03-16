@@ -20,7 +20,7 @@ export const getOrgApiCallAction = createAction({
       method: HttpMethod.GET,
       url: `https://api.zoo.dev/org/api-calls/${propsValue.callId}`,
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
     });
     return response.body;

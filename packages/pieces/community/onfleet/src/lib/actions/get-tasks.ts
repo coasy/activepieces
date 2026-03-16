@@ -19,7 +19,6 @@ export const getTasks = createAction({
       required: false,
     }),
     state: Property.MultiSelectDropdown({
-      auth: onfleetAuth,
       displayName: 'State',
       required: false,
       refreshers: [],
@@ -49,7 +48,7 @@ export const getTasks = createAction({
     }),
   },
   async run(context) {
-    const onfleetApi = new Onfleet(context.auth.secret_text);
+    const onfleetApi = new Onfleet(context.auth);
 
     const from = context.propsValue.from
       ? dayjs(context.propsValue.from).valueOf()

@@ -25,7 +25,7 @@ export const groqAuth = PieceAuth.SecretText({
         method: HttpMethod.GET,
         authentication: {
           type: AuthenticationType.BEARER_TOKEN,
-          token: auth.auth,
+          token: auth.auth as string,
         },
       });
       return {
@@ -56,7 +56,7 @@ export const groq = createPiece({
       baseUrl: () => baseUrl,
       authMapping: async (auth) => {
         return {
-          Authorization: `Bearer ${auth.secret_text}`,
+          Authorization: `Bearer ${auth}`,
         };
       },
     }),

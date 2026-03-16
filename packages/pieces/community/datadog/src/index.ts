@@ -1,10 +1,10 @@
 import { createPiece, PieceAuth, Property } from "@activepieces/pieces-framework";
 import { createCustomApiCallAction } from '@activepieces/pieces-common';
-import { constructDatadogBaseHeaders, constructDatadogBaseUrl, getDatadogConfiguration } from "./lib/common";
+import { constructDatadogBaseHeaders, constructDatadogBaseUrl, DatadogAuthType, getDatadogConfiguration } from "./lib/common";
 import { sendMultipleLogs } from "./lib/actions/send-multiple-logs";
 import { v1 } from "@datadog/datadog-api-client";
 import { sendOneLog } from "./lib/actions/send-one-log";
-import { AppConnectionType, PieceCategory } from "@activepieces/shared";
+import { PieceCategory } from "@activepieces/shared";
 
 export const datadogAuth = PieceAuth.CustomAuth({
   description: 'Datadog authentication requires an API key and a site (by default, US1).',
@@ -41,10 +41,7 @@ export const datadogAuth = PieceAuth.CustomAuth({
      * Documentation: https://docs.datadoghq.com/api/latest/authentication/?code-lang=typescript
      */
     try {
-      const apiInstance = new v1.AuthenticationApi(getDatadogConfiguration({
-        type: AppConnectionType.CUSTOM_AUTH,
-        props: auth,
-      }));
+      const apiInstance = new v1.AuthenticationApi(getDatadogConfiguration(auth));
 
       await apiInstance.validate()
       return {
@@ -71,9 +68,9 @@ export const datadog = createPiece({
     sendMultipleLogs,
     sendOneLog,
     createCustomApiCallAction({
-      baseUrl: (auth) =>auth ? constructDatadogBaseUrl(auth) : '',
+      baseUrl: (auth) => constructDatadogBaseUrl(auth as DatadogAuthType),
       auth: datadogAuth,
-      authMapping: async (auth) => constructDatadogBaseHeaders(auth),
+      authMapping: async (auth) => constructDatadogBaseHeaders(auth as DatadogAuthType),
       authLocation: 'headers',
       props: {
         url: {

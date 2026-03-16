@@ -3,7 +3,6 @@ import { MoveLeft } from 'lucide-react';
 import React from 'react';
 
 import { CardList } from '@/components/custom/card-list';
-import { useTelemetry } from '@/components/telemetry-provider';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { pieceSelectorUtils } from '@/features/pieces/lib/piece-selector-utils';
 import { CORE_ACTIONS_METADATA } from '@/features/pieces/lib/step-utils';
@@ -12,24 +11,19 @@ import {
   PieceSelectorOperation,
   StepMetadataWithSuggestions,
 } from '@/lib/types';
-import {
-  FlowActionType,
-  isNil,
-  FlowTriggerType,
-  TelemetryEventName,
-} from '@activepieces/shared';
+import { FlowActionType, isNil, FlowTriggerType } from '@activepieces/shared';
 
-import { usePieceSearchContext } from '../../../features/pieces/lib/piece-search-context';
 import { useBuilderStateContext } from '../builder-hooks';
 
 import { CreateTodoDialog } from './add-todo-step-dialog';
 import GenericActionOrTriggerItem from './generic-piece-selector-item';
+import RunAgentActionItem from './run-agent-action-item';
 type PieceActionsOrTriggersListProps = {
   hidePieceIconAndDescription: boolean;
   stepMetadataWithSuggestions: StepMetadataWithSuggestions | null;
   operation: PieceSelectorOperation;
 };
-export const convertStepMetadataToPieceSelectorItems = (
+const convertStepMetadataToPieceSelectorItems = (
   stepMetadataWithSuggestions: StepMetadataWithSuggestions,
 ): PieceSelectorItem[] => {
   switch (stepMetadataWithSuggestions.type) {
@@ -73,8 +67,6 @@ export const PieceActionsOrTriggersList: React.FC<
   hidePieceIconAndDescription,
   operation,
 }) => {
-  const { capture } = useTelemetry();
-  const { searchQuery } = usePieceSearchContext();
   const [handleAddingOrUpdatingStep] = useBuilderStateContext((state) => [
     state.handleAddingOrUpdatingStep,
   ]);
@@ -98,10 +90,23 @@ export const PieceActionsOrTriggersList: React.FC<
             const isCreateTodoAction =
               item.type === FlowActionType.PIECE &&
               item.actionOrTrigger.name === 'createTodo';
+            const isRunAgentAction =
+              item.type === FlowActionType.PIECE &&
+              item.actionOrTrigger.name === 'run_agent';
 
             if (isCreateTodoAction) {
               return (
                 <CreateTodoDialog
+                  key={index}
+                  pieceSelectorItem={item}
+                  operation={operation}
+                  hidePieceIconAndDescription={hidePieceIconAndDescription}
+                />
+              );
+            }
+            if (isRunAgentAction) {
+              return (
+                <RunAgentActionItem
                   key={index}
                   pieceSelectorItem={item}
                   operation={operation}
@@ -115,27 +120,13 @@ export const PieceActionsOrTriggersList: React.FC<
                 item={item}
                 hidePieceIconAndDescription={hidePieceIconAndDescription}
                 stepMetadataWithSuggestions={stepMetadataWithSuggestions}
-                onClick={() => {
-                  if (
-                    item.type === FlowActionType.PIECE ||
-                    item.type === FlowTriggerType.PIECE
-                  ) {
-                    capture({
-                      name: TelemetryEventName.PIECE_SELECTOR_SEARCH,
-                      payload: {
-                        search: searchQuery,
-                        isTrigger: item.type === FlowTriggerType.PIECE,
-                        selectedActionOrTriggerName: item.actionOrTrigger.name,
-                      },
-                    });
-                  }
-
+                onClick={() =>
                   handleAddingOrUpdatingStep({
                     pieceSelectorItem: item,
                     operation,
                     selectStepAfter: true,
-                  });
-                }}
+                  })
+                }
               />
             );
           })}

@@ -26,7 +26,7 @@ export const get_visits = createAction({
             url,
             headers: {
                 ...commonHeaders,
-                'Authorization': `Token ${context.auth.secret_text}`
+                'Authorization': `Token ${context.auth}`
             }
         });
         return {

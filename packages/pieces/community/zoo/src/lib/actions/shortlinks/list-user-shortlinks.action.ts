@@ -25,7 +25,7 @@ export const listUserShortlinksAction = createAction({
       method: HttpMethod.GET,
       url: 'https://api.zoo.dev/user/shortlinks',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
       queryParams: {
         ...(propsValue.limit && { limit: propsValue.limit.toString() }),

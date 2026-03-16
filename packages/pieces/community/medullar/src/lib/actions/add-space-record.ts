@@ -77,7 +77,7 @@ export const addSpaceRecord = createAction({
         },
       },
       headers: {
-        Authorization: `Bearer ${context.auth.secret_text}`,
+        Authorization: `Bearer ${context.auth}`,
       },
     });
 

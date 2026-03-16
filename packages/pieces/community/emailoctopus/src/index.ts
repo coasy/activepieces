@@ -41,7 +41,7 @@ export const emailoctopus = createPiece({
           baseUrl:()=>emailOctopusApiUrl,
           authMapping:async (auth)=>{
             return{
-              Authorization:`Bearer ${auth.secret_text}`
+              Authorization:`Bearer ${auth}`
             }
           }
           

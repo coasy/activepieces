@@ -20,7 +20,7 @@ export const deleteFormCoupon = createAction({
       await paperformCommon.apiCall({
         method: HttpMethod.DELETE,
         url: `/forms/${formId}/coupons/${couponCode}`,
-        auth: auth.secret_text,
+        auth: auth as string,
       });
       
       return {

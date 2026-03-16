@@ -1,5 +1,5 @@
 import { Property } from '@activepieces/pieces-framework';
-import { docsbotAuth, docsbotCommon } from '.';
+import { docsbotCommon } from '.';
 
 // Base reusable properties
 const teamProperty = ({
@@ -10,7 +10,6 @@ const teamProperty = ({
   description?: string;
 }) =>
   Property.Dropdown({
-    auth: docsbotAuth,
     displayName: displayName || 'Team',
     description: description || 'The team to use.',
     required: true,
@@ -23,7 +22,7 @@ const teamProperty = ({
           options: [],
         };
       }
-      const teams = await docsbotCommon.listTeams(auth.secret_text);
+      const teams = await docsbotCommon.listTeams(auth as string);
       return {
         options: teams.map((team) => ({
           label: team.name,
@@ -161,7 +160,6 @@ export const createSource = () => ({
     },
   }),
   sourceProperties: Property.DynamicProperties({
-    auth: docsbotAuth,
     displayName: 'Source Properties',
     description: 'Create Source Properties',
     required: true,

@@ -24,7 +24,6 @@ export const createPresentationAction = createAction({
       required: false,
     }),
     template: Property.Dropdown({
-      auth: slidespeakAuth,
       displayName: 'Dropdown',
       refreshers: [],
       required: false,
@@ -41,7 +40,7 @@ export const createPresentationAction = createAction({
           method: HttpMethod.GET,
           url: BASE_URL + '/presentation/templates',
           headers: {
-            'X-API-key': auth.secret_text,
+            'X-API-key': auth as string,
           },
         });
 
@@ -139,7 +138,7 @@ export const createPresentationAction = createAction({
       method: HttpMethod.POST,
       url: BASE_URL + '/presentation/generate',
       headers: {
-        'X-API-key': apiKey.secret_text,
+        'X-API-key': apiKey,
       },
       body: {
         plain_text,
@@ -175,7 +174,7 @@ export const createPresentationAction = createAction({
         method: HttpMethod.GET,
         url: BASE_URL + `/task_status/${taskId}`,
         headers: {
-          'X-API-key': apiKey.secret_text,
+          'X-API-key': apiKey,
         },
       });
 

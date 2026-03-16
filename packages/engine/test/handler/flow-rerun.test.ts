@@ -1,5 +1,4 @@
-import { FlowRunStatus } from '@activepieces/shared'
-import { FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
+import { ExecutionVerdict, FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
 import { flowExecutor } from '../../src/lib/handler/flow-executor'
 import { buildPieceAction, generateMockEngineConstants } from './test-helper'
 
@@ -33,22 +32,19 @@ const successHttpAction =  buildPieceAction({
 
 
 describe('flow retry', () => {
+    const context = FlowExecutorContext.empty()
     it('should retry entire flow', async () => {
-        const context = FlowExecutorContext.empty()
-
         const failedResult = await flowExecutor.execute({
             action: failedHttpAction, executionState: context, constants: generateMockEngineConstants(),
         })
         const retryEntireFlow = await flowExecutor.execute({
             action: successHttpAction, executionState: context, constants: generateMockEngineConstants(),
         })
-        expect(failedResult.verdict.status).toBe(FlowRunStatus.FAILED)
-        expect(retryEntireFlow.verdict.status).toBe(FlowRunStatus.RUNNING)
+        expect(failedResult.verdict).toBe(ExecutionVerdict.FAILED)
+        expect(retryEntireFlow.verdict).toBe(ExecutionVerdict.RUNNING)
     }, 10000)
 
     it('should retry flow from failed step', async () => {
-        const context = FlowExecutorContext.empty()
-
         const failedResult = await flowExecutor.execute({
             action: failedHttpAction, executionState: context, constants: generateMockEngineConstants(),
         })
@@ -56,7 +52,7 @@ describe('flow retry', () => {
         const retryFromFailed = await flowExecutor.execute({
             action: successHttpAction, executionState: context, constants: generateMockEngineConstants({}),
         })
-        expect(failedResult.verdict.status).toBe(FlowRunStatus.FAILED)
-        expect(retryFromFailed.verdict.status).toBe(FlowRunStatus.RUNNING)
+        expect(failedResult.verdict).toBe(ExecutionVerdict.FAILED)
+        expect(retryFromFailed.verdict).toBe(ExecutionVerdict.RUNNING)
     }, 10000)
 })

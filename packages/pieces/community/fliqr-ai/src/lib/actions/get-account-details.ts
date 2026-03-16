@@ -16,7 +16,7 @@ export const getFliqrAccountDetails = createAction({
       method: HttpMethod.GET,
       url: `${fliqrConfig.baseUrl}/accounts/me`,
       headers: {
-        [fliqrConfig.accessTokenHeaderKey]: context.auth.secret_text,
+        [fliqrConfig.accessTokenHeaderKey]: context.auth,
         },
     });
     return res.body;

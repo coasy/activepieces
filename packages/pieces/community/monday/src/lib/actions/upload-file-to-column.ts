@@ -15,7 +15,6 @@ export const uploadFileToColumnAction = createAction({
     board_id: mondayCommon.board_id(true),
     item_id: mondayCommon.item_id(true),
     file_column_id: Property.Dropdown({
-      auth: mondayAuth,
       displayName: 'File Column ID',
       required: true,
       refreshers: ['board_id'],
@@ -28,7 +27,7 @@ export const uploadFileToColumnAction = createAction({
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const res = await client.listBoardColumns({
           boardId: board_id as string,
         });
@@ -94,7 +93,7 @@ export const uploadFileToColumnAction = createAction({
       url: 'https://api.monday.com/v2/file',
       headers: {
         'API-Version': '2024-01',
-        Authorization: context.auth.secret_text,
+        Authorization: context.auth,
         ...formData.getHeaders(),
       },
       body: formData,

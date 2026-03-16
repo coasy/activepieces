@@ -9,7 +9,6 @@ const commonAuthProps = {
     pieceName: Type.String({}),
     projectId: Type.String({}),
     metadata: Type.Optional(Metadata),
-    pieceVersion: Type.Optional(Type.String({})),
 }
 
 
@@ -20,13 +19,12 @@ export enum OAuth2GrantType {
     CLIENT_CREDENTIALS = 'client_credentials',
 }
 
-const propsSchema = Type.Record(Type.String(), Type.Unknown())
 export const UpsertCustomAuthRequest = Type.Object({
     ...commonAuthProps,
     type: Type.Literal(AppConnectionType.CUSTOM_AUTH),
     value: Type.Object({
         type: Type.Literal(AppConnectionType.CUSTOM_AUTH),
-        props: propsSchema,
+        props: Type.Record(Type.String(), Type.Unknown()),
     }),
 }, {
     title: 'Custom Auth',
@@ -60,7 +58,7 @@ export const UpsertPlatformOAuth2Request = Type.Object({
     type: Type.Literal(AppConnectionType.PLATFORM_OAUTH2),
     value: Type.Object({
         ...commonOAuth2ValueProps,
-        props: Type.Optional(propsSchema),
+        props: Type.Optional(Type.Record(Type.String(), Type.String())),
         type: Type.Literal(AppConnectionType.PLATFORM_OAUTH2),
         redirect_url: Type.String({
             minLength: 1,
@@ -77,7 +75,7 @@ export const UpsertCloudOAuth2Request = Type.Object({
     type: Type.Literal(AppConnectionType.CLOUD_OAUTH2),
     value: Type.Object({
         ...commonOAuth2ValueProps,
-        props: Type.Optional(propsSchema),
+        props: Type.Optional(Type.Record(Type.String(), Type.String())),
         scope: Type.String(),
         type: Type.Literal(AppConnectionType.CLOUD_OAUTH2),
     }),

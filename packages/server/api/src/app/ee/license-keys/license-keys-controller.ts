@@ -1,5 +1,4 @@
-import { securityAccess } from '@activepieces/server-shared'
-import { ActivepiecesError, ErrorCode, isNil, VerifyLicenseKeyRequestBody } from '@activepieces/shared'
+import { ActivepiecesError, ErrorCode, isNil, PrincipalType, VerifyLicenseKeyRequestBody } from '@activepieces/shared'
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
 import { Type } from '@sinclair/typebox'
 import { licenseKeysService } from './license-keys-service'
@@ -33,7 +32,10 @@ export const licenseKeysController: FastifyPluginAsyncTypebox = async (app) => {
 }
 const VerifyLicenseKeyRequest = {
     config: {
-        security: securityAccess.public(),
+        allowedPrincipals: [
+            PrincipalType.UNKNOWN,
+            PrincipalType.USER,
+        ],
     },
     schema: {
         body: VerifyLicenseKeyRequestBody,
@@ -42,7 +44,10 @@ const VerifyLicenseKeyRequest = {
 
 const GetLicenseKeyRequest = {
     config: {
-        security: securityAccess.public(),
+        allowedPrincipals: [
+            PrincipalType.UNKNOWN,
+            PrincipalType.USER,
+        ],
     },
     schema: {
         params: Type.Object({

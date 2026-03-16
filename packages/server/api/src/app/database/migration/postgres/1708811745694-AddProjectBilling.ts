@@ -34,7 +34,7 @@ export class AddProjectBilling1708811745694 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        if (isNotOneOfTheseEditions([ApEdition.CLOUD, ApEdition.ENTERPRISE])) {
+        if (isNotOneOfTheseEditions([ApEdition.CLOUD])) {
             return
         }
         await queryRunner.query(`

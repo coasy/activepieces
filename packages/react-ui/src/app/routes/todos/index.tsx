@@ -9,28 +9,27 @@ import {
   ListTodo,
   CheckCheck,
   Trash2,
-  Activity,
-  Clock,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { DashboardPageHeader } from '@/components/custom/dashboard-page-header';
 import { ConfirmationDeleteDialog } from '@/components/delete-dialog';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   DataTable,
   RowDataWithActions,
   BulkAction,
 } from '@/components/ui/data-table';
 import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
-import { TruncatedColumnTextValue } from '@/components/ui/data-table/truncated-column-text-value';
-import { FormattedDate } from '@/components/ui/formatted-date';
 import { StatusIconWithText } from '@/components/ui/status-icon-with-text';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { projectMembersHooks } from '@/features/members/lib/project-members-hooks';
+import { projectMembersHooks } from '@/features/team/lib/project-members-hooks';
 import { todosHooks } from '@/features/todos/lib/todo-hook';
 import { todoUtils } from '@/features/todos/lib/todo-utils';
 import { userHooks } from '@/hooks/user-hooks';
+import { formatUtils } from '@/lib/utils';
 import {
   Todo,
   PopulatedTodo,
@@ -158,30 +157,100 @@ function TodosPage() {
 
   const columns: ColumnDef<RowDataWithActions<PopulatedTodo>, unknown>[] = [
     {
-      accessorKey: 'title',
-      size: 200,
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('Title')} icon={Tag} />
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            table.getIsSomePageRowsSelected()
+          }
+          variant="secondary"
+          onCheckedChange={(value) => {
+            const isChecked = !!value;
+            table.toggleAllPageRowsSelected(isChecked);
+
+            if (isChecked) {
+              const allRows = table
+                .getRowModel()
+                .rows.map((row) => row.original);
+
+              const newSelectedRows = [...allRows, ...selectedRows];
+
+              const uniqueRows = Array.from(
+                new Map(
+                  newSelectedRows.map((item) => [item.id, item]),
+                ).values(),
+              );
+
+              setSelectedRows(uniqueRows);
+            } else {
+              const filteredRows = selectedRows.filter((row) => {
+                return !table
+                  .getRowModel()
+                  .rows.some((r) => r.original.id === row.id);
+              });
+              setSelectedRows(filteredRows);
+            }
+          }}
+        />
       ),
       cell: ({ row }) => {
-        return <TruncatedColumnTextValue value={row.original.title} />;
+        const isChecked = selectedRows.some(
+          (selectedRow) => selectedRow.id === row.original.id,
+        );
+        return (
+          <Checkbox
+            variant="secondary"
+            checked={isChecked}
+            onCheckedChange={(value) => {
+              const isChecked = !!value;
+              let newSelectedRows = [...selectedRows];
+              if (isChecked) {
+                const exists = newSelectedRows.some(
+                  (selectedRow) => selectedRow.id === row.original.id,
+                );
+                if (!exists) {
+                  newSelectedRows.push(row.original);
+                }
+              } else {
+                newSelectedRows = newSelectedRows.filter(
+                  (selectedRow) => selectedRow.id !== row.original.id,
+                );
+              }
+              setSelectedRows(newSelectedRows);
+              row.toggleSelected(!!value);
+            }}
+          />
+        );
+      },
+      accessorKey: 'select',
+    },
+    {
+      accessorKey: 'title',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title={t('Title')} />
+      ),
+      cell: ({ row }) => {
+        return (
+          <div className="flex items-center gap-2">{row.original.title}</div>
+        );
       },
     },
     {
       accessorKey: 'createdBy',
-      size: 180,
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('Created by')}
-          icon={User}
-        />
+        <DataTableColumnHeader column={column} title={t('Created by')} />
       ),
       cell: ({ row }) => {
         const authorName = todoUtils.getAuthorName(row.original);
         return (
           <div className="text-left flex items-center gap-2">
-            <ApAvatar size="small" id={row.original.createdByUser?.id ?? ''} />
+            <ApAvatar
+              size="small"
+              type={todoUtils.getAuthorType(row.original)}
+              fullName={authorName ?? ''}
+              userEmail={row.original.createdByUser?.email ?? ''}
+            />
             <div>{authorName}</div>
           </div>
         );
@@ -189,22 +258,23 @@ function TodosPage() {
     },
     {
       accessorKey: 'assignee',
-      size: 180,
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('Assigned to')}
-          icon={User}
-        />
+        <DataTableColumnHeader column={column} title={t('Assigned to')} />
       ),
       cell: ({ row }) => {
         return (
           <div className="text-left">
             {row.original.assignee && (
               <ApAvatar
+                type="user"
                 size="small"
                 includeName={true}
-                id={row.original.assignee.id}
+                userEmail={row.original.assignee.email}
+                fullName={
+                  row.original.assignee.firstName +
+                  ' ' +
+                  row.original.assignee.lastName
+                }
               />
             )}
             {!row.original.assignee && <div className="text-left">-</div>}
@@ -214,13 +284,8 @@ function TodosPage() {
     },
     {
       accessorKey: 'status',
-      size: 120,
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('Status')}
-          icon={Activity}
-        />
+        <DataTableColumnHeader column={column} title={t('Status')} />
       ),
       cell: ({ row }) => {
         return (
@@ -238,18 +303,13 @@ function TodosPage() {
 
     {
       accessorKey: 'created',
-      size: 150,
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('Date Created')}
-          icon={Clock}
-        />
+        <DataTableColumnHeader column={column} title={t('Date Created')} />
       ),
       cell: ({ row }) => {
         return (
           <div className="text-left">
-            <FormattedDate date={new Date(row.original.created)} />
+            {formatUtils.formatDate(new Date(row.original.created))}
           </div>
         );
       },
@@ -258,6 +318,13 @@ function TodosPage() {
 
   return (
     <div className="flex-col w-full">
+      <DashboardPageHeader
+        description={t(
+          'Manage todos for your project that are created by automations',
+        )}
+        title={t('Todos')}
+        tutorialTab="todos"
+      />
       <Tabs
         value={activeTab}
         onValueChange={(value) => setActiveTab(value as 'all' | 'needs-action')}
@@ -297,8 +364,6 @@ function TodosPage() {
           setSelectedTask(row);
           setDrawerOpen(true);
         }}
-        selectColumn={true}
-        onSelectedRowsChange={setSelectedRows}
         bulkActions={bulkActions}
       />
       {selectedTask && (

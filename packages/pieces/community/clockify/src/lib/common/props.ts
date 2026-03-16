@@ -1,7 +1,6 @@
 import { HttpMethod } from '@activepieces/pieces-common';
 import { Property } from '@activepieces/pieces-framework';
 import { clockifyApiCall } from './client';
-import { clockifyAuth } from '../..';
 
 interface DropdownParams {
 	displayName: string;
@@ -11,7 +10,6 @@ interface DropdownParams {
 
 export const workspaceId = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: clockifyAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -26,7 +24,7 @@ export const workspaceId = (params: DropdownParams) =>
 			}
 
 			const response = await clockifyApiCall<{ id: string; name: string }[]>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: '/workspaces',
 			});
@@ -43,7 +41,6 @@ export const workspaceId = (params: DropdownParams) =>
 
 export const projectId = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: clockifyAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -66,7 +63,7 @@ export const projectId = (params: DropdownParams) =>
 			}
 
 			const response = await clockifyApiCall<{ id: string; name: string }[]>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: `/workspaces/${workspaceId}/projects`,
 			});
@@ -83,7 +80,6 @@ export const projectId = (params: DropdownParams) =>
 
 export const assigneeIds = (params: DropdownParams) =>
 	Property.MultiSelectDropdown({
-		auth: clockifyAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -106,7 +102,7 @@ export const assigneeIds = (params: DropdownParams) =>
 			}
 
 			const response = await clockifyApiCall<{ id: string; email: string }[]>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: `/workspaces/${workspaceId}/users`,
 			});
@@ -123,7 +119,6 @@ export const assigneeIds = (params: DropdownParams) =>
 
 export const taskId = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: clockifyAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -154,7 +149,7 @@ export const taskId = (params: DropdownParams) =>
 			}
 
 			const response = await clockifyApiCall<{ id: string; name: string }[]>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: `/workspaces/${workspaceId}/projects/${projectId}/tasks`,
 			});
@@ -171,7 +166,6 @@ export const taskId = (params: DropdownParams) =>
 
 export const tagIds = (params: DropdownParams) =>
 	Property.MultiSelectDropdown({
-		auth: clockifyAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -193,7 +187,7 @@ export const tagIds = (params: DropdownParams) =>
 				};
 			}
 			const response = await clockifyApiCall<{ id: string; name: string }[]>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: `/workspaces/${workspaceId}/tags`,
 			});

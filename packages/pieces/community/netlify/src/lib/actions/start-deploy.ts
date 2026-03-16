@@ -1,6 +1,5 @@
 import { createAction, Property, OAuth2PropertyValue } from "@activepieces/pieces-framework";
 import { httpClient, HttpMethod } from "@activepieces/pieces-common";
-import { netlifyAuth } from "../common/auth";
 
 export const startDeploy = createAction({
   name: "start_deploy",
@@ -8,7 +7,7 @@ export const startDeploy = createAction({
   description: "Triggers a new build for a site on Netlify. Supports clearing build cache.",
   props: {
     siteId: Property.Dropdown({
-      auth: netlifyAuth,      displayName: "Site",
+      displayName: "Site",
       description: "Select the site to deploy",
       required: true,
       refreshers: ['auth'],

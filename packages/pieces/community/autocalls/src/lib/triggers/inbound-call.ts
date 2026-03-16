@@ -9,7 +9,6 @@ export const inboundCall = createTrigger({
     description: 'Triggers for variables before connecting an inbound call.',
     props: {
         assistant: Property.Dropdown({
-            auth: autocallsAuth,
             displayName: 'Assistant',
             description: 'Select an assistant',
             required: true,
@@ -20,7 +19,7 @@ export const inboundCall = createTrigger({
                     method: HttpMethod.GET,
                     url: baseApiUrl + 'api/user/assistants',
                     headers: {
-                        Authorization: "Bearer " + auth?.secret_text,
+                        Authorization: "Bearer " + auth,
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
@@ -63,7 +62,7 @@ export const inboundCall = createTrigger({
                 webhook_url: context.webhookUrl,
             },
             headers: {
-                Authorization: "Bearer " + context.auth.secret_text,
+                Authorization: "Bearer " + context.auth,
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
@@ -77,7 +76,7 @@ export const inboundCall = createTrigger({
                 assistant_id: context.propsValue['assistant'],
             },
             headers: {
-                Authorization: "Bearer " + context.auth.secret_text,
+                Authorization: "Bearer " + context.auth,
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },

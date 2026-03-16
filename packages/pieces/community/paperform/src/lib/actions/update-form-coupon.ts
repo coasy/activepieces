@@ -116,7 +116,7 @@ export const updateFormCoupon = createAction({
           method: HttpMethod.PUT,
           url: `/forms/${formId}/coupons/${couponCode}`,
           body: requestBody,
-          auth: auth.secret_text,
+          auth: auth as string,
         });
 
       return response.results.coupon;

@@ -18,14 +18,14 @@ export const getRecord = createAction({
   },
   async run({
     propsValue: { elementType, record },
-    auth
+    auth: { instance_url, username, password },
   }) {
-    const instance = await instanceLogin(auth.props.instance_url, auth.props.username, auth.props.password);
+    const instance = await instanceLogin(instance_url, username, password);
 
     if (instance !== null) {
       const response = await httpClient.sendRequest<Record<string, unknown>[]>({
         method: HttpMethod.GET,
-        url: `${auth.props.instance_url}/webservice.php`,
+        url: `${instance_url}/webservice.php`,
         queryParams: {
           operation: 'retrieve',
           sessionName: instance.sessionId ?? instance.sessionName,

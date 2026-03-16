@@ -295,7 +295,7 @@ export const updateUser = createAction({
     })
   },
   async run(context) {
-    const authData = await getAuthToken(context.auth);
+    const authData = await getAuthToken(context.auth as CyberArkAuth);
 
     const requestBody: any = {
       id: parseInt(context.propsValue.userId as string),

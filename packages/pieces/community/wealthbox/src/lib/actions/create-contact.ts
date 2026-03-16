@@ -1,12 +1,10 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
-import { wealthboxAuth } from '../..';
 
 export const createContact = createAction({
   name: 'create_contact',
   displayName: 'Create Contact',
   description: 'Adds a new contact with rich details (name, address, email, tags, etc.)',
-  auth: wealthboxAuth,
   props: {
     first_name: Property.ShortText({
       displayName: 'First Name',
@@ -301,7 +299,7 @@ export const createContact = createAction({
         method: HttpMethod.POST,
         url: 'https://api.crmworkspace.com/v1/contacts',
         headers: {
-          'ACCESS_TOKEN': auth.secret_text,
+          'ACCESS_TOKEN': auth as string,
           'Content-Type': 'application/json'
         },
         body: requestBody

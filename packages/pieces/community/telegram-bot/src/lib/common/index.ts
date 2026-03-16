@@ -3,8 +3,6 @@ import {
   HttpRequest,
   httpClient,
 } from '@activepieces/pieces-common';
-import { telegramBotAuth } from '../..';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
 
 export type SetWebhookRequest = {
   ip_address: string;
@@ -15,8 +13,8 @@ export type SetWebhookRequest = {
 };
 
 export const telegramCommons = {
-  getApiUrl: (auth: AppConnectionValueForAuthProperty<typeof telegramBotAuth>, methodName: string) => {
-    return `https://api.telegram.org/bot${auth.secret_text}/${methodName}`;
+  getApiUrl: (botToken: string, methodName: string) => {
+    return `https://api.telegram.org/bot${botToken}/${methodName}`;
   },
   subscribeWebhook: async (
     botToken: string,

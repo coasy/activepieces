@@ -4,7 +4,6 @@ import { useMutation } from '@tanstack/react-query';
 import { t } from 'i18next';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -17,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { internalErrorToast } from '@/components/ui/sonner';
+import { INTERNAL_ERROR_TOAST, toast } from '@/components/ui/use-toast';
 import { validationUtils } from '@/lib/utils';
 import { Folder } from '@activepieces/shared';
 
@@ -57,7 +56,9 @@ const RenameFolderDialog = ({
     onSuccess: () => {
       setIsOpen(false);
       onRename();
-      toast.success(t('Renamed flow successfully'));
+      toast({
+        title: t('Renamed flow successfully'),
+      });
     },
     onError: (err) => {
       if (validationUtils.isValidationError(err)) {
@@ -65,7 +66,7 @@ const RenameFolderDialog = ({
           message: t('Folder name already used'),
         });
       } else {
-        internalErrorToast();
+        toast(INTERNAL_ERROR_TOAST);
       }
     },
   });

@@ -84,7 +84,7 @@ export const createNewBrowserWindowAction = createAction({
 		if (waitUntilTimeoutSeconds) body['waitUntilTimeoutSeconds'] = waitUntilTimeoutSeconds;
 
 		const response = await airtopApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.POST,
 			resourceUri: `/sessions/${sessionId}/windows`,
 			body,

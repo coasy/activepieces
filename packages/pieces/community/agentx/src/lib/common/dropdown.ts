@@ -1,10 +1,9 @@
 import { Property } from "@activepieces/pieces-framework";
 import { makeRequest } from "./client";
-import { HttpMethod } from "@activepieces/pieces-common";
 import { AgentXAuth } from "./auth";
+import { HttpMethod } from "@activepieces/pieces-common";
 
-export const AgentIdDropdown = Property.Dropdown<string,true,typeof AgentXAuth>({
-  auth: AgentXAuth,
+export const AgentIdDropdown = Property.Dropdown<string>({
   displayName: "Agent",
   description: "Select an AgentX agent",
   required: true, // ensures the value is always a string, not undefined
@@ -19,7 +18,7 @@ export const AgentIdDropdown = Property.Dropdown<string,true,typeof AgentXAuth>(
     }
 
     try {
-      const agents = await makeRequest(auth.secret_text, HttpMethod.GET, "/agents");
+      const agents = await makeRequest(auth as string, HttpMethod.GET, "/agents");
 
       return {
         disabled: false,
@@ -38,8 +37,7 @@ export const AgentIdDropdown = Property.Dropdown<string,true,typeof AgentXAuth>(
   },
 });
 
-export const ConversationIdDropdown = Property.Dropdown({
-  auth: AgentXAuth,
+export const ConversationIdDropdown = Property.Dropdown<string>({
   displayName: "Conversation",
   description: "Select a conversation for the chosen Agent",
   required: false,
@@ -63,7 +61,7 @@ export const ConversationIdDropdown = Property.Dropdown({
 
     try {
       const conversations = await makeRequest(
-        auth.secret_text,
+        auth as string,
         HttpMethod.GET,
         `/agents/${agentId}/conversations`
       );

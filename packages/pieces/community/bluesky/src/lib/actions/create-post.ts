@@ -193,7 +193,7 @@ export const createPost = createAction({
     } = propsValue;
 
     try {
-      const agent = await createBlueskyAgent(auth.props);
+      const agent = await createBlueskyAgent(auth);
 
       let processedText = text;
       if (additionalHashtags && additionalHashtags.trim()) {

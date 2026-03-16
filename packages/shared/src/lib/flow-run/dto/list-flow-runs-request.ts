@@ -13,7 +13,6 @@ export const ListFlowRunsRequestQuery = Type.Object({
     projectId: ApId,
     failedStepName: Type.Optional(Type.String({})),
     flowRunIds: Type.Optional(Type.Array(ApId)),
-    includeArchived: Type.Optional(Type.Boolean({})),
 })
 
 export type ListFlowRunsRequestQuery = Static<typeof ListFlowRunsRequestQuery>

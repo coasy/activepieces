@@ -67,7 +67,7 @@ export const uploadFile = createAction({
 				url: 'https://api.mistral.ai/v1/files',
 				authentication: {
 					type: AuthenticationType.BEARER_TOKEN,
-					token: context.auth.secret_text,
+					token: context.auth as string,
 				},
 				headers:{
 					...form.getHeaders()

@@ -3,6 +3,7 @@ import { EntitySchema } from 'typeorm'
 import {
     ApIdSchema,
     BaseColumnSchemaPart,
+    JSONB_COLUMN_TYPE,
 } from '../../../database/database-common'
 
 export type PlatformPlanSchema = PlatformPlan & {
@@ -21,24 +22,13 @@ export const PlatformPlanEntity = new EntitySchema<PlatformPlanSchema>({
         includedAiCredits: {
             type: Number,
         },
-        aiCreditsAutoTopUpCreditsToAdd: {
+        aiCreditsOverageLimit: {
             type: Number,
             nullable: true,
         },
-        lastFreeAiCreditsRenewalDate: {
-            type: 'timestamp with time zone',
-            nullable: true,
-        },
-        maxAutoTopUpCreditsMonthly: {
-            type: Number,
-            nullable: true,
-        },
-        aiCreditsAutoTopUpThreshold: {
-            type: Number,
-            nullable: true,
-        },
-        aiCreditsAutoTopUpState: {
+        aiCreditsOverageState: {
             type: String,
+            nullable: true,
         },
         stripeSubscriptionStartDate: {
             type: Number,
@@ -50,6 +40,10 @@ export const PlatformPlanEntity = new EntitySchema<PlatformPlanSchema>({
         },
         stripeSubscriptionCancelDate: {
             type: Number,
+            nullable: true,
+        },
+        stripePaymentMethod: {
+            type: String,
             nullable: true,
         },
         environmentsEnabled: {
@@ -76,8 +70,8 @@ export const PlatformPlanEntity = new EntitySchema<PlatformPlanSchema>({
         customAppearanceEnabled: {
             type: Boolean,
         },
-        teamProjectsLimit: {
-            type: String,
+        manageProjectsEnabled: {
+            type: Boolean,
         },
         projectRolesEnabled: {
             type: Boolean,
@@ -113,22 +107,43 @@ export const PlatformPlanEntity = new EntitySchema<PlatformPlanSchema>({
             type: String,
             nullable: true,
         },
+        stripeBillingCycle: {
+            type: String,
+        },
+        tablesEnabled: {
+            type: Boolean,
+        },
+        todosEnabled: {
+            type: Boolean,
+        },
+        userSeatsLimit: {
+            type: Number,
+            nullable: true,
+        },
         projectsLimit: {
             type: Number,
             nullable: true,
         },
-        tablesEnabled: {
+        tablesLimit: {
+            type: Number,
+            nullable: true,
+        },
+        agentsEnabled: {
             type: Boolean,
+        },
+        mcpLimit: {
+            type: Number,
+            nullable: true,
         },
         activeFlowsLimit: {
             type: Number,
             nullable: true,
         },
-        eventStreamingEnabled: {
+        mcpsEnabled: {
             type: Boolean,
         },
         dedicatedWorkers: {
-            type: 'jsonb',
+            type: JSONB_COLUMN_TYPE,
             nullable: true,
         },
     },

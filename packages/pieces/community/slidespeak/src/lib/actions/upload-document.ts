@@ -27,7 +27,7 @@ export const uploadDocumentAction = createAction({
       method: HttpMethod.POST,
       url: BASE_URL + '/document/upload',
       headers: {
-        'X-API-key': apiKey.secret_text,
+        'X-API-key': apiKey,
         ...formData.getHeaders(),
       },
       body:formData
@@ -49,7 +49,7 @@ export const uploadDocumentAction = createAction({
         method:HttpMethod.GET,
         url:BASE_URL + `/task_status/${taskId}`,
         headers: {
-        'X-API-key': apiKey.secret_text,
+        'X-API-key': apiKey,
         }
       })
 

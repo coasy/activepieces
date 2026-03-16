@@ -48,14 +48,11 @@ export const baserow = createPiece({
     updateRowAction,
     createCustomApiCallAction({
       baseUrl: (auth) => {
-        if (!auth) {
-          return '';
-        }
-        return auth.props.apiUrl;
+        return (auth as { apiUrl: string }).apiUrl;
       },
       auth: baserowAuth,
       authMapping: async (auth) => ({
-        Authorization: `Token ${auth.props.token}`,
+        Authorization: `Token ${(auth as { token: string }).token}`,
       }),
     }),
   ],

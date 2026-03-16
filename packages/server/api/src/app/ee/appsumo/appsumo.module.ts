@@ -1,4 +1,5 @@
-import { AppSystemProp, securityAccess } from '@activepieces/server-shared'
+import { AppSystemProp } from '@activepieces/server-shared'
+import { ALL_PRINCIPAL_TYPES } from '@activepieces/shared'
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
 import { Static, Type } from '@sinclair/typebox'
 import { FastifyInstance, FastifyRequest } from 'fastify'
@@ -41,7 +42,8 @@ const appsumoController: FastifyPluginAsyncTypebox = async (
         '/token',
         {
             config: {
-                security: securityAccess.public(),
+                allowedPrincipals: ALL_PRINCIPAL_TYPES,
+                skipAuth: true,
             },
             schema: {
                 body: ExchangeTokenRequest,
@@ -71,7 +73,8 @@ const appsumoController: FastifyPluginAsyncTypebox = async (
         '/action',
         {
             config: {
-                security: securityAccess.public(),
+                allowedPrincipals: ALL_PRINCIPAL_TYPES,
+                skipAuth: true,
             },
             schema: {
                 headers: AuthorizationHeaders,

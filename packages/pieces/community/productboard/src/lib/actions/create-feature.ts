@@ -31,7 +31,6 @@ export const createFeature = createAction({
             }
         }),
         status: Property.Dropdown({
-            auth: productboardAuth,
             displayName: 'Status',
             description: 'Current status of the feature',
             required: true,
@@ -45,7 +44,7 @@ export const createFeature = createAction({
                     };
                 }
                 const response = await productboardCommon.apiCall({
-                    auth: auth,
+                    auth: auth as string,
                     method: HttpMethod.GET,
                     resourceUri: '/feature-statuses'
                 });
@@ -60,7 +59,6 @@ export const createFeature = createAction({
             }
         }),
         parent_type: Property.DynamicProperties({
-            auth: productboardAuth,
             displayName: 'Parent Type',
             required: true,
             refreshers: ['type'],
@@ -93,12 +91,11 @@ export const createFeature = createAction({
             }
         }),
         parent_id: Property.Dropdown({
-            auth: productboardAuth,
             displayName: 'Parent',
             required: true,
             refreshers: ['parent_type'],
             options: async (props) => {
-                const auth = props['auth']
+                const auth = props['auth'] as string
                 const parent_type = props['parent_type'] as unknown as { parent_type: string }
 
                 if (!auth) return { disabled: true, options: [], placeholder: 'Please authenticate first' };
@@ -113,7 +110,7 @@ export const createFeature = createAction({
                 if (!resourceUri) return { disabled: true, options: [], placeholder: 'Invalid parent type' };
 
                 const response = await productboardCommon.apiCall({
-                    auth: auth,
+                    auth: auth as string,
                     method: HttpMethod.GET,
                     resourceUri: resourceUri
                 });

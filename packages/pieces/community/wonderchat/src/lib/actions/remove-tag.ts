@@ -22,7 +22,7 @@ export const removeTag = createAction({
   },
 
   async run({ auth, propsValue }) {
-    const apiKey = auth.secret_text;
+    const apiKey = auth;
     const { chatlogId, tags } = propsValue;
 
     const response = await httpClient.sendRequest({

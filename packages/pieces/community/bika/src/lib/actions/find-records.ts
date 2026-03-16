@@ -40,7 +40,7 @@ export const findRecordsAction = createAction({
     const filter = context.propsValue.filter;
 
     const client = makeClient(
-      context.auth.props,
+      context.auth as PiecePropValueSchema<typeof BikaAuth>
     );
     const response: any = await client.listRecords(
       spaceId,

@@ -17,17 +17,9 @@ export const newMessageInTopic = createTrigger({
     topic: Property.Dropdown({
       displayName: 'Topic',
       required: true,
-      auth: googlePubsubAuth, 
       refreshers: ['auth'],
       options: async ({ auth }) => {
-        if (!auth) {
-          return {
-            disabled: true,
-            options: [],
-            placeholder: 'Please authenticate first',
-          };
-        }
-        const json = auth.props.json;
+        const json = (auth as { json: string }).json;
         return common.getTopics(json);
       },
     }),
@@ -39,11 +31,11 @@ export const newMessageInTopic = createTrigger({
   },
   type: TriggerStrategy.WEBHOOK,
   onEnable: async (context) => {
-    const json = context.auth.props.json;
+    const json = (context.auth as { json: string }).json;
     const client = common.getClient(json);
 
     const { topic, subscription } = context.propsValue;
-    const project = common.getProjectId(context.auth.props.json);
+    const project = common.getProjectId(context.auth.json as string);
 
     const url = `https://pubsub.googleapis.com/v1/projects/${project}/subscriptions/${subscription}`;
     const body = {
@@ -70,7 +62,7 @@ export const newMessageInTopic = createTrigger({
     const response = await context.store.get<ISubscriptionInfo>('_trigger');
 
     if (response !== null && response !== undefined) {
-      const json = context.auth.props.json;
+      const json = (context.auth as { json: string }).json;
       const client = common.getClient(json);
       const { project, subscription } = response;
       const url = `https://pubsub.googleapis.com/v1/projects/${project}/subscriptions/${subscription}`;

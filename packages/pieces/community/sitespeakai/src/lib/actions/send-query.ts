@@ -45,7 +45,7 @@ export const sendQuery = createAction({
     }
 
     const response = await makeRequest(
-      auth.secret_text,
+      auth as string,
       HttpMethod.POST,
       `/${propsValue.chatbotId}/query`,
       body

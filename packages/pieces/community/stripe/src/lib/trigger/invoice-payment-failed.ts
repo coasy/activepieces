@@ -68,7 +68,7 @@ export const stripeInvoicePaymentFailed = createTrigger({
     const webhook = await stripeCommon.subscribeWebhook(
       'invoice.payment_failed',
       context.webhookUrl,
-      context.auth.secret_text
+      context.auth
     );
     await context.store.put<StripeWebhookInformation>(
       '_invoice_payment_failed_trigger',
@@ -85,7 +85,7 @@ export const stripeInvoicePaymentFailed = createTrigger({
     if (webhookInfo !== null && webhookInfo !== undefined) {
       await stripeCommon.unsubscribeWebhook(
         webhookInfo.webhookId,
-        context.auth.secret_text
+        context.auth
       );
     }
   },
@@ -94,7 +94,7 @@ export const stripeInvoicePaymentFailed = createTrigger({
       method: HttpMethod.GET,
       url: 'https://api.stripe.com/v1/checkout/invoices',
       headers: {
-        Authorization: 'Bearer ' + context.auth.secret_text,
+        Authorization: 'Bearer ' + context.auth,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       queryParams: {

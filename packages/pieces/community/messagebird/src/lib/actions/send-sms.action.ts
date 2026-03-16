@@ -35,7 +35,7 @@ export const sendSMSAction = createAction({
   },
   async run(context) {
     const { recipient, message, reference, scheduledFor } = context.propsValue;
-    const auth = context.auth.props;
+    const auth = context.auth as { apiKey: string; workspaceId: string; channelId: string };
     
     // Format request for Bird Channels API
     const request: HttpRequest = {

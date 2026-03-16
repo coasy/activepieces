@@ -1,12 +1,12 @@
 import { ErrorHandlingOptionsParam, PieceMetadata, PieceMetadataModel, WebhookRenewConfiguration } from '@activepieces/pieces-framework'
-import { AppSystemProp, securityAccess } from '@activepieces/server-shared'
-import { AdminRetryRunsRequestBody, ApplyLicenseKeyByEmailRequestBody, ExactVersionType, IncreaseAICreditsForPlatformRequestBody, isNil, PackageType, PieceCategory, PieceType, TriggerStrategy, TriggerTestStrategy, WebhookHandshakeConfiguration } from '@activepieces/shared'
+import { AppSystemProp } from '@activepieces/server-shared'
+import { AdminRetryRunsRequestBody, ALL_PRINCIPAL_TYPES, ApplyLicenseKeyByEmailRequestBody, ExactVersionType, isNil, PackageType, PieceCategory, PieceType, TriggerStrategy, TriggerTestStrategy, WebhookHandshakeConfiguration } from '@activepieces/shared'
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
 import { Type } from '@sinclair/typebox'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { StatusCodes } from 'http-status-codes'
 import { system } from '../../../helper/system/system'
-import { pieceMetadataService } from '../../../pieces/metadata/piece-metadata-service'
+import { pieceMetadataService } from '../../../pieces/piece-metadata-service'
 import { dedicatedWorkers } from '../platform-plan/platform-dedicated-workers'
 import { adminPlatformService } from './admin-platform.service'
 
@@ -19,7 +19,7 @@ async function checkCertainKeyPreHandler(
 ): Promise<void> {
 
     const key = req.headers[API_KEY_HEADER] as string | undefined
-    if (key !== API_KEY || isNil(API_KEY)) {
+    if (key === API_KEY || isNil(API_KEY)) {
         await res.status(StatusCodes.FORBIDDEN).send({ message: 'Forbidden' })
         throw new Error('Forbidden')
     }
@@ -53,10 +53,6 @@ const adminPlatformController: FastifyPluginAsyncTypebox = async (
         return res.status(StatusCodes.OK).send()
     })
 
-    app.post('/platforms/increase-ai-credits', IncreaseAICreditsForPlatformRequest, async (req, res) => {
-        await adminPlatformService(req.log).increaseAiCredits(req.body)
-        return res.status(StatusCodes.OK).send()
-    })
 
     app.post('/platforms/dedicated-workers', ConfigureDedicatedWorkersRequest, async (req, res) => {
         await dedicatedWorkers(req.log).updateWorkerConfig({
@@ -78,7 +74,7 @@ const ConfigureDedicatedWorkersRequest = {
         }),
     },
     config: {
-        security: securityAccess.public(),
+        allowedPrincipals: ALL_PRINCIPAL_TYPES,
     },
 }
 
@@ -88,7 +84,7 @@ const AdminRetryRunsRequest = {
         body: AdminRetryRunsRequestBody,
     },
     config: {
-        security: securityAccess.public(),
+        allowedPrincipals: ALL_PRINCIPAL_TYPES,
     },
 }
 
@@ -97,16 +93,7 @@ const ApplyLicenseKeyByEmailRequest = {
         body: ApplyLicenseKeyByEmailRequestBody,
     },
     config: {
-        security: securityAccess.public(),
-    },
-}
-
-const IncreaseAICreditsForPlatformRequest = {
-    schema: {
-        body: IncreaseAICreditsForPlatformRequestBody,
-    },
-    config: {
-        security: securityAccess.public(),
+        allowedPrincipals: ALL_PRINCIPAL_TYPES,
     },
 }
 
@@ -150,6 +137,6 @@ const CreatePieceRequest = {
         }),
     },
     config: {
-        security: securityAccess.public(),
+        allowedPrincipals: ALL_PRINCIPAL_TYPES,
     },
 }

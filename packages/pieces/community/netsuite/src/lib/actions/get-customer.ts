@@ -17,7 +17,7 @@ export const getCustomer = createAction({
   },
   async run(context) {
     const { accountId, consumerKey, consumerSecret, tokenId, tokenSecret } =
-      context.auth.props;
+      context.auth;
     const { customerId } = context.propsValue;
 
     const requestUrl = `https://${accountId}.suitetalk.api.netsuite.com/services/rest/record/v1/customer/${customerId}`;

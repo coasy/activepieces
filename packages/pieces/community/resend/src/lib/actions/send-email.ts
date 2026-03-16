@@ -47,8 +47,7 @@ export const sendEmail = createAction({
       description: undefined,
       required: true,
     }),
-    content_type: Property.Dropdown<'text' | 'html', true, typeof resendAuth>({
-      auth: resendAuth,
+    content_type: Property.Dropdown<'text' | 'html'>({
       displayName: 'Content Type',
       refreshers: [],
       required: true,
@@ -100,7 +99,7 @@ export const sendEmail = createAction({
       body: requestBody,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: context.auth.secret_text,
+        token: context.auth,
       },
       queryParams: {},
     });

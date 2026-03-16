@@ -6,7 +6,6 @@ import {
   pollingHelper,
 } from '@activepieces/pieces-common';
 import {
-  AppConnectionValueForAuthProperty,
   createTrigger,
   OAuth2PropertyValue,
   TriggerStrategy,
@@ -85,7 +84,7 @@ export const newResponse = createTrigger({
   },
 });
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof googleFormsAuth>, { form_id: string }> = {
+const polling: Polling<OAuth2PropertyValue, { form_id: string }> = {
   strategy: DedupeStrategy.TIMEBASED,
   items: async ({ auth, propsValue, lastFetchEpochMS }) => {
     const items = await getResponse(

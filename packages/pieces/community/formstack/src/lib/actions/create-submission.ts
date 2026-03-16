@@ -43,7 +43,6 @@ export const createSubmission = createAction({
       required: false,
     }),
     form_fields: Property.DynamicProperties({
-      auth: formStackAuth,
       displayName: 'Form Fields',
       description: 'Fill out the form fields',
       required: true,
@@ -53,7 +52,7 @@ export const createSubmission = createAction({
           return {};
         }
 
-        const authentication = auth;
+        const authentication = auth as OAuth2PropertyValue;
         const accessToken = authentication['access_token'];
 
         try {

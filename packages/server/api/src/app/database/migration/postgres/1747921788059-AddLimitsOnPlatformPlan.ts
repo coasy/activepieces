@@ -1,14 +1,9 @@
-import { ApEdition } from '@activepieces/shared'
 import { MigrationInterface, QueryRunner } from 'typeorm'
-import { isNotOneOfTheseEditions } from '../../database-common'
 
 export class AddLimitsOnPlatformPlan1747921788059 implements MigrationInterface {
     name = 'AddLimitsOnPlatformPlan1747921788059'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        if (isNotOneOfTheseEditions([ApEdition.CLOUD, ApEdition.ENTERPRISE])) {
-            return
-        }
         await queryRunner.query(`
             ALTER TABLE "project_plan"
                 RENAME COLUMN "aiTokens" TO "aiCredits"
@@ -36,9 +31,6 @@ export class AddLimitsOnPlatformPlan1747921788059 implements MigrationInterface 
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        if (isNotOneOfTheseEditions([ApEdition.CLOUD, ApEdition.ENTERPRISE])) {
-            return
-        }
         await queryRunner.query(`
             ALTER TABLE "platform_plan" DROP COLUMN "activeFlowsLimit"
         `)

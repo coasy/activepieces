@@ -133,7 +133,7 @@ export const trainCustomClassifierAction = createAction({
     const response = await JinaAICommon.makeRequest({
       url: JinaAICommon.classifierTrainUrl,
       method: HttpMethod.POST,
-      auth: apiKey.secret_text,
+      auth: apiKey as string,
       body: requestBody,
     });
 

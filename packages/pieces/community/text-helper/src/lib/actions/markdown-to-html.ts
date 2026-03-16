@@ -1,7 +1,7 @@
 import { Property, createAction } from '@activepieces/pieces-framework';
 import { Converter, Flavor } from 'showdown';
+import { z } from 'zod';
 import { propsValidation } from '@activepieces/pieces-common';
-import { z, type ZodTypeAny } from 'zod';
 
 export const markdownToHTML = createAction({
   name: 'markdown_to_html',
@@ -66,10 +66,9 @@ export const markdownToHTML = createAction({
     }),
   },
   run: async (context) => {
-    const validationSchema: Record<string, ZodTypeAny> = {
+    await propsValidation.validateZod(context.propsValue, {
       headerLevelStart: z.number().min(1).max(6),
-    };
-    await propsValidation.validateZod(context.propsValue, validationSchema);
+    });
 
     const converter = new Converter({
       headerLevelStart: context.propsValue.headerLevelStart,

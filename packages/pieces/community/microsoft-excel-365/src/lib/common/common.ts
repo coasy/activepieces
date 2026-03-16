@@ -6,12 +6,10 @@ import {
   HttpRequest
 } from '@activepieces/pieces-common';
 import { isNil } from '@activepieces/shared';
-import { excelAuth } from '../..';
 
 export const excelCommon = {
   baseUrl: 'https://graph.microsoft.com/v1.0/me/drive',
   workbook_id: Property.Dropdown({
-    auth: excelAuth,
     displayName: 'Workbook',
     required: true,
     options: async ({ auth }) => {
@@ -48,7 +46,6 @@ export const excelCommon = {
     refreshers: []
   }),
   worksheet_id: Property.Dropdown({
-    auth: excelAuth,
     displayName: 'Worksheet',
     required: true,
     refreshers: ['workbook_id'],
@@ -86,7 +83,6 @@ export const excelCommon = {
     }
   }),
   table_id: Property.Dropdown({
-    auth: excelAuth,
     displayName: 'Table',
     required: true,
     refreshers: ['workbook_id', 'worksheet_id'],
@@ -124,7 +120,6 @@ export const excelCommon = {
     }
   }),
   values: Property.DynamicProperties({
-    auth: excelAuth,
     displayName: 'Values',
     description: 'The values to insert',
     required: true,
@@ -169,7 +164,6 @@ export const excelCommon = {
     }
   }),
   table_values: Property.DynamicProperties({
-    auth: excelAuth,
     displayName: 'Values',
     description: 'The values to insert',
     required: true,
@@ -208,7 +202,6 @@ export const excelCommon = {
     }
   }),
   parent_folder: Property.Dropdown({
-    auth: excelAuth,
     displayName: 'Parent Folder',
     description: 'The parent folder to use',
     required: true,

@@ -1,29 +1,41 @@
+import { useQuery } from '@tanstack/react-query';
 import { t } from 'i18next';
 
-import { useBuilderStateContext } from '@/app/builder/builder-hooks';
+import {
+  LeftSideBarType,
+  useBuilderStateContext,
+} from '@/app/builder/builder-hooks';
 import { CardList, CardListItemSkeleton } from '@/components/custom/card-list';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { flowHooks } from '@/features/flows/lib/flow-hooks';
-import { RightSideBarType } from '@/lib/types';
+import { flowsApi } from '@/features/flows/lib/flows-api';
+import { FlowVersionMetadata, SeekPage } from '@activepieces/shared';
 
 import { SidebarHeader } from '../sidebar-header';
 
 import { FlowVersionDetailsCard } from './flow-versions-card';
 
 const FlowVersionsList = () => {
-  const [flow, setRightSidebar, selectedFlowVersion] = useBuilderStateContext(
-    (state) => [state.flow, state.setRightSidebar, state.flowVersion],
+  const [flow, setLeftSidebar, selectedFlowVersion] = useBuilderStateContext(
+    (state) => [state.flow, state.setLeftSidebar, state.flowVersion],
   );
 
   const {
     data: flowVersionPage,
     isLoading,
     isError,
-  } = flowHooks.useListFlowVersions(flow.id);
+  } = useQuery<SeekPage<FlowVersionMetadata>, Error>({
+    queryKey: ['flow-versions', flow.id],
+    queryFn: () =>
+      flowsApi.listVersions(flow.id, {
+        limit: 1000,
+        cursor: undefined,
+      }),
+    staleTime: 0,
+  });
 
   return (
     <>
-      <SidebarHeader onClose={() => setRightSidebar(RightSideBarType.NONE)}>
+      <SidebarHeader onClose={() => setLeftSidebar(LeftSideBarType.NONE)}>
         {t('Version History')}
       </SidebarHeader>
       <CardList>

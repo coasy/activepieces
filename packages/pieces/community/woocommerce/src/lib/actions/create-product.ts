@@ -72,7 +72,7 @@ export const wooCreateProduct = createAction({
     }),
   },
   async run(configValue) {
-    const trimmedBaseUrl = configValue.auth.props.baseUrl.replace(/\/$/, '');
+    const trimmedBaseUrl = configValue.auth.baseUrl.replace(/\/$/, '');
 
     const name = configValue.propsValue['name'];
     const type = configValue.propsValue['type'];
@@ -103,8 +103,8 @@ export const wooCreateProduct = createAction({
       method: HttpMethod.POST,
       authentication: {
         type: AuthenticationType.BASIC,
-        username: configValue.auth.props.consumerKey,
-        password: configValue.auth.props.consumerSecret,
+        username: configValue.auth.consumerKey,
+        password: configValue.auth.consumerSecret,
       },
       body,
     };

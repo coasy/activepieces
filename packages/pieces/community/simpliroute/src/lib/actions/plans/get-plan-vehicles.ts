@@ -18,7 +18,7 @@ export const get_plan_vehicles = createAction({
             url,
             headers: {
                 ...commonHeaders,
-                'Authorization': `Token ${context.auth.secret_text}`
+                'Authorization': `Token ${context.auth}`
             }
         });
         return {

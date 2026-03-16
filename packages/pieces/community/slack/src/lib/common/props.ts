@@ -1,6 +1,6 @@
 import { OAuth2PropertyValue, Property } from '@activepieces/pieces-framework';
 import { UsersListResponse, WebClient } from '@slack/web-api';
-import {slackAuth} from '../../index';
+
 const slackChannelBotInstruction = `
 	Please make sure add the bot to the channel by following these steps:
 	  1. Type /invite in the channel's chat.
@@ -22,8 +22,7 @@ export const singleSelectChannelInfo = Property.MarkDown({
 });
 
 export const slackChannel = <R extends boolean>(required: R) =>
-  Property.Dropdown<string, R,typeof slackAuth>({
-    auth: slackAuth,
+  Property.Dropdown<string, R>({
     displayName: 'Channel',
     description:
       "You can get the Channel ID by right-clicking on the channel and selecting 'View Channel Details.'",
@@ -62,16 +61,10 @@ export const profilePicture = Property.ShortText({
   required: false,
 });
 
-export const iconEmoji = Property.ShortText({
-  displayName: 'Icon Emoji',
-  description: 'The icon emoji of the bot',
-  required: false,
-});
-
 export const threadTs = Property.ShortText({
-  displayName: 'Reply to Thread (Thread Message Link/Timestamp)',
+  displayName: 'Thread ts',
   description:
-    'Provide the ts (timestamp) or link value of the **parent** message to make this message a reply. Do not use the ts value of the reply itself; use its parent instead. For example `1710304378.475129`.Alternatively, you can easily obtain the message link by clicking on the three dots next to the parent message and selecting the `Copy link` option.',
+    'Provide the ts (timestamp) value of the **parent** message to make this message a reply. Do not use the ts value of the reply itself; use its parent instead. For example `1710304378.475129`.Alternatively, you can easily obtain the message link by clicking on the three dots next to the parent message and selecting the `Copy link` option.',
   required: false,
 });
 
@@ -90,8 +83,7 @@ export const blocks = Property.Json({
   defaultValue: []
 });
 
-export const userId = Property.Dropdown<string,true,typeof slackAuth>({
-  auth: slackAuth,
+export const userId = Property.Dropdown<string>({
   displayName: 'User',
   required: true,
   refreshers: [],

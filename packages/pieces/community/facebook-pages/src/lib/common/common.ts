@@ -4,12 +4,10 @@ import {
   getAccessTokenOrThrow,
 } from '@activepieces/pieces-common';
 import { OAuth2PropertyValue, Property } from '@activepieces/pieces-framework';
-import { facebookPagesAuth } from '../..';
 
 export const facebookPagesCommon = {
   baseUrl: 'https://graph.facebook.com/v17.0',
-  page: Property.Dropdown<FacebookPageDropdown,true,typeof facebookPagesAuth>({
-    auth: facebookPagesAuth,
+  page: Property.Dropdown<FacebookPageDropdown>({
     displayName: 'Page',
     required: true,
     refreshers: [],
@@ -24,7 +22,7 @@ export const facebookPagesCommon = {
 
       try {
         const accessToken: string = getAccessTokenOrThrow(
-          auth
+          auth as OAuth2PropertyValue
         );
         const pages: any[] = (
           await facebookPagesCommon.getPages(accessToken)

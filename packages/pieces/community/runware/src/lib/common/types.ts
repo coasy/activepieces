@@ -1,13 +1,11 @@
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
 import {
     IRemoveImageBackground,
     IRequestImage,
     IRequestVideo,
 } from '@runware/sdk-js';
-import { runwareAuth } from '.';
 
 export interface AuthorizationParams {
-  apiKey: AppConnectionValueForAuthProperty<typeof runwareAuth>;
+  apiKey: string;
 }
 
 export interface GenerateImagesParams

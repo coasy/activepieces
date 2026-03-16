@@ -30,11 +30,11 @@ export default createAction({
     },
     async run(context) {
         const odoo = new Odoo({
-            url: context.auth.props.base_url,
+            url: context.auth.base_url,
             port: 443,
-            db: context.auth.props.database,
-            username: context.auth.props.username,
-            password: context.auth.props.api_key,
+            db: context.auth.database,
+            username: context.auth.username,
+            password: context.auth.api_key,
         });
 
         try {

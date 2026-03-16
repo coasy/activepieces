@@ -7,11 +7,9 @@ import {
 import mailchimp from '@mailchimp/mailchimp_marketing';
 import { AuthenticationType } from '@activepieces/pieces-common';
 import crypto from 'crypto';
-import { mailchimpAuth } from '../..';
 
 export const mailchimpCommon = {
-  mailChimpListIdDropdown: Property.Dropdown<string,true,typeof mailchimpAuth>({
-    auth: mailchimpAuth,
+  mailChimpListIdDropdown: Property.Dropdown<string>({
     displayName: 'Audience',
     refreshers: [],
     description: 'Audience you want to add the contact to',
@@ -57,8 +55,7 @@ export const mailchimpCommon = {
     });
   },
 
-  mailChimpCampaignIdDropdown: Property.Dropdown<string,true,typeof mailchimpAuth >({
-    auth: mailchimpAuth,
+  mailChimpCampaignIdDropdown: Property.Dropdown<string>({
     displayName: 'Campaign',
     refreshers: [],
     description: 'Select the campaign to get information for',
@@ -105,8 +102,7 @@ export const mailchimpCommon = {
     });
   },
 
-  mailChimpStoreIdDropdown: Property.Dropdown<string,true,typeof mailchimpAuth >({
-    auth: mailchimpAuth,
+  mailChimpStoreIdDropdown: Property.Dropdown<string>({
     displayName: 'Store',
     refreshers: [],
     description: 'Select the e-commerce store',

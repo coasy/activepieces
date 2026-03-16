@@ -18,8 +18,6 @@ export const promptCompletion = createAction({
     'Enables users to generate prompt completion based on a specified model.',
   props: {
     model: Property.Dropdown({
-  auth: straicoAuth,
-
       displayName: 'Model',
       required: true,
       description:
@@ -47,7 +45,7 @@ export const promptCompletion = createAction({
             method: HttpMethod.GET,
             authentication: {
               type: AuthenticationType.BEARER_TOKEN,
-              token: auth.secret_text,
+              token: auth as string,
             },
           });
           return {
@@ -139,7 +137,7 @@ export const promptCompletion = createAction({
       method: HttpMethod.POST,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: auth.secret_text,
+        token: auth as string,
       },
       body: {
         models: [propsValue.model],

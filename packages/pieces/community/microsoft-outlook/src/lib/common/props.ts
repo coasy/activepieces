@@ -1,7 +1,6 @@
 import { OAuth2PropertyValue, Property } from '@activepieces/pieces-framework';
 import { PageCollection, Client } from '@microsoft/microsoft-graph-client';
 import { MailFolder, Message } from '@microsoft/microsoft-graph-types';
-import { microsoftOutlookAuth } from './auth';
 
 type DropdownParams = {
 	displayName: string;
@@ -11,7 +10,6 @@ type DropdownParams = {
 
 export const messageIdDropdown = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: microsoftOutlookAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -57,7 +55,6 @@ export const messageIdDropdown = (params: DropdownParams) =>
 
 export const draftMessageIdDropdown = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: microsoftOutlookAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -103,7 +100,6 @@ export const draftMessageIdDropdown = (params: DropdownParams) =>
 
 export const mailFolderIdDropdown = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: microsoftOutlookAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,

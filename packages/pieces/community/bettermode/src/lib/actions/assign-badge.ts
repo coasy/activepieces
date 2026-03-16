@@ -1,7 +1,7 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { assignBadgeToMember } from '../api';
 import { buildBadgesDropdown } from '../props';
-import { bettermodeAuth } from '../auth';
+import { bettermodeAuth, BettermodeAuthType } from '../auth';
 
 export const assignBadgeAction = createAction({
   name: 'assign_badge',
@@ -10,13 +10,12 @@ export const assignBadgeAction = createAction({
   description: 'Assign an existing badge to a member by email',
   props: {
     badgeId: Property.Dropdown({
-      auth: bettermodeAuth,
       displayName: 'Badge',
       description: 'The badge to assign',
       required: true,
       refreshers: [],
       options: async ({ auth }) =>
-        await buildBadgesDropdown(auth?.props),
+        await buildBadgesDropdown(auth as BettermodeAuthType),
     }),
     email: Property.ShortText({
       displayName: 'Email',
@@ -26,7 +25,7 @@ export const assignBadgeAction = createAction({
   },
   async run(context) {
     return await assignBadgeToMember(
-      context.auth.props,
+      context.auth as BettermodeAuthType,
       context.propsValue.badgeId,
       context.propsValue.email
     );

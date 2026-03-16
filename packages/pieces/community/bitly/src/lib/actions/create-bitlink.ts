@@ -120,7 +120,7 @@ export const createBitlinkAction = createAction({
 
       return await bitlyApiCall({
         method: HttpMethod.POST,
-        auth: context.auth.props,
+        auth: context.auth,
         resourceUri: '/bitlinks',
         body,
       });

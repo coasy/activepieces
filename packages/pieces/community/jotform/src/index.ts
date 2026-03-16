@@ -59,11 +59,10 @@ export const jotform = createPiece({
   actions: [
     createCustomApiCallAction({
       baseUrl: (auth) =>
-        auth?
-        jotformCommon.baseUrl(auth.props.region) : '',
+        jotformCommon.baseUrl((auth as { region: string }).region),
       auth: jotformAuth,
       authMapping: async (auth) => ({
-        APIKEY: auth.props.apiKey,
+        APIKEY: (auth as { apiKey: string }).apiKey,
       }),
     }),
   ],

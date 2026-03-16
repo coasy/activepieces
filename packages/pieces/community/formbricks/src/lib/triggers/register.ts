@@ -31,7 +31,6 @@ export const formBricksRegisterTrigger = ({
     description,
     props: {
       survey_id: Property.MultiSelectDropdown({
-        auth: formBricksAuth,
         displayName: 'Survey',
         description:
           'A selection of surveys that will trigger. Else, all surveys will trigger.',
@@ -46,13 +45,13 @@ export const formBricksRegisterTrigger = ({
             };
           }
 
-          const authValue = auth;
+          const authValue = auth as PiecePropValueSchema<typeof formBricksAuth>;
 
           const response = await httpClient.sendRequest<{ data: Survey[] }>({
             method: HttpMethod.GET,
-            url: `${auth.props.appUrl}/api/v1/management/surveys`,
+            url: `${authValue.appUrl}/api/v1/management/surveys`,
             headers: {
-              'x-api-key': auth.props.apiKey,
+              'x-api-key': authValue.apiKey,
             },
           });
 
@@ -81,14 +80,14 @@ export const formBricksRegisterTrigger = ({
     async onEnable(context) {
       const response = await httpClient.sendRequest<WebhookInformation>({
         method: HttpMethod.POST,
-        url: `${context.auth.props.appUrl}/api/v1/webhooks`,
+        url: `${context.auth.appUrl}/api/v1/webhooks`,
         body: {
           url: context.webhookUrl,
           triggers: [eventType],
           surveyIds: context.propsValue.survey_id ?? [],
         },
         headers: {
-          'x-api-key': context.auth.props.apiKey,
+          'x-api-key': context.auth.apiKey as string,
         },
       });
       await context.store.put<WebhookInformation>(
@@ -103,9 +102,9 @@ export const formBricksRegisterTrigger = ({
       if (webhook?.data.id != null) {
         const request: HttpRequest = {
           method: HttpMethod.DELETE,
-          url: `${context.auth.props.appUrl}/api/v1/webhooks/${webhook.data.id}`,
+          url: `${context.auth.appUrl}/api/v1/webhooks/${webhook.data.id}`,
           headers: {
-            'x-api-key': context.auth.props.apiKey,
+            'x-api-key': context.auth.apiKey as string,
           },
         };
         await httpClient.sendRequest(request);

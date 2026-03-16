@@ -56,7 +56,6 @@ export const crawl = createAction({
       defaultValue: 10,
     }),
     formats: Property.Dropdown({
-      auth: firecrawlAuth,
       displayName: 'Output Format',
       description: 'Choose what format you want your output in.',
       required: true,
@@ -82,19 +81,18 @@ export const crawl = createAction({
       defaultValue: false,
     }),
     extractMode: Property.DynamicProperties({
-      auth: firecrawlAuth,
       displayName: 'Schema Mode',
       description: 'Data schema type.',
       required: false,
       refreshers: ['formats'],
-      props: async (propsValue): Promise<InputPropertyMap> => {
+      props: async (propsValue: Record<string, DynamicPropsValue>): Promise<InputPropertyMap> => {
         const format = propsValue['formats'] as unknown as string;
 
         if (format !== 'json') {
           return {};
         }
 
-        const map: InputPropertyMap=  {
+        return {
           mode: Property.StaticDropdown<'simple' | 'advanced'>({
             displayName: 'Data Schema Type',
             description: 'For complex schema, you can use advanced mode.',
@@ -109,16 +107,14 @@ export const crawl = createAction({
             },
           }),
         };
-        return map;
       },
     }),
     extractSchema: Property.DynamicProperties({
-      auth: firecrawlAuth,
       displayName: 'Data Definition',
       required: false,
       refreshers: ['formats', 'extractMode'],
-      props: async (propsValue): Promise<InputPropertyMap> => {
-        const mode = (propsValue['extractMode'] as unknown as { mode: 'simple' | 'advanced' })?.mode;
+      props: async (propsValue: Record<string, DynamicPropsValue>): Promise<InputPropertyMap> => {
+        const mode = propsValue['extractMode']?.['mode'] as unknown as 'simple' | 'advanced';
         const format = propsValue['formats'] as unknown as string;
 
         if (format !== 'json') {
@@ -205,15 +201,14 @@ export const crawl = createAction({
       description: 'Properties for webhook configuration.',
       required: false,
       refreshers: ['useWebhook'],
-      auth: firecrawlAuth,
-      props: async (propsValue): Promise<InputPropertyMap> => {
+      props: async (propsValue: Record<string, DynamicPropsValue>): Promise<InputPropertyMap> => {
         const useWebhook = propsValue['useWebhook'] as unknown as boolean;
         
         if (!useWebhook) {
           return {};
         }
         
-        const map: InputPropertyMap = {
+        return {
           webhookUrl: Property.ShortText({
             displayName: 'Webhook URL',
             description: 'The URL to send the webhook to. This will trigger for crawl started (crawl.started), every page crawled (crawl.page) and when the crawl is completed (crawl.completed or crawl.failed).',
@@ -238,7 +233,6 @@ export const crawl = createAction({
             defaultValue: ['completed', 'page', 'failed', 'started'],
           }),
         };
-        return map;
       },
     }),
   },
@@ -298,7 +292,7 @@ export const crawl = createAction({
       url: `${FIRECRAWL_API_BASE_URL}/crawl`,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${auth.secret_text}`,
+        'Authorization': `Bearer ${auth}`,
       },
       body: body,
     });
@@ -307,7 +301,7 @@ export const crawl = createAction({
 
     // polling
     const timeoutSeconds = propsValue.timeout || 300;
-    const result = await polling(jobId, auth.secret_text, timeoutSeconds, 'crawl');
+    const result = await polling(jobId, auth, timeoutSeconds, 'crawl');
 
     if (propsValue.formats === 'screenshot') {
       await downloadAndSaveCrawlScreenshots(result, context);

@@ -141,10 +141,10 @@ export const supabase = createPiece({
     deleteRows,
     searchRows,
     createCustomApiCallAction({
-      baseUrl: (auth) => auth?.props?.url || '',
+      baseUrl: (auth) => (auth as { url: string }).url,
       auth: supabaseAuth,
       authMapping: async (auth) => ({
-        Authorization: `Bearer ${auth.props.apiKey}`,
+        Authorization: `Bearer ${(auth as { apiKey: string }).apiKey}`,
       }),
     }),
   ],

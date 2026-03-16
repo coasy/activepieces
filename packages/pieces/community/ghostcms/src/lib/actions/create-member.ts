@@ -36,10 +36,10 @@ export const createMember = createAction({
     }
 
     const response = await httpClient.sendRequest({
-      url: `${context.auth.props.baseUrl}/ghost/api/admin/members`,
+      url: `${context.auth.baseUrl}/ghost/api/admin/members`,
       method: HttpMethod.POST,
       headers: {
-        Authorization: `Ghost ${common.jwtFromApiKey(context.auth.props.apiKey)}`,
+        Authorization: `Ghost ${common.jwtFromApiKey(context.auth.apiKey)}`,
       },
       body: {
         members: [

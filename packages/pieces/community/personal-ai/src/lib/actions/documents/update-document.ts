@@ -59,7 +59,7 @@ export const updateDocument = createAction({
       url: `${BASE_URL}/update-document`,
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': auth.secret_text,
+        'x-api-key': auth as string,
       },
       body: {
         DocumentId: documentId,

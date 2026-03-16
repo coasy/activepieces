@@ -37,7 +37,7 @@ export const addTagToTicketAction = createAction({
     }),
   },
   async run({ propsValue, auth }) {
-    const authentication = auth;
+    const authentication = auth as AuthProps;
     const { ticket_id, tags, safe_update, updated_stamp } = propsValue;
 
     if (!Array.isArray(tags) || tags.length === 0) {
@@ -63,15 +63,15 @@ export const addTagToTicketAction = createAction({
 
     try {
       const response = await httpClient.sendRequest({
-        url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/tickets/${ticket_id}/tags.json`,
+        url: `https://${authentication.subdomain}.zendesk.com/api/v2/tickets/${ticket_id}/tags.json`,
         method: HttpMethod.PUT,
         headers: {
           'Content-Type': 'application/json',
         },
         authentication: {
           type: AuthenticationType.BASIC,
-          username: authentication.props.email + '/token',
-          password: authentication.props.token,
+          username: authentication.email + '/token',
+          password: authentication.token,
         },
         body,
       });

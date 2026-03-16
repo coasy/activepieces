@@ -61,7 +61,6 @@ export const telegramSendMediaAction = createAction({
       },
     }),
     media: Property.DynamicProperties({
-      auth: telegramBotAuth,
       displayName: 'Media Properties',
       required: false,
       refreshers: ['media_type'],

@@ -81,7 +81,7 @@ export const runAgentTaskAction = createAction({
 			context.propsValue;
 
 		const response = await skyvernApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.POST,
 			resourceUri: '/run/tasks',
 			body: {

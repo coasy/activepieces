@@ -1,11 +1,9 @@
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
-import { folkAuth } from './auth';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
 
 export const folkClient = {
   baseUrl: 'https://api.folk.app',
 
-  async testConnection(apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>): Promise<void> {
+  async testConnection(apiKey: string): Promise<void> {
     await this.makeRequest<any>({
       method: HttpMethod.GET,
       url: '/v1/people?limit=1',
@@ -22,7 +20,7 @@ export const folkClient = {
   }: {
     method: HttpMethod;
     url: string;
-    apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>;
+    apiKey: string;
     body?: any;
     headers?: Record<string, string>;
   }): Promise<T> {
@@ -30,7 +28,7 @@ export const folkClient = {
       method,
       url: `${this.baseUrl}${url}`,
       headers: {
-        Authorization: `Bearer ${apiKey.secret_text}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
         ...headers,
       },
@@ -51,7 +49,7 @@ export const folkClient = {
     limit = 100,
     offset = 0,
   }: {
-    apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>;
+    apiKey: string;
     limit?: number;
     offset?: number;
   }) {
@@ -70,7 +68,7 @@ export const folkClient = {
     nameFilter,
     emailFilter,
   }: {
-    apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>;
+    apiKey: string;
     limit?: number;
     cursor?: string;
     combinator?: 'and' | 'or';
@@ -113,7 +111,7 @@ export const folkClient = {
     apiKey,
     contactId,
   }: {
-    apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>;
+    apiKey: string;
     contactId: string;
   }) {
     return this.makeRequest<{ data: any }>({
@@ -123,7 +121,7 @@ export const folkClient = {
     });
   },
 
-  async searchPerson({ apiKey, query }: { apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>; query: string }) {
+  async searchPerson({ apiKey, query }: { apiKey: string; query: string }) {
     return this.makeRequest<{ people: any[] }>({
       method: HttpMethod.GET,
       url: `/v1/people/search?query=${encodeURIComponent(query)}`,
@@ -131,11 +129,11 @@ export const folkClient = {
     });
   },
 
-  async createPerson({ apiKey, data }: { apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>; data: any }) {
+  async createPerson({ apiKey, data }: { apiKey: string; data: any }) {
     return this.makeRequest<{ data: any }>({
       method: HttpMethod.POST,
       url: '/v1/people',
-      apiKey: apiKey,
+      apiKey,
       body: data,
     });
   },
@@ -145,7 +143,7 @@ export const folkClient = {
     contactId,
     data,
   }: {
-    apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>;
+    apiKey: string;
     contactId: string;
     data: any;
   }) {
@@ -162,7 +160,7 @@ export const folkClient = {
     limit = 100,
     offset = 0,
   }: {
-    apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>;
+    apiKey: string;
     limit?: number;
     offset?: number;
   }) {
@@ -180,7 +178,7 @@ export const folkClient = {
     combinator = 'and',
     nameFilter 
   }: { 
-    apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>; 
+    apiKey: string; 
     limit?: number; 
     cursor?: string;
     combinator?: 'and' | 'or';
@@ -216,7 +214,7 @@ export const folkClient = {
     apiKey,
     companyId,
   }: {
-    apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>;
+    apiKey: string;
     companyId: string;
   }) {
     return this.makeRequest<{ data: any }>({
@@ -226,7 +224,7 @@ export const folkClient = {
     });
   },
 
-  async searchCompany({ apiKey, query }: { apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>; query: string }) {
+  async searchCompany({ apiKey, query }: { apiKey: string; query: string }) {
     return this.makeRequest<{
       data: { items: any[]; pagination: { nextLink: string } };
     }>({
@@ -238,11 +236,11 @@ export const folkClient = {
     });
   },
 
-  async createCompany({ apiKey, data }: { apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>; data: any }) {
+  async createCompany({ apiKey, data }: { apiKey: string; data: any }) {
     return this.makeRequest<{ data: any }>({
       method: HttpMethod.POST,
       url: '/v1/companies',
-      apiKey: apiKey,
+      apiKey,
       body: data,
     });
   },
@@ -252,7 +250,7 @@ export const folkClient = {
     companyId,
     data,
   }: {
-    apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>;
+    apiKey: string;
     companyId: string;
     data: any;
   }) {
@@ -264,7 +262,7 @@ export const folkClient = {
     });
   },
 
-  async getGroups({ apiKey }: { apiKey: AppConnectionValueForAuthProperty<typeof folkAuth> }) {
+  async getGroups({ apiKey }: { apiKey: string }) {
     return this.makeRequest<{
       data: { items: any[]; pagination: { nextLink?: string } };
     }>({
@@ -280,7 +278,7 @@ export const folkClient = {
     targetUrl,
     subscribedEvents,
   }: {
-    apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>;
+    apiKey: string;
     name: string;
     targetUrl: string;
     subscribedEvents: Array<{
@@ -318,7 +316,7 @@ export const folkClient = {
     });
   },
 
-  async deleteWebhook({ apiKey, webhookId }: { apiKey: AppConnectionValueForAuthProperty<typeof folkAuth>; webhookId: string }) {
+  async deleteWebhook({ apiKey, webhookId }: { apiKey: string; webhookId: string }) {
     return this.makeRequest<void>({
       method: HttpMethod.DELETE,
       url: `/v1/webhooks/${webhookId}`,

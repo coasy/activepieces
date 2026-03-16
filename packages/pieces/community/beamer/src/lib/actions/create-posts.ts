@@ -126,7 +126,7 @@ export const createBeamerPost = createAction({
   },
 
   async run(context) {
-    const apiKey = context.auth.secret_text;
+    const apiKey = context.auth;
 
     const request: HttpRequest = {
       method: HttpMethod.POST,

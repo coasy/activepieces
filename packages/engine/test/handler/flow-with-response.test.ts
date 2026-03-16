@@ -1,5 +1,5 @@
 import { FlowRunStatus } from '@activepieces/shared'
-import { FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
+import { ExecutionVerdict, FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
 import { flowExecutor } from '../../src/lib/handler/flow-executor'
 import { buildPieceAction, generateMockEngineConstants } from './test-helper'
 
@@ -37,8 +37,9 @@ describe('flow with response', () => {
                 input,
             }), executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.SUCCEEDED,
+        expect(result.verdict).toBe(ExecutionVerdict.SUCCEEDED)
+        expect(result.verdictResponse).toEqual({
+            reason: FlowRunStatus.SUCCEEDED,
             stopResponse: response,
         })
         expect(result.steps.http.output).toEqual(response)

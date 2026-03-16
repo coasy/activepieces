@@ -23,7 +23,7 @@ export const crawlCrawlApi = createAction({
   },
   async run({ propsValue, auth }) {
     try {
-      const client = createScrapelessClient(auth.secret_text);
+      const client = createScrapelessClient(auth);
 
       const url = propsValue.url;
       const limit = propsValue.limit;

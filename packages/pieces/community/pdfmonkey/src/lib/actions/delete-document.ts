@@ -18,7 +18,7 @@ export const deleteDocumentAction = createAction({
 			throw new Error('Document ID is required');
 		}
 		const response = await makeRequest(
-			auth,
+			auth as string,
 			HttpMethod.DELETE,
 			`/documents/${document_id}`,
 		);

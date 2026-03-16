@@ -14,7 +14,6 @@ export const uploadFileToSessionAction = createAction({
 	props: {
 		fileId: fileId,
 		sessionIds: Property.MultiSelectDropdown({
-			auth: airtopAuth,
 			displayName: 'Session IDs',
 			description: 'Select one or more sessions to make the file available on. Leave empty to make available to all sessions.',
 			required: false,
@@ -30,7 +29,7 @@ export const uploadFileToSessionAction = createAction({
 
 				try {
 					const response = await airtopApiCall<any>({
-						apiKey: auth.secret_text,
+						apiKey: auth as string,
 						method: HttpMethod.GET,
 						resourceUri: '/sessions',
 					});
@@ -87,7 +86,7 @@ export const uploadFileToSessionAction = createAction({
 		}
 
 		const result = await airtopApiCall({
-			apiKey: auth.secret_text,
+			apiKey: auth,
 			method: HttpMethod.POST,
 			resourceUri: `/files/${fileId}/push`,
 			body,

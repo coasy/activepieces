@@ -20,7 +20,6 @@ export const uploadFile = createAction({
 		tableId: smartsuiteCommon.tableId,
 		recordId: smartsuiteCommon.recordId,
 		field: Property.Dropdown({
-			auth: smartsuiteAuth,
 			displayName: 'Search Field',
 			required: true,
 			refreshers: ['tableId'],
@@ -33,7 +32,7 @@ export const uploadFile = createAction({
 					};
 				}
 
-				const { apiKey, accountId } = auth.props;
+				const { apiKey, accountId } = auth as PiecePropValueSchema<typeof smartsuiteAuth>;
 
 				const response = await smartSuiteApiCall<{
 					structure: TableStucture[];
@@ -76,16 +75,16 @@ export const uploadFile = createAction({
 				body: formData,
 				headers: {
 					...formData.getHeaders(),
-					Authorization: `Token ${auth.props.apiKey}`,
-					'ACCOUNT-ID': auth.props.accountId,
+					Authorization: `Token ${auth.apiKey}`,
+					'ACCOUNT-ID': auth.accountId,
 				},
 			});
 
 			const tableResponse = await smartSuiteApiCall<{
 				structure: TableStucture[];
 			}>({
-				apiKey: auth.props.apiKey,
-				accountId: auth.props.accountId,
+				apiKey: auth.apiKey,
+				accountId: auth.accountId,
 				method: HttpMethod.GET,
 				resourceUri: `/applications/${tableId}`,
 			});

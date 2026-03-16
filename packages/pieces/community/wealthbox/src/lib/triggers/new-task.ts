@@ -14,7 +14,6 @@ import {
 } from '@activepieces/pieces-common';
 import dayjs from 'dayjs';
 import { fetchUsers, fetchContacts, fetchProjects, fetchOpportunities, WEALTHBOX_API_BASE, handleApiError } from '../common';
-import { wealthboxAuth } from '../..';
 
 const polling: Polling<any, any> = {
   strategy: DedupeStrategy.TIMEBASED,
@@ -51,7 +50,7 @@ const polling: Polling<any, any> = {
         method: HttpMethod.GET,
         url: url,
         headers: {
-          'ACCESS_TOKEN': auth.secret_text,
+          'ACCESS_TOKEN': auth as unknown as string,
           'Accept': 'application/json'
         }
       });
@@ -86,7 +85,6 @@ export const newTask = createTrigger({
   type: TriggerStrategy.POLLING,
   props: {
     assigned_to: Property.Dropdown({
-      auth: wealthboxAuth,
       displayName: 'Assigned To',
       description: 'Only trigger for tasks assigned to this user (optional)',
       required: false,
@@ -95,7 +93,7 @@ export const newTask = createTrigger({
         if (!auth) return { options: [] };
 
         try {
-          const users = await fetchUsers(auth.secret_text);
+          const users = await fetchUsers(auth as unknown as string);
           return {
             options: users.map((user: any) => ({
               label: `${user.name} (${user.email})`,
@@ -118,7 +116,6 @@ export const newTask = createTrigger({
     }),
 
     created_by: Property.Dropdown({
-      auth: wealthboxAuth,
       displayName: 'Created By',
       description: 'Only trigger for tasks created by this user (optional)',
       required: false,
@@ -127,7 +124,7 @@ export const newTask = createTrigger({
         if (!auth) return { options: [] };
 
         try {
-          const users = await fetchUsers(auth.secret_text);
+          const users = await fetchUsers(auth as unknown as string);
           return {
             options: users.map((user: any) => ({
               label: `${user.name} (${user.email})`,
@@ -171,7 +168,6 @@ export const newTask = createTrigger({
     }),
 
     resource_record: Property.DynamicProperties({
-      auth: wealthboxAuth,
       displayName: 'Linked Resource',
       description: 'Select the specific resource to filter tasks by',
       required: false,
@@ -195,15 +191,15 @@ export const newTask = createTrigger({
 
           switch (resourceTypeValue) {
             case 'Contact':
-              records = await fetchContacts(auth.secret_text, { active: true, order: 'recent' });
+              records = await fetchContacts(auth as unknown as string, { active: true, order: 'recent' });
               recordType = 'Contact';
               break;
             case 'Project':
-              records = await fetchProjects(auth.secret_text);
+              records = await fetchProjects(auth as unknown as string);
               recordType = 'Project';
               break;
             case 'Opportunity':
-              records = await fetchOpportunities(auth.secret_text);
+              records = await fetchOpportunities(auth as unknown as string);
               recordType = 'Opportunity';
               break;
             default:

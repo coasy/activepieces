@@ -1,9 +1,8 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import Client from 'ssh2-sftp-client';
-import { Client as FTPClient, FTPError } from 'basic-ftp';
+import { Client as FTPClient } from 'basic-ftp';
 import { endClient, getClient, getProtocolBackwardCompatibility, sftpAuth } from '../..';
 import { Readable } from 'stream';
-import { getSftpError } from './common';
 
 async function uploadFileToFTP(client: FTPClient, fileName: string, fileContent: { data: any }) {
   const remoteDirectory = fileName.substring(0, fileName.lastIndexOf('/'));
@@ -39,10 +38,10 @@ export const uploadFileAction = createAction({
     }),
   },
   async run(context) {
-    const client = await getClient(context.auth.props);
+    const client = await getClient(context.auth);
     const fileName = context.propsValue['fileName'];
     const fileContent = context.propsValue['fileContent'];
-    const protocolBackwardCompatibility = await getProtocolBackwardCompatibility(context.auth.props.protocol);
+    const protocolBackwardCompatibility = await getProtocolBackwardCompatibility(context.auth.protocol);
     try {
       switch (protocolBackwardCompatibility) {
         case 'ftps':
@@ -57,24 +56,13 @@ export const uploadFileAction = createAction({
       return {
         status: 'success',
       };
-    } 
-    catch (err) {
-      if (err instanceof FTPError) {
-        console.error(getSftpError(err.code));
-        return {
-          status: 'error',
-          content: null,
-          error: getSftpError(err.code),
-        };
-      } else {
-        return {
-          status: 'error',
-          content: null,
-          error: err
-        }
-      }
+    } catch (error) {
+      console.error(error);
+      return {
+        status: 'error',
+      };
     } finally {
-      await endClient(client, context.auth.props.protocol);
+      await endClient(client, context.auth.protocol);
     }
   },
 });

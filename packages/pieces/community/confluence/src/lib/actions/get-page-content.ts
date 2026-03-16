@@ -3,7 +3,6 @@ import {
 	Property,
 	DynamicPropsValue,
 	PiecePropValueSchema,
-	AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { confluenceAuth } from '../..';
@@ -17,14 +16,14 @@ interface ConfluencePage {
 }
 
 async function getPageWithContent(
-	auth: AppConnectionValueForAuthProperty<typeof confluenceAuth>,
+	auth: PiecePropValueSchema<typeof confluenceAuth>,
 	pageId: string,
 ): Promise<ConfluencePage> {
 	try {
 		const response = await confluenceApiCall<ConfluencePage>({
-			domain: auth.props.confluenceDomain,
-			username: auth.props.username,
-			password: auth.props.password,
+			domain: auth.confluenceDomain,
+			username: auth.username,
+			password: auth.password,
 			method: HttpMethod.GET,
 			version: 'v2',
 			resourceUri: `/pages/${pageId}`,
@@ -41,7 +40,7 @@ async function getPageWithContent(
 }
 
 async function getChildPages(
-	auth: AppConnectionValueForAuthProperty<typeof confluenceAuth>,
+	auth: PiecePropValueSchema<typeof confluenceAuth>,
 	parentId: string,
 	currentDepth: number,
 	maxDepth: number,
@@ -52,9 +51,9 @@ async function getChildPages(
 
 	try {
 		const childrenResponse = await confluenceApiCall<{ results: ConfluencePage[] }>({
-			domain: auth.props.confluenceDomain,
-			username: auth.props.username,
-			password: auth.props.password,
+			domain: auth.confluenceDomain,
+			username: auth.username,
+			password: auth.password,
 			method: HttpMethod.GET,
 			version: 'v2',
 			resourceUri: `/pages/${parentId}/children`,
@@ -99,7 +98,6 @@ export const getPageContent = createAction({
 			defaultValue: false,
 		}),
 		dynamic: Property.DynamicProperties({
-			auth: confluenceAuth,
 			displayName: 'Dynamic Properties',
 			refreshers: ['includeDescendants'],
 			required: true,

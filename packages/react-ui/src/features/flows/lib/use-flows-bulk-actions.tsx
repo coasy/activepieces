@@ -8,9 +8,9 @@ import { useEmbedding } from '@/components/embed-provider';
 import { Button } from '@/components/ui/button';
 import { BulkAction } from '@/components/ui/data-table';
 import { LoadingSpinner } from '@/components/ui/spinner';
-import { PublishedNeededTooltip } from '@/features/project-releases/components/published-tooltip';
-import { PushToGitDialog } from '@/features/project-releases/components/push-to-git-dialog';
-import { gitSyncHooks } from '@/features/project-releases/lib/git-sync-hooks';
+import { PublishedNeededTooltip } from '@/features/git-sync/components/published-tooltip';
+import { PushToGitDialog } from '@/features/git-sync/components/push-to-git-dialog';
+import { gitSyncHooks } from '@/features/git-sync/lib/git-sync-hooks';
 import { useAuthorization } from '@/hooks/authorization-hooks';
 import { platformHooks } from '@/hooks/platform-hooks';
 import { authenticationSession } from '@/lib/authentication-session';
@@ -23,10 +23,9 @@ import {
 
 import { MoveFlowDialog } from '../components/move-flow-dialog';
 
-import { flowHooks } from './flow-hooks';
+import { CreateFlowDropdown } from './create-flow-dropdown';
 import { flowsApi } from './flows-api';
-import { ImportFlowButton } from './Import-flow-button';
-import { NewFlowButton } from './new-flow-button';
+import { flowsHooks } from './flows-hooks';
 
 export const useFlowsBulkActions = ({
   selectedRows,
@@ -66,7 +65,7 @@ export const useFlowsBulkActions = ({
   const isDevelopmentBranch =
     gitSync && gitSync.branchType === GitBranchType.DEVELOPMENT;
   const { mutate: exportFlows, isPending: isExportPending } =
-    flowHooks.useExportFlows();
+    flowsHooks.useExportFlows();
   return useMemo(() => {
     const showMoveFlow =
       !embedState.hideFolders &&
@@ -178,8 +177,7 @@ export const useFlowsBulkActions = ({
                   </ConfirmationDeleteDialog>
                 </PermissionNeededTooltip>
               )}
-              <ImportFlowButton folderId={folderId} onRefresh={refetch} />
-              <NewFlowButton folderId={folderId} />
+              <CreateFlowDropdown refetch={refetch} folderId={folderId} />
             </div>
           );
         },

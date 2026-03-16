@@ -7,7 +7,6 @@ import {
   createTrigger,
   TriggerStrategy,
   OAuth2PropertyValue,
-  AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import dayjs from 'dayjs';
 import { notionCommon } from '../common';
@@ -121,7 +120,7 @@ export const updatedDatabaseItem = createTrigger({
 });
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof notionAuth>,
+  OAuth2PropertyValue,
   { database_id: string | undefined }
 > = {
   strategy: DedupeStrategy.LAST_ITEM,

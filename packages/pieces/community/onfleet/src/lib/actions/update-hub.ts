@@ -19,7 +19,7 @@ export const updateHub = createAction({
     teams: common.teams,
   },
   async run(context) {
-    const onfleetApi = new Onfleet(context.auth.secret_text);
+    const onfleetApi = new Onfleet(context.auth);
     const options: any = {};
 
     if (context.propsValue.name) options.name = context.propsValue.name;

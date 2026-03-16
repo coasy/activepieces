@@ -52,7 +52,7 @@ const NumberEditor = () => {
             className={cn(
               'flex-1 h-full min-w-0',
               'border-none text-sm px-2',
-              'focus:outline-hidden',
+              'focus:outline-none',
               'placeholder:text-muted-foreground',
             )}
             autoComplete="off"

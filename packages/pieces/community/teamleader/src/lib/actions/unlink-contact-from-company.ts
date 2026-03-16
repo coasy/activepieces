@@ -10,7 +10,6 @@ export const unlinkContactFromCompany = createAction({
     auth: teamleaderAuth,
     props: {
         contact_id: Property.Dropdown({
-          auth:teamleaderAuth,
             displayName: 'Contact',
             description: 'Select the contact to unlink',
             required: true,
@@ -24,7 +23,7 @@ export const unlinkContactFromCompany = createAction({
 
                 try {
                     const response = await teamleaderCommon.apiCall({
-                        auth,
+                        auth: auth as any,
                         method: HttpMethod.POST,
                         resourceUri: '/contacts.list',
                         body: {}
@@ -47,7 +46,6 @@ export const unlinkContactFromCompany = createAction({
             }
         }),
         company_id: Property.Dropdown({
-          auth:teamleaderAuth,
             displayName: 'Company',
             description: 'Select the company to unlink from',
             required: true,
@@ -61,7 +59,7 @@ export const unlinkContactFromCompany = createAction({
 
                 try {
                     const response = await teamleaderCommon.apiCall({
-                        auth,
+                        auth: auth as any,
                         method: HttpMethod.POST,
                         resourceUri: '/companies.list',
                         body: {}

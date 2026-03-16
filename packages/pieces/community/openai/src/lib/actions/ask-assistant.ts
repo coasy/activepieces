@@ -16,7 +16,6 @@ export const askAssistant = createAction({
   description: 'Ask a GPT assistant anything you want!',
   props: {
     assistant: Property.Dropdown({
-  auth: openaiAuth,
       displayName: 'Assistant',
       required: true,
       description: 'The assistant which will generate the completion.',
@@ -31,7 +30,7 @@ export const askAssistant = createAction({
         }
         try {
           const openai = new OpenAI({
-            apiKey: auth.secret_text,
+            apiKey: auth as string,
           });
           const assistants = await openai.beta.assistants.list();
 
@@ -70,7 +69,7 @@ export const askAssistant = createAction({
     });
 
     const openai = new OpenAI({
-      apiKey: auth.secret_text,
+      apiKey: auth,
     });
     const { assistant, prompt, memoryKey } = propsValue;
     const runCheckDelay = 1000;

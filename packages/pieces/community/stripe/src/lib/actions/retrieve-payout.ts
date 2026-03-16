@@ -23,7 +23,7 @@ export const stripeRetrievePayout = createAction({
       url: `${stripeCommon.baseUrl}/payouts/${payout_id}`,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: context.auth.secret_text,
+        token: context.auth,
       },
     });
 

@@ -47,7 +47,6 @@ export const createRecord = createAction({
             }
         }),
         fields: Property.DynamicProperties({
-            auth: insightlyAuth,
             displayName: 'Fields',
             required: true,
             refreshers: ['objectName'],

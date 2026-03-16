@@ -5,16 +5,17 @@ import {
     ExecuteExtractPieceMetadataOperation,
     ExecuteFlowOperation,
     ExecutePropsOptions,
+    ExecuteToolOperation,
     ExecuteTriggerOperation,    
     ExecuteValidateAuthOperation,
-    ExecutionError,
-    ExecutionErrorType,
-    TriggerHookType, 
+    TriggerHookType,
 } from '@activepieces/shared'
+import { ExecutionError, ExecutionErrorType } from '../helper/execution-errors'
 import { authValidationOperation } from './auth-validation.operation'
 import { flowOperation } from './flow.operation'
 import { pieceMetadataOperation } from './piece-metadata.operation'
 import { propertyOperation } from './property.operation'
+import { toolOperation } from './tool.operation'
 import { triggerHookOperation } from './trigger-hook.operation'
 
 
@@ -31,6 +32,9 @@ export async function execute(operationType: EngineOperationType, operation: Eng
         }
         case EngineOperationType.EXECUTE_TRIGGER_HOOK: {
             return triggerHookOperation.execute(operation as ExecuteTriggerOperation<TriggerHookType>)
+        }
+        case EngineOperationType.EXECUTE_TOOL: {
+            return toolOperation.execute(operation as ExecuteToolOperation)
         }
         case EngineOperationType.EXECUTE_VALIDATE_AUTH: {
             return authValidationOperation.execute(operation as ExecuteValidateAuthOperation)

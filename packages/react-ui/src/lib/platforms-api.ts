@@ -37,14 +37,4 @@ export const platformApi = {
       req,
     );
   },
-  updateWithFormData(formdata: FormData, platformId: string) {
-    return api.post<PlatformWithoutSensitiveData>(
-      `/v1/platforms/${platformId}`,
-      formdata,
-      {},
-      {
-        'Content-Type': 'multipart/form-data',
-      },
-    );
-  },
 };

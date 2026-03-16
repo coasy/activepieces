@@ -11,7 +11,6 @@ export const setCustomFieldAction = createAction({
 	props: {
 		subscriber_id: subscriberId,
 		field_id: Property.Dropdown({
-			auth: manychatAuth,
 			displayName: 'Custom Field',
 			refreshers: [],
 			required: true,
@@ -31,7 +30,7 @@ export const setCustomFieldAction = createAction({
 					method: HttpMethod.GET,
 					authentication: {
 						type: AuthenticationType.BEARER_TOKEN,
-						token: auth.secret_text
+						token: auth as string,
 					},
 				});
 				return {
@@ -46,8 +45,7 @@ export const setCustomFieldAction = createAction({
 			},
 		}),
 		field_value: Property.DynamicProperties({
-			auth: manychatAuth,
-				displayName: 'Field Value',
+			displayName: 'Field Value',
 			required: true,
 			refreshers: ['field_id'],
 			props: async ({ auth, field_id }) => {
@@ -98,7 +96,7 @@ export const setCustomFieldAction = createAction({
 			url: `${BASE_URL}/subscriber/setCustomField`,
 			authentication: {
 				type: AuthenticationType.BEARER_TOKEN,
-				token: auth.secret_text,
+				token: auth,
 			},
 			body: {
 				subscriber_id,
@@ -116,7 +114,7 @@ export const setCustomFieldAction = createAction({
 			url: `${BASE_URL}/subscriber/getInfo`,
 			authentication: {
 				type: AuthenticationType.BEARER_TOKEN,
-				token: auth.secret_text,
+				token: auth,
 			},
 			queryParams: {
 				subscriber_id: `${subscriber_id}`,

@@ -1,7 +1,6 @@
 import { PieceAuth } from "@activepieces/pieces-framework";
 import { makeRequest } from "./client";
 import { HttpMethod } from "@activepieces/pieces-common";
-import { AppConnectionType } from "@activepieces/shared";
 
 export const magicalApiAuth = PieceAuth.SecretText({
   displayName: "Magical API Key",
@@ -18,7 +17,7 @@ export const magicalApiAuth = PieceAuth.SecretText({
     try {
 
       const response = await makeRequest(
-        {type: AppConnectionType.SECRET_TEXT, secret_text: auth},
+        auth as string,
         HttpMethod.POST,
         "/profile-data",
         { profile_name: "activepieces_validation" }

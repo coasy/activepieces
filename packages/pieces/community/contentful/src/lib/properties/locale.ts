@@ -3,19 +3,18 @@ import { ContentfulAuth, makeClient } from '../common';
 import { isEmpty } from '@activepieces/shared';
 
 const Locale = Property.Dropdown({
-  auth: ContentfulAuth,
   displayName: 'Content Locale',
   required: true,
   refreshers: [],
   options: async ({ auth }) => {
-    if (isEmpty(auth) || !auth) {
+    if (isEmpty(auth)) {
       return {
         disabled: true,
         options: [],
         placeholder: 'Please connect your account',
       };
     }
-    const { client } = makeClient(auth);
+    const { client } = makeClient(auth as ContentfulAuth);
     try {
       const response = await client.locale.getMany({});
       const options: DropdownOption<string>[] = response.items.map(

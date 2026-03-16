@@ -1,6 +1,5 @@
 import { Property } from '@activepieces/pieces-framework';
 import { googleChatAPIService } from './requests';
-import { googleChatApiAuth } from './constants';
 
 export const projectsDropdown = (refreshers: string[]) =>
   Property.Dropdown({
@@ -8,7 +7,6 @@ export const projectsDropdown = (refreshers: string[]) =>
     description: 'Select a Google Cloud Project',
     required: true,
     refreshers,
-    auth: googleChatApiAuth,
     async options({ auth }: any) {
       if (!auth) {
         return {
@@ -47,7 +45,6 @@ export const spacesDropdown = ({
   required?: boolean;
 }) =>
   Property.Dropdown({
-    auth: googleChatApiAuth,
     displayName: 'Space',
     description: `Select a Space${
       required ? '' : ', leave empty for all spaces'
@@ -92,7 +89,6 @@ export const allSpacesDropdown = ({
   required?: boolean;
 }) =>
   Property.Dropdown({
-    auth: googleChatApiAuth,
     displayName: 'Space',
     description: `Select a Space${
       required ? '' : ', leave empty for all spaces'
@@ -137,7 +133,6 @@ export const directMessagesDropdown = ({
   required?: boolean;
 }) =>
   Property.Dropdown({
-    auth: googleChatApiAuth,
     displayName: 'Direct Message',
     description: `Select a Direct Message${
       required ? '' : ', leave empty for all spaces'
@@ -176,12 +171,11 @@ export const directMessagesDropdown = ({
 
 export const spacesMembersDropdown = (refreshers: string[]) =>
   Property.Dropdown({
-    auth: googleChatApiAuth,
     displayName: 'Space Member',
     description: 'Select a space member, leave empty for all members',
     required: false,
     refreshers,
-    async options({ auth, spaceId }) {
+    async options({ auth, spaceId }: any) {
       if (!auth) {
         return {
           disabled: true,
@@ -190,7 +184,7 @@ export const spacesMembersDropdown = (refreshers: string[]) =>
         };
       }
 
-      if (!spaceId || typeof spaceId !== 'string') {
+      if (!spaceId) {
         return {
           disabled: true,
           placeholder: 'Please select a space first',
@@ -222,12 +216,11 @@ export const spacesMembersDropdown = (refreshers: string[]) =>
 
 export const peoplesDropdown = (refreshers: string[]) =>
   Property.Dropdown({
-    auth: googleChatApiAuth,
     displayName: 'Select A Person',
     description: 'Select a person',
     required: true,
     refreshers,
-    async options({ auth }) {
+    async options({ auth }: any) {
       if (!auth) {
         return {
           disabled: true,
@@ -274,12 +267,11 @@ export const threadsDropdown = ({
   required?: boolean;
 }) =>
   Property.Dropdown({
-    auth: googleChatApiAuth,
     displayName: 'Thread',
     description: `Select a thread to reply to${required ? '' : ', leave empty for new thread'}`,
     required,
     refreshers,
-    async options({ auth, spaceId }) {
+    async options({ auth, spaceId }: any) {
       if (!auth) {
         return {
           disabled: true,
@@ -288,7 +280,7 @@ export const threadsDropdown = ({
         };
       }
 
-      if (!spaceId || typeof spaceId !== 'string') {
+      if (!spaceId) {
         return {
           disabled: true,
           placeholder: 'Please select a space first',

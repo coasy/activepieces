@@ -69,10 +69,7 @@ export function ApTableStateProvider({
     error: fieldsError,
   } = useQuery({
     queryKey: ['fields', tableId],
-    queryFn: () =>
-      fieldsApi.list({
-        tableId: tableId!,
-      }),
+    queryFn: () => fieldsApi.list(tableId!),
     refetchOnWindowFocus: true,
     refetchOnMount: true,
     staleTime: 0,
@@ -155,9 +152,4 @@ export function useTableState<T>(selector: (state: TableState) => T) {
     throw new Error('Table context not found');
   }
   return useStore(tableStore, selector);
-}
-
-export function useOptionalTableStore() {
-  const tableStore = useContext(TableContext);
-  return tableStore ?? null;
 }

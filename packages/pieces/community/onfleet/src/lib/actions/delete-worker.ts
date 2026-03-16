@@ -13,7 +13,7 @@ export const deleteWorker = createAction({
     worker: common.worker,
   },
   async run(context) {
-    const onfleetApi = new Onfleet(context.auth.secret_text);
+    const onfleetApi = new Onfleet(context.auth);
 
     return await onfleetApi.workers.deleteOne(
       context.propsValue.worker as string

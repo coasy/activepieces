@@ -37,18 +37,18 @@ export const telegramNewMessage = createTrigger({
     },
   },
   async onEnable(context) {
-    await telegramCommons.subscribeWebhook(context.auth.secret_text, context.webhookUrl, {
+    await telegramCommons.subscribeWebhook(context.auth, context.webhookUrl, {
       allowed_updates: [],
     });
   },
   async onDisable(context) {
-    await telegramCommons.unsubscribeWebhook(context.auth.secret_text);
+    await telegramCommons.unsubscribeWebhook(context.auth);
   },
   async run(context) {
     return [context.payload.body];
   },
   async test(context) {
-    const messages = await getLastFiveMessages(context.auth.secret_text)
+    const messages = await getLastFiveMessages(context.auth)
     return messages.result
   },
 });

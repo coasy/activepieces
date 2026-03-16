@@ -1,6 +1,6 @@
 import { inspect } from 'node:util'
 import { PiecePropertyMap, StaticPropsValue, TriggerStrategy } from '@activepieces/pieces-framework'
-import { assertEqual, AUTHENTICATION_PROPERTY_NAME, EngineGenericError, EventPayload, ExecuteTriggerOperation, ExecuteTriggerResponse, FlowTrigger, InvalidCronExpressionError, isNil, PieceTrigger, PropertySettings, ScheduleOptions, TriggerHookType, TriggerSourceScheduleType } from '@activepieces/shared'
+import { assertEqual, AUTHENTICATION_PROPERTY_NAME, EventPayload, ExecuteTriggerOperation, ExecuteTriggerResponse, FlowTrigger, isNil, PieceTrigger, PropertySettings, ScheduleOptions, TriggerHookType, TriggerSourceScheduleType } from '@activepieces/shared'
 import { isValidCron } from 'cron-validator'
 import { EngineConstants } from '../handler/context/engine-constants'
 import { FlowExecutorContext } from '../handler/context/flow-execution-context'
@@ -10,6 +10,7 @@ import { createContextStore } from '../services/storage.service'
 import { utils } from '../utils'
 import { propsProcessor } from '../variables/props-processor'
 import { createPropsResolver } from '../variables/props-resolver'
+import { EngineGenericError } from './execution-errors'
 import { pieceLoader } from './piece-loader'
 
 type Listener = {
@@ -26,7 +27,7 @@ export const triggerHelper = {
             throw new EngineGenericError('TriggerNameNotSetError', 'Trigger name is not set')
         }
 
-        const { pieceTrigger, processedInput, piece } = await prepareTriggerExecution({
+        const { pieceTrigger, processedInput } = await prepareTriggerExecution({
             pieceName,
             pieceVersion,
             triggerName,
@@ -34,9 +35,8 @@ export const triggerHelper = {
             projectId: constants.projectId,
             apiUrl: constants.internalApiUrl,
             engineToken: constants.engineToken,
-            devPieces: constants.devPieces,
+            pieceSource: constants.piecesSource,
             propertySettings,
-            stepNames: constants.stepNames,
         })
         const isOldVersionOrNotSupported = isNil(pieceTrigger.onStart)
         if (isOldVersionOrNotSupported) {
@@ -67,9 +67,9 @@ export const triggerHelper = {
                 projectId: constants.projectId,
                 engineToken: constants.engineToken,
                 target: 'triggers',
-                contextVersion: piece.getContextInfo?.().version,
             }),
         }
+
         await pieceTrigger.onStart(context)
     },
 
@@ -88,9 +88,8 @@ export const triggerHelper = {
             projectId: params.projectId,
             apiUrl: constants.internalApiUrl,
             engineToken: params.engineToken,
-            devPieces: constants.devPieces,
+            pieceSource: constants.piecesSource,
             propertySettings,
-            stepNames: constants.stepNames,
         })
 
         const appListeners: Listener[] = []
@@ -113,7 +112,7 @@ export const triggerHelper = {
             },
             setSchedule(request: ScheduleOptions) {
                 if (!isValidCron(request.cronExpression)) {
-                    throw new InvalidCronExpressionError(request.cronExpression)
+                    throw new EngineGenericError('InvalidCronExpressionError', `Invalid cron expression: ${request.cronExpression}`)
                 }
                 scheduleOptions = {
                     type: TriggerSourceScheduleType.CRON_EXPRESSION,
@@ -145,7 +144,6 @@ export const triggerHelper = {
                 projectId: constants.projectId,
                 engineToken: constants.engineToken,
                 target: 'triggers',
-                contextVersion: piece.getContextInfo?.().version,
             }),
         }
         switch (params.hookType) {
@@ -274,20 +272,18 @@ type ExecuteTriggerParams = {
     constants: EngineConstants
 }
 
-async function prepareTriggerExecution({ pieceName, pieceVersion, triggerName, input, propertySettings, projectId, apiUrl, engineToken, devPieces, stepNames }: PrepareTriggerExecutionParams) {
+async function prepareTriggerExecution({ pieceName, pieceVersion, triggerName, input, propertySettings, projectId, apiUrl, engineToken, pieceSource }: PrepareTriggerExecutionParams) {
     const { piece, pieceTrigger } = await pieceLoader.getPieceAndTriggerOrThrow({
         pieceName,
         pieceVersion,
         triggerName,
-        devPieces,
+        pieceSource,
     })
 
     const { resolvedInput } = await createPropsResolver({
         apiUrl,
         projectId,
         engineToken,
-        contextVersion: piece.getContextInfo?.().version,
-        stepNames,
     }).resolve<StaticPropsValue<PiecePropertyMap>>({
         unresolvedInput: input,
         executionState: FlowExecutorContext.empty(),
@@ -311,6 +307,5 @@ type PrepareTriggerExecutionParams = {
     projectId: string
     apiUrl: string
     engineToken: string
-    devPieces: string[]
-    stepNames: string[]
+    pieceSource: string
 }

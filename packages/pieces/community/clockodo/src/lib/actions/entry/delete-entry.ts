@@ -14,7 +14,7 @@ export default createAction({
     }),
   },
   async run({ auth, propsValue }) {
-    const client = makeClient(auth.props);
+    const client = makeClient(auth);
     await client.deleteEntry(propsValue.entry_id);
   },
 });

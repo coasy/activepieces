@@ -107,7 +107,7 @@ export function register({
 		sampleData: sampleData,
 		type: TriggerStrategy.WEBHOOK,
 		async onEnable(context) {
-			const mailerLite = new MailerLite({ api_key: context.auth.secret_text });
+			const mailerLite = new MailerLite({ api_key: context.auth });
 			mailerLite.webhooks
 				.create({
 					name: context.propsValue.name,
@@ -125,7 +125,7 @@ export function register({
 			const webhook = await context.store.get<Webhook>(name);
 
 			if (webhook?.data.id) {
-				const mailerLite = new MailerLite({ api_key: context.auth.secret_text });
+				const mailerLite = new MailerLite({ api_key: context.auth });
 				mailerLite.webhooks.delete(webhook?.data.id);
 			}
 		},

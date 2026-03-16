@@ -68,7 +68,7 @@ export const reachinbox = createPiece({
       baseUrl: () => 'https://api.reachinbox.ai/api/v1/',
       auth: ReachinboxAuth,
       authMapping: async (auth) => ({
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       }),
     }),
   ],

@@ -1,19 +1,19 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { t } from 'i18next';
-import { Key, Plus, Trash, Hash, Tag, Clock } from 'lucide-react';
+import { Key, Plus, Trash } from 'lucide-react';
 
-import { DashboardPageHeader } from '@/app/components/dashboard-page-header';
 import LockedFeatureGuard from '@/app/components/locked-feature-guard';
 import { NewApiKeyDialog } from '@/app/routes/platform/security/api-keys/new-api-key-dialog';
+import { DashboardPageHeader } from '@/components/custom/dashboard-page-header';
 import { ConfirmationDeleteDialog } from '@/components/delete-dialog';
 import { Button } from '@/components/ui/button';
 import { DataTable, RowDataWithActions } from '@/components/ui/data-table';
 import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
-import { FormattedDate } from '@/components/ui/formatted-date';
-import { internalErrorToast } from '@/components/ui/sonner';
+import { INTERNAL_ERROR_TOAST, toast } from '@/components/ui/use-toast';
 import { apiKeyApi } from '@/features/platform-admin/lib/api-key-api';
 import { platformHooks } from '@/hooks/platform-hooks';
+import { formatUtils } from '@/lib/utils';
 import { ApiKeyResponseWithoutValue } from '@activepieces/ee-shared';
 
 const ApiKeysPage = () => {
@@ -29,9 +29,8 @@ const ApiKeysPage = () => {
   const columns: ColumnDef<RowDataWithActions<ApiKeyResponseWithoutValue>>[] = [
     {
       accessorKey: 'id',
-      size: 200,
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('Id')} icon={Hash} />
+        <DataTableColumnHeader column={column} title={t('Id')} />
       ),
       cell: ({ row }) => {
         return <div className="text-left">{row.original.id}</div>;
@@ -39,13 +38,8 @@ const ApiKeysPage = () => {
     },
     {
       accessorKey: 'displayName',
-      size: 200,
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('Display Name')}
-          icon={Tag}
-        />
+        <DataTableColumnHeader column={column} title={t('Display Name')} />
       ),
       cell: ({ row }) => {
         return <div className="text-left">{row.original.displayName}</div>;
@@ -53,40 +47,13 @@ const ApiKeysPage = () => {
     },
     {
       accessorKey: 'created',
-      size: 150,
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('Created')}
-          icon={Clock}
-        />
+        <DataTableColumnHeader column={column} title={t('Created')} />
       ),
       cell: ({ row }) => {
         return (
           <div className="text-left">
-            <FormattedDate date={new Date(row.original.created)} />
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: 'lastUsedAt',
-      size: 150,
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('Last Used')}
-          icon={Clock}
-        />
-      ),
-      cell: ({ row }) => {
-        return (
-          <div className="text-left">
-            {row.original.lastUsedAt ? (
-              <FormattedDate date={new Date(row.original.lastUsedAt)} />
-            ) : (
-              t('Never')
-            )}
+            {formatUtils.formatDate(new Date(row.original.created))}
           </div>
         );
       },
@@ -145,7 +112,7 @@ const ApiKeysPage = () => {
                       refetch();
                     }}
                     onError={() => {
-                      internalErrorToast();
+                      toast(INTERNAL_ERROR_TOAST);
                     }}
                   >
                     <Button variant="ghost" className="size-8 p-0">

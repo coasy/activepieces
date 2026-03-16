@@ -61,7 +61,7 @@ export const calendlyInviteeCanceled = createTrigger({
   },
   type: TriggerStrategy.WEBHOOK,
   async onEnable(context) {
-    const calendlyUser = await calendlyCommon.getUser(context.auth.secret_text);
+    const calendlyUser = await calendlyCommon.getUser(context.auth);
     const request: HttpRequest = {
       method: HttpMethod.POST,
       url: `${calendlyCommon.baseUrl}/webhook_subscriptions`,
@@ -73,7 +73,7 @@ export const calendlyInviteeCanceled = createTrigger({
         events: ['invitee.canceled'],
       },
       authentication: {
-        token: context.auth.secret_text,
+        token: context.auth,
         type: AuthenticationType.BEARER_TOKEN,
       },
       queryParams: {},
@@ -94,7 +94,7 @@ export const calendlyInviteeCanceled = createTrigger({
         method: HttpMethod.DELETE,
         url: `${calendlyCommon.baseUrl}/webhook_subscriptions/${response.webhookId}`,
         authentication: {
-          token: context.auth.secret_text,
+          token: context.auth,
           type: AuthenticationType.BEARER_TOKEN,
         },
       };

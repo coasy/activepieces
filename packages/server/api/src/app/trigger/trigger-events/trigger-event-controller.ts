@@ -1,5 +1,4 @@
 
-import { ProjectResourceType, securityAccess } from '@activepieces/server-shared'
 import {
     ListTriggerEventsRequest,
     PrincipalType,
@@ -16,7 +15,7 @@ export const triggerEventController: FastifyPluginAsyncTypebox = async (fastify)
 
     fastify.post('/', SaveTriggerEventRequestParams, async (request) => {
         return triggerEventService(request.log).saveEvent({
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
             flowId: request.body.flowId,
             payload: request.body.mockData,
         })
@@ -25,11 +24,11 @@ export const triggerEventController: FastifyPluginAsyncTypebox = async (fastify)
     fastify.get('/', ListTriggerEventsRequestParams, async (request) => {
         const flow = await flowService(request.log).getOnePopulatedOrThrow({
             id: request.query.flowId,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
         })
 
         return triggerEventService(request.log).list({
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
             flow,
             cursor: request.query.cursor ?? null,
             limit: request.query.limit ?? DEFAULT_PAGE_SIZE,
@@ -44,9 +43,7 @@ const ListTriggerEventsRequestParams = {
         querystring: ListTriggerEventsRequest,
     },
     config: {
-        security: securityAccess.project([PrincipalType.USER], undefined, {
-            type: ProjectResourceType.QUERY,
-        }),
+        allowedPrincipals: [PrincipalType.USER] as const,   
     },
 }
 
@@ -55,8 +52,6 @@ const SaveTriggerEventRequestParams = {
         body: SaveTriggerEventRequest,
     },
     config: {
-        security: securityAccess.project([PrincipalType.USER], undefined, {
-            type: ProjectResourceType.BODY,
-        }),
+        allowedPrincipals: [PrincipalType.USER] as const,
     },
 }

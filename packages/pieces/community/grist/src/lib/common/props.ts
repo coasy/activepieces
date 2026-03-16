@@ -12,7 +12,6 @@ export const commonProps = {
     displayName: 'Workspace',
     refreshers: [],
     required: true,
-    auth: gristAuth,
     options: async ({ auth }) => {
       if (!auth) {
         return {
@@ -22,7 +21,7 @@ export const commonProps = {
         };
       }
 
-      const authValue = auth.props;
+      const authValue = auth as PiecePropValueSchema<typeof gristAuth>;
 
       const client = new GristAPIClient({
         domainUrl: authValue.domain,
@@ -46,7 +45,6 @@ export const commonProps = {
     displayName: 'Document',
     refreshers: ['workspace_id'],
     required: true,
-    auth: gristAuth,
     options: async ({ auth, workspace_id }) => {
       if (!auth || !workspace_id) {
         return {
@@ -56,7 +54,7 @@ export const commonProps = {
         };
       }
 
-      const authValue = auth.props;
+      const authValue = auth as PiecePropValueSchema<typeof gristAuth>;
 
       const client = new GristAPIClient({
         domainUrl: authValue.domain,
@@ -82,7 +80,6 @@ export const commonProps = {
     displayName: 'Table',
     refreshers: ['document_id'],
     required: true,
-    auth: gristAuth,
     options: async ({ auth, document_id }) => {
       if (!auth || !document_id) {
         return {
@@ -92,7 +89,7 @@ export const commonProps = {
         };
       }
 
-      const authValue = auth.props;
+      const authValue = auth as PiecePropValueSchema<typeof gristAuth>;
 
       const client = new GristAPIClient({
         domainUrl: authValue.domain,
@@ -118,7 +115,6 @@ export const commonProps = {
     displayName: 'Table Columns',
     refreshers: ['document_id', 'table_id'],
     required: true,
-    auth: gristAuth,
     props: async ({ auth, document_id, table_id }) => {
       if (!auth) return {};
       if (!document_id) return {};
@@ -126,7 +122,7 @@ export const commonProps = {
 
       const fields: DynamicPropsValue = {};
 
-      const authValue = auth.props;
+      const authValue = auth as PiecePropValueSchema<typeof gristAuth>;
 
       const client = new GristAPIClient({
         domainUrl: authValue.domain,
@@ -247,7 +243,6 @@ export const commonProps = {
     description: `A toggle (boolean) column which is True when the record is ready. The trigger will only be activated when that record becomes ready.Please follow [guideline](https://support.getgrist.com/integrators/#readiness-column) to create readiness column in table.`,
     refreshers: ['document_id', 'table_id'],
     required: false,
-    auth: gristAuth,
     options: async ({ auth, document_id, table_id }) => {
       if (!auth || !document_id || !table_id) {
         return {
@@ -257,7 +252,7 @@ export const commonProps = {
         };
       }
 
-        const authValue = auth.props;
+      const authValue = auth as PiecePropValueSchema<typeof gristAuth>;
 
       const client = new GristAPIClient({
         domainUrl: authValue.domain,

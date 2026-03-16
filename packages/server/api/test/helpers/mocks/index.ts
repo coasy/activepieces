@@ -1,7 +1,9 @@
+import { AIProvider } from '@activepieces/common-ai'
 import {
     ApiKey,
     ApplicationEvent,
     ApplicationEventName,
+    BillingCycle,
     CustomDomain,
     CustomDomainStatus,
     GitBranchType,
@@ -14,12 +16,9 @@ import {
     ProjectMember,
     SigningKey,
 } from '@activepieces/ee-shared'
-import { LATEST_CONTEXT_VERSION } from '@activepieces/pieces-framework'
 import { apDayjs } from '@activepieces/server-shared'
 import {
-    AiCreditsAutoTopUpState,
-    AIProvider,
-    AIProviderName,
+    AiOverageState,
     apId,
     AppConnection,
     AppConnectionScope,
@@ -27,7 +26,6 @@ import {
     AppConnectionType,
     assertNotNullOrUndefined,
     Cell,
-    ColorName,
     Field,
     FieldType,
     File,
@@ -36,10 +34,10 @@ import {
     FileType,
     FilteredPieceBehavior,
     Flow,
-    FlowOperationStatus,
     FlowRun,
     FlowRunStatus,
     FlowStatus,
+    FlowTemplate,
     FlowTriggerType,
     FlowVersion,
     FlowVersionState,
@@ -52,19 +50,14 @@ import {
     PlatformPlan,
     PlatformRole,
     Project,
-    ProjectIcon,
     ProjectPlan,
     ProjectRelease,
     ProjectReleaseType,
     ProjectRole,
-    ProjectType,
     Record,
     RoleType,
     RunEnvironment,
     Table,
-    TeamProjectsLimit,
-    Template,
-    TemplateStatus,
     TemplateType,
     User,
     UserIdentity,
@@ -81,7 +74,7 @@ import { generateApiKey } from '../../../src/app/ee/api-keys/api-key-service'
 import { OAuthAppWithEncryptedSecret } from '../../../src/app/ee/oauth-apps/oauth-app.entity'
 import { PlatformPlanEntity } from '../../../src/app/ee/platform/platform-plan/platform-plan.entity'
 import { encryptUtils } from '../../../src/app/helper/encryption'
-import { PieceMetadataSchema } from '../../../src/app/pieces/metadata/piece-metadata-entity'
+import { PieceMetadataSchema } from '../../../src/app/pieces/piece-metadata-entity'
 import { PieceTagSchema } from '../../../src/app/pieces/tags/pieces/piece-tag.entity'
 import { TagEntitySchema } from '../../../src/app/pieces/tags/tag-entity'
 
@@ -134,25 +127,22 @@ export const createMockOAuthApp = async (
 }
 
 export const createMockTemplate = (
-    template?: Partial<Template>,
-): Template => {
+    template?: Partial<FlowTemplate>,
+): FlowTemplate => {
     return {
+        name: template?.name ?? faker.lorem.word(),
+        description: template?.description ?? faker.lorem.sentence(),
+        type: template?.type ?? faker.helpers.enumValue(TemplateType),
+        tags: template?.tags ?? [],
+        pieces: template?.pieces ?? [],
+        blogUrl: template?.blogUrl ?? faker.internet.url(),
+        template: template?.template ?? createMockFlowVersion(),
+        projectId: template?.projectId ?? apId(),
+        platformId: template?.platformId ?? apId(),
         id: template?.id ?? apId(),
         created: template?.created ?? faker.date.recent().toISOString(),
         updated: template?.updated ?? faker.date.recent().toISOString(),
-        pieces: template?.pieces ?? [],
-        flows: template?.flows ?? [createMockFlowVersion()],
-        platformId: template?.platformId ?? apId(),
-        name: template?.name ?? faker.lorem.word(),
-        type: template?.type ?? TemplateType.CUSTOM,
-        description: template?.description ?? faker.lorem.sentence(),
-        summary: template?.summary ?? faker.lorem.sentence(),
-        tags: template?.tags ?? [],
-        blogUrl: template?.blogUrl ?? faker.internet.url(),
         metadata: template?.metadata ?? null,
-        author: template?.author ?? faker.person.fullName(),
-        categories: template?.categories ?? [],
-        status: template?.status ?? TemplateStatus.PUBLISHED,
     }
 }
 
@@ -163,6 +153,7 @@ export const createMockPlan = (plan?: Partial<ProjectPlan>): ProjectPlan => {
         updated: plan?.updated ?? faker.date.recent().toISOString(),
         projectId: plan?.projectId ?? apId(),
         name: plan?.name ?? faker.lorem.word(),
+        aiCredits: plan?.aiCredits ?? 0,
         locked: plan?.locked ?? false,
         pieces: plan?.pieces ?? [],
         piecesFilterType: plan?.piecesFilterType ?? PiecesFilterType.NONE,
@@ -185,9 +176,6 @@ export const createMockUserInvitation = (userInvitation: Partial<UserInvitation>
 }
 
 export const createMockProject = (project?: Partial<Project>): Project => {
-    const icon: ProjectIcon = {
-        color: faker.helpers.enumValue(ColorName),
-    }
     return {
         id: project?.id ?? apId(),
         created: project?.created ?? faker.date.recent().toISOString(),
@@ -199,8 +187,6 @@ export const createMockProject = (project?: Partial<Project>): Project => {
         externalId: project?.externalId ?? apId(),
         releasesEnabled: project?.releasesEnabled ?? false,
         metadata: project?.metadata ?? null,
-        type: project?.type ?? ProjectType.TEAM,
-        icon,
     }
 }
 
@@ -220,18 +206,20 @@ export const createMockGitRepo = (gitRepo?: Partial<GitRepo>): GitRepo => {
 
 export const createMockPlatformPlan = (platformPlan?: Partial<PlatformPlan>): PlatformPlan => {
     return {
+        stripeBillingCycle: platformPlan?.stripeBillingCycle ?? BillingCycle.MONTHLY,
         id: platformPlan?.id ?? apId(),
         created: platformPlan?.created ?? faker.date.recent().toISOString(),
         updated: platformPlan?.updated ?? faker.date.recent().toISOString(),
         platformId: platformPlan?.platformId ?? apId(),
-        tablesEnabled: platformPlan?.tablesEnabled ?? false,
         includedAiCredits: platformPlan?.includedAiCredits ?? 0,
         licenseKey: platformPlan?.licenseKey ?? faker.lorem.word(),
         stripeCustomerId: undefined,
+        mcpsEnabled: platformPlan?.mcpsEnabled ?? false,
         stripeSubscriptionId: undefined,
         ssoEnabled: platformPlan?.ssoEnabled ?? false,
-        eventStreamingEnabled: platformPlan?.eventStreamingEnabled ?? false,
-        aiCreditsAutoTopUpState: AiCreditsAutoTopUpState.DISABLED,
+        agentsEnabled: platformPlan?.agentsEnabled ?? false,
+        aiCreditsOverageLimit: platformPlan?.aiCreditsOverageLimit ?? 0,
+        aiCreditsOverageState: platformPlan?.aiCreditsOverageState ?? AiOverageState.ALLOWED_BUT_OFF,
         environmentsEnabled: platformPlan?.environmentsEnabled ?? false,
         analyticsEnabled: platformPlan?.analyticsEnabled ?? false,
         auditLogEnabled: platformPlan?.auditLogEnabled ?? false,
@@ -244,9 +232,11 @@ export const createMockPlatformPlan = (platformPlan?: Partial<PlatformPlan>): Pl
         stripeSubscriptionStatus: undefined,
         showPoweredBy: platformPlan?.showPoweredBy ?? false,
         embeddingEnabled: platformPlan?.embeddingEnabled ?? false,
-        teamProjectsLimit: platformPlan?.teamProjectsLimit ?? TeamProjectsLimit.NONE,
+        manageProjectsEnabled: platformPlan?.manageProjectsEnabled ?? false,
         projectRolesEnabled: platformPlan?.projectRolesEnabled ?? false,
         customDomainsEnabled: platformPlan?.customDomainsEnabled ?? false,
+        tablesEnabled: platformPlan?.tablesEnabled ?? false,
+        todosEnabled: platformPlan?.todosEnabled ?? false,
         stripeSubscriptionEndDate: apDayjs().endOf('month').unix(),
         stripeSubscriptionStartDate: apDayjs().startOf('month').unix(),
         plan: platformPlan?.plan,
@@ -272,6 +262,7 @@ export const createMockPlatform = (platform?: Partial<Platform>): Platform => {
         filteredPieceBehavior:
             platform?.filteredPieceBehavior ??
             faker.helpers.enumValue(FilteredPieceBehavior),
+        smtp: platform?.smtp,
         cloudAuthEnabled: platform?.cloudAuthEnabled ?? faker.datatype.boolean(),
     }
 }
@@ -402,6 +393,7 @@ export const createMockPieceMetadata = (
         displayName: pieceMetadata?.displayName ?? faker.lorem.word(),
         logoUrl: pieceMetadata?.logoUrl ?? faker.image.urlPlaceholder(),
         description: pieceMetadata?.description ?? faker.lorem.sentence(),
+        projectId: pieceMetadata?.projectId,
         directoryPath: pieceMetadata?.directoryPath,
         auth: pieceMetadata?.auth,
         authors: pieceMetadata?.authors ?? [],
@@ -416,7 +408,6 @@ export const createMockPieceMetadata = (
             pieceMetadata?.packageType ?? faker.helpers.enumValue(PackageType),
         archiveId: pieceMetadata?.archiveId,
         categories: pieceMetadata?.categories ?? [],
-        contextInfo: pieceMetadata?.contextInfo ?? { version: LATEST_CONTEXT_VERSION },
     }
 }
 
@@ -497,7 +488,6 @@ export const createMockFlow = (flow?: Partial<Flow>): Flow => {
         projectId: flow?.projectId ?? apId(),
         status: flow?.status ?? faker.helpers.enumValue(FlowStatus),
         folderId: flow?.folderId ?? null,
-        operationStatus: flow?.operationStatus ?? FlowOperationStatus.NONE,
         publishedVersionId: flow?.publishedVersionId ?? null,
         externalId: flow?.externalId ?? apId(),
     }
@@ -526,7 +516,6 @@ export const createMockFlowVersion = (
         state: flowVersion?.state ?? faker.helpers.enumValue(FlowVersionState),
         updatedBy: flowVersion?.updatedBy,
         valid: flowVersion?.valid ?? faker.datatype.boolean(),
-        notes: flowVersion?.notes ?? [],
     }
 }
 
@@ -550,7 +539,6 @@ export const createMockConnection = (connection: Partial<AppConnection>, ownerId
         metadata: connection?.metadata ?? {},
         externalId: connection?.externalId ?? apId(),
         owner: null,
-        pieceVersion: connection?.pieceVersion ?? '0.0.0',
     }
 }
 
@@ -645,7 +633,7 @@ export const mockBasicUser = async ({ userIdentity, user }: { userIdentity?: Par
     const mockUserIdentity = createMockUserIdentity({
         verified: true,
         ...userIdentity,
-    })
+    })  
     await databaseConnection().getRepository('user_identity').save(mockUserIdentity)
     const mockUser = createMockUser({
         ...user,
@@ -676,7 +664,7 @@ export const mockAndSaveBasicSetup = async (params?: MockBasicSetupParams): Prom
         ownerId: mockOwner.id,
         filteredPieceBehavior: params?.platform?.filteredPieceBehavior ?? FilteredPieceBehavior.BLOCKED,
     })
-
+    
     await databaseConnection().getRepository('platform').save(mockPlatform)
     const hasPlanTable = databaseConnection().hasMetadata(PlatformPlanEntity)
     if (hasPlanTable) {
@@ -685,7 +673,7 @@ export const mockAndSaveBasicSetup = async (params?: MockBasicSetupParams): Prom
             auditLogEnabled: true,
             apiKeysEnabled: true,
             customRolesEnabled: true,
-            teamProjectsLimit: TeamProjectsLimit.UNLIMITED,
+            manageProjectsEnabled: true,
             customDomainsEnabled: true,
             includedAiCredits: 1000,
             ...params?.plan,
@@ -772,14 +760,11 @@ export const createMockAIProvider = async (aiProvider?: Partial<AIProvider>): Pr
         created: aiProvider?.created ?? faker.date.recent().toISOString(),
         updated: aiProvider?.updated ?? faker.date.recent().toISOString(),
         platformId: aiProvider?.platformId ?? apId(),
-        provider: aiProvider?.provider ?? faker.helpers.enumValue(AIProviderName),
-        displayName: aiProvider?.displayName ?? faker.lorem.word(),
-        auth: await encryptUtils.encryptObject({
-            apiKey: process.env.OPENAI_API_KEY ?? faker.string.uuid(),
+        provider: aiProvider?.provider ?? 'openai',
+        config: await encryptUtils.encryptObject({
+            apiKey: aiProvider?.config?.apiKey ?? process.env.OPENAI_API_KEY ?? faker.string.uuid(),
         }),
-        config: {},
     }
-    
 }
 
 export const mockAndSaveAIProvider = async (params?: Partial<AIProvider>): Promise<Omit<AIProviderSchema, 'platform'>> => {
@@ -787,6 +772,7 @@ export const mockAndSaveAIProvider = async (params?: Partial<AIProvider>): Promi
     await databaseConnection().getRepository('ai_provider').upsert(mockAIProvider, ['platformId', 'provider'])
     return mockAIProvider
 }
+
 
 type CreateMockPlatformWithOwnerParams = {
     platform?: Partial<Omit<Platform, 'ownerId'>>

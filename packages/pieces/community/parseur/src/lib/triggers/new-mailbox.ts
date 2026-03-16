@@ -4,7 +4,6 @@ import {
     pollingHelper,
 } from '@activepieces/pieces-common';
 import {
-  AppConnectionValueForAuthProperty,
     createTrigger,
     PiecePropValueSchema,
     TriggerStrategy,
@@ -12,13 +11,13 @@ import {
 import { parseurAuth, parseurCommon } from '../common';
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof parseurAuth>,
+  PiecePropValueSchema<typeof parseurAuth>,
   Record<string, never>
 > = {
   strategy: DedupeStrategy.LAST_ITEM,
   items: async ({ auth: apiKey }) => {
     const response = await parseurCommon.listMailboxes({
-      apiKey: apiKey.secret_text,
+      apiKey
     });
     const items = response.results;
     return items.map((item) => ({

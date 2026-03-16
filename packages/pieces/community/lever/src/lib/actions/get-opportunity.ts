@@ -33,7 +33,7 @@ export const getOpportunity = createAction({
       )}`,
       authentication: {
         type: AuthenticationType.BASIC,
-        username: auth.props.apiKey,
+        username: auth.apiKey,
         password: '',
       },
     });

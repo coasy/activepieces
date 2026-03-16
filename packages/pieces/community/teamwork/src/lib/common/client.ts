@@ -4,7 +4,7 @@ import {
 	HttpMethod,
 	QueryParams,
 } from '@activepieces/pieces-common';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
+import { PiecePropValueSchema } from '@activepieces/pieces-framework';
 import { teamworkAuth } from './auth';
 
 const MAX_RETRIES = 5;
@@ -32,10 +32,10 @@ async function sleep(ms: number) {
 }
 
 export async function teamworkRequest(
-	auth: AppConnectionValueForAuthProperty<typeof teamworkAuth>,
+	auth: PiecePropValueSchema<typeof teamworkAuth>,
 	options: TeamworkRequestOptions,
 ) {
-	const base = `https://${auth.props.subdomain}.teamwork.com`;
+	const base = `https://${auth.subdomain}.teamwork.com`;
 	const url = buildUrl(base, options.path, options.query);
 
 	let attempt = 0;
@@ -50,8 +50,8 @@ export async function teamworkRequest(
 				body: options.body,
 				authentication: {
 					type: AuthenticationType.BASIC,
-					username: auth.props.username,
-					password: auth.props.password,
+					username: auth.username,
+					password: auth.password,
 				},
 			});
 			return normalizeResponse(res.body);

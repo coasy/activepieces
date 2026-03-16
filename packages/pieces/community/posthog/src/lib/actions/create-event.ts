@@ -62,7 +62,7 @@ export const posthogCreateEvent = createAction({
     const body: EventBody = {
       event: context.propsValue.event,
       type: context.propsValue.event_type!,
-      api_key: context.auth.secret_text,
+      api_key: context.auth,
       messageId: context.propsValue.message_id,
       context: context.propsValue.context || {},
       properties: context.propsValue.properties || {},
@@ -76,7 +76,7 @@ export const posthogCreateEvent = createAction({
       body,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: context.auth.secret_text,
+        token: context.auth,
       },
     };
 

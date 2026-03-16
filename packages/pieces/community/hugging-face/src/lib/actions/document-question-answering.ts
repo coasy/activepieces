@@ -131,7 +131,7 @@ export const documentQuestionAnswering = createAction({
       }
     };
 
-    const hf = new InferenceClient(context.auth.secret_text);
+    const hf = new InferenceClient(context.auth as string);
     const mimeType = getMimeType(image.filename);
     const imageBlob = new Blob([new Uint8Array(image.data)], {
       type: mimeType,

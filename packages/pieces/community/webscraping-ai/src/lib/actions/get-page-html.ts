@@ -15,7 +15,7 @@ export const getPageHtml = createAction({
     ];
 
     const params: any = {
-      apiKey:apiKey.secret_text,
+      apiKey,
       ...rest,
       format: (format === 'json' || format === 'text') ? format : undefined,
       proxy: (proxy === 'datacenter' || proxy === 'residential') ? proxy : undefined,

@@ -15,7 +15,7 @@ export const getAuthenticatedUser = createAction({
       const secretRecoveryPhrase = auth;
 
       const mailchain =
-        Mailchain.fromSecretRecoveryPhrase(secretRecoveryPhrase.secret_text);
+        Mailchain.fromSecretRecoveryPhrase(secretRecoveryPhrase);
 
       const user = await mailchain.user();
       return user;

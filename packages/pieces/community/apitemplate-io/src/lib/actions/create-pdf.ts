@@ -1,6 +1,6 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { ApitemplateAuth } from '../common/auth';
-import { ApitemplateRegion, makeRequest } from '../common/client';
+import { ApitemplateAuthConfig, makeRequest } from '../common/client';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { templateIdDropdown } from '../common/props';
 
@@ -36,7 +36,7 @@ export const createPdf = createAction({
     }),
   },
   async run({ auth, propsValue }) {
-    const authConfig = auth.props;
+    const authConfig = auth as ApitemplateAuthConfig;
     const {
       templateId,
       data,
@@ -70,7 +70,7 @@ export const createPdf = createAction({
         endpoint,
         data,
         undefined,
-        authConfig.region as ApitemplateRegion
+        authConfig.region
       );
 
       return response;

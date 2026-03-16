@@ -35,8 +35,8 @@ export const respondIo = createPiece({
     createCustomApiCallAction({
       auth: respondIoAuth,
       baseUrl: () => 'https://api.respond.io/v2',
-      authMapping: async (auth) => {
-        const { token } = auth.props;
+      authMapping: async (auth: unknown) => {
+        const { token } = auth as { token: string };
         return {
           Authorization: `Bearer ${token}`,
         };

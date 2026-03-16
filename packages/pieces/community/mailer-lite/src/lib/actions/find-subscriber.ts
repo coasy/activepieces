@@ -14,7 +14,7 @@ export const findSubscriberAction = createAction({
 		}),
 	},
 	async run(context) {
-		const client = new MailerLite({ api_key: context.auth.secret_text });
+		const client = new MailerLite({ api_key: context.auth });
 		const response = await client.subscribers.find(context.propsValue.searchValue);
 		return response.data;
 	},

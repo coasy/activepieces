@@ -4,7 +4,6 @@ import {
   pollingHelper,
 } from '@activepieces/pieces-common';
 import {
-  AppConnectionValueForAuthProperty,
   createTrigger,
   PiecePropValueSchema,
   TriggerStrategy,
@@ -13,7 +12,7 @@ import dayjs from 'dayjs';
 import { microsoft365PlannerAuth, microsoft365PlannerCommon } from '../common';
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof microsoft365PlannerAuth>,
+  PiecePropValueSchema<typeof microsoft365PlannerAuth>,
   Record<string, never>
 > = {
   strategy: DedupeStrategy.TIMEBASED,

@@ -1,12 +1,10 @@
 import { DropdownOption, Property } from '@activepieces/pieces-framework';
 import { makeClient } from './client';
 import { LinearDocument } from '@linear/sdk';
-import { linearAuth } from '../..';
 
 export const props = {
   team_id: (required = true) =>
     Property.Dropdown({
-auth: linearAuth,
       description:
         'The team for which the issue, project or comment will be created',
       displayName: 'Team',
@@ -20,7 +18,7 @@ auth: linearAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const options: DropdownOption<string>[] = [];
 
         let hasNextPage = false;
@@ -49,7 +47,6 @@ auth: linearAuth,
     }),
   status_id: (required = false) =>
     Property.Dropdown({
-auth: linearAuth,
       description: 'Status of the Issue',
       displayName: 'Status',
       required,
@@ -62,7 +59,7 @@ auth: linearAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const options: DropdownOption<string>[] = [];
 
         let hasNextPage = false;
@@ -98,7 +95,6 @@ auth: linearAuth,
     }),
   labels: (required = false) =>
     Property.MultiSelectDropdown({
-auth: linearAuth,
       description: 'Labels for the Issue',
       displayName: 'Labels',
       required,
@@ -118,11 +114,9 @@ auth: linearAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
-        const teamLabels: DropdownOption<string>[] = [];
-        const workspaceLabels: DropdownOption<string>[] = [];
+        const client = makeClient(auth as string);
+        const options: DropdownOption<string>[] = [];
 
-        // Fetch team specific labels
         let hasNextPage = false;
         let cursor;
 
@@ -141,45 +135,12 @@ auth: linearAuth,
           });
 
           for (const label of labels.nodes) {
-            teamLabels.push({ label: label.name, value: label.id });
+            options.push({ label: label.name, value: label.id });
           }
 
           hasNextPage = labels.pageInfo.hasNextPage;
           cursor = labels.pageInfo.endCursor;
         } while (hasNextPage);
-
-        // Fetch all workspace labels that are common to all teams
-        hasNextPage = false;
-        cursor = undefined;
-
-        do {
-          const labels = await client.listIssueLabels({
-            filter: {
-              team: {
-                null: true,
-              },
-            },
-            orderBy: LinearDocument.PaginationOrderBy.UpdatedAt,
-            first: 100,
-            after: cursor,
-          });
-
-          for (const label of labels.nodes) {
-            // Prefix workspace labels with [Workspace]
-            workspaceLabels.push({ label: `[Workspace] ${label.name}`, value: label.id });
-          }
-
-          hasNextPage = labels.pageInfo.hasNextPage;
-          cursor = labels.pageInfo.endCursor;
-        } while (hasNextPage);
-
-        // team labels are displayed first in alphabetical order
-        teamLabels.sort((a, b) => a.label.localeCompare(b.label));
-        
-        // followed by workspace labels in alphabetical order
-        workspaceLabels.sort((a, b) => a.label.localeCompare(b.label));
-
-        const options = [...teamLabels, ...workspaceLabels];
 
         return {
           disabled: false,
@@ -189,7 +150,6 @@ auth: linearAuth,
     }),
   assignee_id: (required = false) =>
     Property.Dropdown({
-auth: linearAuth,
       description: 'Assignee of the Issue / Comment',
       displayName: 'Assignee',
       required,
@@ -202,7 +162,7 @@ auth: linearAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const options: DropdownOption<string>[] = [];
 
         let hasNextPage = false;
@@ -231,7 +191,6 @@ auth: linearAuth,
     }),
   priority_id: (required = false) =>
     Property.Dropdown({
-auth: linearAuth,
       description: 'Priority of the Issue',
       displayName: 'Priority',
       required,
@@ -244,7 +203,7 @@ auth: linearAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const priorities = await client.listIssuePriorities();
 
         return {
@@ -260,7 +219,6 @@ auth: linearAuth,
     }),
   issue_id: (required = true) =>
     Property.Dropdown({
-auth: linearAuth,
       displayName: 'Issue',
       required,
       description: 'ID of Linear Issue',
@@ -273,7 +231,7 @@ auth: linearAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const filter: LinearDocument.IssuesQueryVariables = {
           first: 50,
           filter: {
@@ -300,7 +258,6 @@ auth: linearAuth,
 
   project_id: (required = true) =>
     Property.Dropdown({
-auth: linearAuth,
       displayName: 'Project',
       required,
       description: 'ID of Linear Project',
@@ -313,7 +270,7 @@ auth: linearAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const options: DropdownOption<string>[] = [];
 
         let hasNextPage = false;
@@ -342,7 +299,6 @@ auth: linearAuth,
     }),
   template_id: (required = false) =>
     Property.Dropdown({
-auth: linearAuth,
       displayName: 'Template',
       required,
       description: 'ID of Template',
@@ -355,7 +311,7 @@ auth: linearAuth,
             options: [],
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const options: DropdownOption<string>[] = [];
 
         let hasNextPage = false;

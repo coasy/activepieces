@@ -1,4 +1,4 @@
-import { Property, DynamicPropsValue, PieceAuth, AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
+import { Property, DynamicPropsValue, PieceAuth } from '@activepieces/pieces-framework';
 import { ServiceNowClient } from './client';
 
 export const servicenowAuth = PieceAuth.CustomAuth({
@@ -23,7 +23,6 @@ export const servicenowAuth = PieceAuth.CustomAuth({
 });
 
 export const tableDropdown = Property.Dropdown({
-  auth: servicenowAuth,
   displayName: 'Table',
   description: 'ServiceNow table to work with',
   required: true,
@@ -63,7 +62,6 @@ export const tableDropdown = Property.Dropdown({
 });
 
 export const recordDropdown = Property.Dropdown({
-  auth: servicenowAuth,
   displayName: 'Record',
   description: 'Select a record from the table',
   required: true,
@@ -102,13 +100,13 @@ export const recordDropdown = Property.Dropdown({
   },
 });
 
-export function createServiceNowClient(auth: AppConnectionValueForAuthProperty<typeof servicenowAuth>): ServiceNowClient {
+export function createServiceNowClient(auth: any): ServiceNowClient {
   return new ServiceNowClient({
-    instanceUrl: auth.props.instanceUrl,
+    instanceUrl: auth.instanceUrl,
     auth: {
       type: 'basic',
-      username: auth.props.username,
-      password: auth.props.password,
+      username: auth.username,
+      password: auth.password,
     },
   });
 }

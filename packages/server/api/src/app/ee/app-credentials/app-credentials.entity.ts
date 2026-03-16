@@ -4,6 +4,7 @@ import { EntitySchema } from 'typeorm'
 import {
     ApIdSchema,
     BaseColumnSchemaPart,
+    JSONB_COLUMN_TYPE,
 } from '../../database/database-common'
 
 export type AppCredentialSchema = {
@@ -19,7 +20,7 @@ export const AppCredentialEntity = new EntitySchema<AppCredentialSchema>({
         },
         projectId: ApIdSchema,
         settings: {
-            type: 'jsonb',
+            type: JSONB_COLUMN_TYPE,
         },
     },
     indices: [],

@@ -1,7 +1,8 @@
 import {
 	createTrigger,
 	TriggerStrategy,
-	AppConnectionValueForAuthProperty,
+	Property,
+	PiecePropValueSchema,
 } from '@activepieces/pieces-framework';
 import { crispAuth } from '../common/auth';
 import { websiteIdProp } from '../common/props';
@@ -15,7 +16,7 @@ import {
 import dayjs from 'dayjs';
 import { crispApiCall } from '../common/client';
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof crispAuth>, { websiteId: string }> = {
+const polling: Polling<PiecePropValueSchema<typeof crispAuth>, { websiteId: string }> = {
 	strategy: DedupeStrategy.TIMEBASED,
 	async items({ auth, lastFetchEpochMS, propsValue }) {
 		const websiteId = propsValue.websiteId;

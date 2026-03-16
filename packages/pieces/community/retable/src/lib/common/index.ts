@@ -10,13 +10,11 @@ import {
   RetableTable,
 } from './models';
 import { isNil } from '@activepieces/shared';
-import { retableAuth } from '../..';
 
 export const retableCommon = {
   baseUrl: 'https://api.retable.io/v1/public',
   workspace_id: (required = true) =>
-        Property.Dropdown({
-      auth: retableAuth,
+    Property.Dropdown({
       displayName: 'Workspace',
       required,
       refreshers: [],
@@ -36,7 +34,7 @@ export const retableCommon = {
           method: HttpMethod.GET,
           url: `${retableCommon.baseUrl}/workspace`,
           headers: {
-            ApiKey: auth.secret_text,
+            ApiKey: auth as string,
           },
         });
         return {
@@ -51,8 +49,7 @@ export const retableCommon = {
       },
     }),
   project_id: (required = true) =>
-        Property.Dropdown({
-      auth: retableAuth,
+    Property.Dropdown({
       displayName: 'Project',
       required,
       refreshers: ['workspace_id'],
@@ -75,7 +72,7 @@ export const retableCommon = {
             workspace_id as string
           }/project`,
           headers: {
-            ApiKey: auth.secret_text,
+            ApiKey: auth as string,
           },
         });
         return {
@@ -90,8 +87,7 @@ export const retableCommon = {
       },
     }),
   retable_id: (required = true) =>
-        Property.Dropdown({
-      auth: retableAuth,
+    Property.Dropdown({
       displayName: 'Retable',
       required,
       refreshers: ['project_id'],
@@ -113,7 +109,7 @@ export const retableCommon = {
             project_id as string
           }/retable`,
           headers: {
-            ApiKey: auth.secret_text,
+            ApiKey: auth as string,
           },
         });
         return {
@@ -128,7 +124,6 @@ export const retableCommon = {
       },
     }),
   fields: Property.DynamicProperties({
-    auth: retableAuth,
     displayName: 'Fields',
     required: true,
     refreshers: ['retable_id'],

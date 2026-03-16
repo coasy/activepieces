@@ -76,7 +76,7 @@ export const linearUpdatedIssue = createTrigger({
   },
   type: TriggerStrategy.WEBHOOK,
   async onEnable(context) {
-    const client = makeClient(context.auth);
+    const client = makeClient(context.auth as string);
     
     // Create webhook configuration
     const webhookConfig: any = {
@@ -102,7 +102,7 @@ export const linearUpdatedIssue = createTrigger({
     }
   },
   async onDisable(context) {
-    const client = makeClient(context.auth);
+    const client = makeClient(context.auth as string);
     const response = await context.store?.get<WebhookInformation>(
       '_updated_issue_trigger'
     );

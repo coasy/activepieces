@@ -23,7 +23,7 @@ export const updateOpportunityAction = createAction({
   async run(context) {
     const id = context.propsValue.id!;
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof flowluAuth>
     );
     return await client.updateOpportunity(id, context.propsValue);
   },

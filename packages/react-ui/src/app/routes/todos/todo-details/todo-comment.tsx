@@ -8,7 +8,6 @@ export type ActivityItem = {
   type: 'comment';
   content: string;
   timestamp: Date;
-  authorId: string;
   authorType: 'user' | 'flow';
   authorName: string;
   userEmail?: string;
@@ -27,7 +26,12 @@ export const TodoComment = ({ comment, showConnector }: TodoCommentProps) => {
     <div className="relative">
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-4">
-          <ApAvatar size="medium" id={comment.authorId} />
+          <ApAvatar
+            type={comment.authorType}
+            size="medium"
+            fullName={comment.authorName}
+            userEmail={comment.userEmail}
+          />
           <div className="flex items-center gap-2">
             <div className="text-sm font-bold">{comment.authorName}</div>
             <div className="text-xs text-muted-foreground">

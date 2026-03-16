@@ -9,24 +9,16 @@ export const askChatbot = createAction({
   description: 'Sends a message to an existing thread with a chatbot.',
   props: {
     thread: Property.Dropdown({
-      auth: retuneAuth,
       displayName: 'Thread',
       description: 'The thread you want to send the message to.',
       required: true,
       refreshers: [],
       options: async ({ auth }) => {
-        if (!auth) {
-          return {
-            disabled: true,
-            options: [],
-            placeholder: 'Please connect your account first',
-          };
-        }
         const options = await httpClient.sendRequest({
-          url: `https://retune.so/api/chat/${(auth).props.chatId}/threads`,
+          url: `https://retune.so/api/chat/${(auth as any).chatId}/threads`,
           method: HttpMethod.POST,
           headers: {
-            'X-Workspace-API-Key': (auth).props.apiKey,
+            'X-Workspace-API-Key': (auth as any).apiKey,
           },
           body: {},
         });
@@ -51,10 +43,10 @@ export const askChatbot = createAction({
     const { thread, message } = propsValue;
 
     const response = await httpClient.sendRequest({
-      url: `https://retune.so/api/chat/${auth.props.chatId}/response`,
+      url: `https://retune.so/api/chat/${auth.chatId}/response`,
       method: HttpMethod.POST,
       headers: {
-        'X-Workspace-API-Key': auth.props.apiKey,
+        'X-Workspace-API-Key': auth.apiKey,
       },
       body: {
         threadId: thread,

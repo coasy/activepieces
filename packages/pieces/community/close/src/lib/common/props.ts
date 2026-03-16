@@ -1,14 +1,12 @@
 import { DynamicPropsValue, Property } from '@activepieces/pieces-framework';
 import { closePaginatedApiCall } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { closeAuth } from '../..';
 
 export const customFields = (objectType: string) =>
 	Property.DynamicProperties({
 		displayName: 'Custom Fields',
 		refreshers: [],
 		required: false,
-		auth: closeAuth,
 		props: async ({ auth }) => {
 			if (!auth) return {};
 
@@ -21,7 +19,7 @@ export const customFields = (objectType: string) =>
 				accepts_multiple_values: boolean;
 				name: string;
 			}>({
-				accessToken: auth.secret_text,
+				accessToken: auth as unknown as string,
 				method: HttpMethod.GET,
 				resourceUri: `/custom_field/${objectType}/`,
 			});
@@ -94,7 +92,6 @@ export const customFields = (objectType: string) =>
 
 export const statusId = (objectType: string, required = false) =>
 	Property.Dropdown({
-		auth: closeAuth,
 		displayName: 'Status',
 		refreshers: [],
 		required,
@@ -111,7 +108,7 @@ export const statusId = (objectType: string, required = false) =>
 				id: string;
 				label: string;
 			}>({
-				accessToken: auth.secret_text,
+				accessToken: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: `/status/${objectType}/`,
 			});
@@ -128,7 +125,6 @@ export const statusId = (objectType: string, required = false) =>
 
 export const leadId = (required = false) =>
 	Property.Dropdown({
-		auth: closeAuth,
 		displayName: 'Lead',
 		required,
 		refreshers: ['auth'],
@@ -145,7 +141,7 @@ export const leadId = (required = false) =>
 					id: string;
 					name: string;
 				}>({
-					accessToken: auth.secret_text,
+					accessToken: auth as string,
 					method: HttpMethod.GET,
 					resourceUri: '/lead/?_fields=id,name',
 				});
@@ -169,7 +165,6 @@ export const leadId = (required = false) =>
 
 export const userId = (required = false) =>
 	Property.Dropdown({
-		auth: closeAuth,
 		displayName: 'User',
 		required,
 		refreshers: ['auth'],
@@ -186,7 +181,7 @@ export const userId = (required = false) =>
 					id: string;
 					email: string;
 				}>({
-					accessToken: auth.secret_text,
+					accessToken: auth as string,
 					method: HttpMethod.GET,
 					resourceUri: '/user/?_fields=id,email',
 				});

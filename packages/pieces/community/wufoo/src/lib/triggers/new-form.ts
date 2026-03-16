@@ -59,10 +59,11 @@ export const newFormTrigger = createTrigger({
 
   async onEnable(context) {
     const { responseFormat } = context.propsValue;
+    const { apiKey, subdomain } = context.auth;
 
     try {
       const response = await wufooApiCall<{ Forms: WufooForm[] }>({
-        auth: context.auth,
+        auth: { apiKey, subdomain },
         method: HttpMethod.GET,
         resourceUri: `/forms.${responseFormat || 'json'}`,
       });
@@ -96,12 +97,13 @@ export const newFormTrigger = createTrigger({
 
   async run(context) {
     const { nameFilter, includeInactive, responseFormat } = context.propsValue;
+    const { apiKey, subdomain } = context.auth;
     
     try {
       const previousHashes = await context.store.get<string[]>(LAST_FORM_IDS_KEY) || [];
 
       const response = await wufooApiCall<{ Forms: WufooForm[] }>({
-        auth: context.auth,
+        auth: { apiKey, subdomain },
         method: HttpMethod.GET,
         resourceUri: `/forms.${responseFormat || 'json'}`,
       });
@@ -178,10 +180,11 @@ export const newFormTrigger = createTrigger({
 
   async test(context) {
     const { responseFormat } = context.propsValue;
+    const { apiKey, subdomain } = context.auth;
 
     try {
       const response = await wufooApiCall<{ Forms: WufooForm[] }>({
-        auth: context.auth,
+        auth: { apiKey, subdomain },
         method: HttpMethod.GET,
         resourceUri: `/forms.${responseFormat || 'json'}`,
       });

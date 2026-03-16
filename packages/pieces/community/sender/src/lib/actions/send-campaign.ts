@@ -18,7 +18,7 @@ export const sendCampaignAction = createAction({
     const campaignId = context.propsValue.campaignId;
     
     const response = await makeSenderRequest(
-      context.auth.secret_text,
+      context.auth,
       `/campaigns/${campaignId}/send`,
       HttpMethod.POST,
     );

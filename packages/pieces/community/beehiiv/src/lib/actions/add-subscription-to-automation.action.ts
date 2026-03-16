@@ -44,7 +44,7 @@ export const addSubscriptionToAutomationAction = createAction({
 		}
 
 		const response = await beehiivApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.POST,
 			resourceUri: `/publications/${publicationId}/automations/${automationId}/journeys`,
 			body,

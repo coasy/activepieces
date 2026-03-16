@@ -4,7 +4,6 @@ import { useMutation } from '@tanstack/react-query';
 import { t } from 'i18next';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { ApMarkdown } from '@/components/custom/markdown';
 import { Button } from '@/components/ui/button';
@@ -20,6 +19,7 @@ import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/components/ui/use-toast';
 import { flagsHooks } from '@/hooks/flags-hooks';
 import { platformApi } from '@/lib/platforms-api';
 import {
@@ -63,7 +63,9 @@ export const ConfigureSamlDialog = ({
       await refetch();
     },
     onSuccess: () => {
-      toast.success(t('Single sign-on settings updated'), {
+      toast({
+        title: t('Success'),
+        description: t('Single sign-on settings updated'),
         duration: 3000,
       });
       setOpen(false);

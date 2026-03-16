@@ -1,16 +1,15 @@
-import { AppConnectionValueForAuthProperty, PiecePropValueSchema, Property } from '@activepieces/pieces-framework';
+import { PiecePropValueSchema, Property } from '@activepieces/pieces-framework';
 import { quickzuAuth } from '../../';
 import { QuickzuAPIClient } from './client';
 
-export function makeClient(auth: AppConnectionValueForAuthProperty<typeof quickzuAuth>) {
-  const client = new QuickzuAPIClient(auth.secret_text);
+export function makeClient(auth: PiecePropValueSchema<typeof quickzuAuth>) {
+  const client = new QuickzuAPIClient(auth);
   return client;
 }
 
 export const quickzuCommon = {
   categoryId: (required = false) =>
     Property.Dropdown({
-      auth: quickzuAuth,
       displayName: 'Category',
       refreshers: [],
       required,
@@ -22,7 +21,7 @@ export const quickzuCommon = {
             placeholder: 'Please connect your account first.',
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const res = await client.listCategories();
 
         return {
@@ -37,8 +36,7 @@ export const quickzuCommon = {
       },
     }),
   productId: (required = false) =>
-    Property.Dropdown({ 
-      auth: quickzuAuth,
+    Property.Dropdown({
       displayName: 'Product',
       refreshers: [],
       required,
@@ -50,7 +48,7 @@ export const quickzuCommon = {
             placeholder: 'Please connect your account first.',
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const res = await client.listProducts();
 
         return {
@@ -65,8 +63,7 @@ export const quickzuCommon = {
       },
     }),
   orderId: (required = false) =>
-    Property.Dropdown<string,boolean,typeof quickzuAuth>({
-      auth: quickzuAuth,
+    Property.Dropdown<string>({
       displayName: 'Order',
       refreshers: [],
       required,
@@ -78,7 +75,7 @@ export const quickzuCommon = {
             placeholder: 'Please connect your account first.',
           };
         }
-        const client = makeClient(auth);
+        const client = makeClient(auth as string);
         const res = await client.listOrders(1, 20);
 
         return {

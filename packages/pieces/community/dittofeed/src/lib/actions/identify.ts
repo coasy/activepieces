@@ -19,7 +19,7 @@ export const identifyAction = createAction({
   },
   async run(context) {
     const { userId, traits } = context.propsValue;
-    const { apiKey, baseUrl } = context.auth.props;
+    const { apiKey, baseUrl } = context.auth;
 
     try {
       const response = await httpClient.sendRequest({

@@ -20,7 +20,6 @@ export const searchContacts = createAction({
             required: false,
         }),
         company_id: Property.Dropdown({
-          auth:teamleaderAuth,
             displayName: 'Company',
             description: 'Filter contacts by company',
             required: false,
@@ -34,7 +33,7 @@ export const searchContacts = createAction({
 
                 try {
                     const response = await teamleaderCommon.apiCall({
-                        auth,
+                        auth: auth as any,
                         method: HttpMethod.POST,
                         resourceUri: '/companies.list',
                         body: {}

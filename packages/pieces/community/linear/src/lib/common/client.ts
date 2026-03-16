@@ -1,6 +1,4 @@
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
 import { LinearClient, LinearDocument } from '@linear/sdk';
-import { linearAuth } from '../..';
 
 export class LinearClientWrapper {
   private client: LinearClient;
@@ -69,6 +67,6 @@ export class LinearClientWrapper {
   }
 }
 
-export function makeClient(auth: AppConnectionValueForAuthProperty<typeof linearAuth>): LinearClientWrapper {
-  return new LinearClientWrapper(auth.secret_text);
+export function makeClient(apiKey: string): LinearClientWrapper {
+  return new LinearClientWrapper(apiKey);
 }

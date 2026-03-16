@@ -2,7 +2,6 @@ import { HttpMethod } from '@activepieces/pieces-common';
 import { DynamicPropsValue, Property } from '@activepieces/pieces-framework';
 import { isNil } from '@activepieces/shared';
 import { skyvernApiCall } from './client';
-import { skyvernAuth } from './auth';
 
 export interface ListWorkflowResponse {
 	workflow_permanent_id: string;
@@ -18,7 +17,6 @@ export interface ListWorkflowResponse {
 }
 
 export const workflowId = Property.Dropdown({
-	auth: skyvernAuth,
 	displayName: 'Workflow',
 	refreshers: [],
 	required: true,
@@ -37,7 +35,7 @@ export const workflowId = Property.Dropdown({
 
 		do {
 			const response = await skyvernApiCall<ListWorkflowResponse[]>({
-				apiKey: auth.secret_text,
+				apiKey: auth as string,
 				method: HttpMethod.GET,
 				resourceUri: '/workflows',
 				query: {
@@ -64,7 +62,6 @@ export const workflowId = Property.Dropdown({
 });
 
 export const workflowParams = Property.DynamicProperties({
-	auth: skyvernAuth,
 	displayName: 'Workflow Params',
 	refreshers: ['workflowId'],
 	required: false,
@@ -77,7 +74,7 @@ export const workflowParams = Property.DynamicProperties({
 
 		do {
 			const response = await skyvernApiCall<ListWorkflowResponse[]>({
-				apiKey: auth.secret_text,
+				apiKey: auth as unknown as string,
 				method: HttpMethod.GET,
 				resourceUri: '/workflows',
 				query: {
@@ -111,7 +108,7 @@ export const workflowParams = Property.DynamicProperties({
 
 			if (workflow_parameter_type === 'credential_id') {
 				const response = await skyvernApiCall<{ credential_id: string; name: string }[]>({
-					apiKey: auth.secret_text,
+					apiKey: auth as unknown as string,
 					method: HttpMethod.GET,
 					resourceUri: '/credentials',
 					query: {

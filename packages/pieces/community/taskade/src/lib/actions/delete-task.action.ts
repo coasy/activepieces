@@ -17,7 +17,7 @@ export const deleteTaskAction = createAction({
 	async run(context) {
 		const { project_id, task_id } = context.propsValue;
 
-		const client = new TaskadeAPIClient(context.auth.secret_text);
+		const client = new TaskadeAPIClient(context.auth);
 
 		return await client.deleteTask(project_id, task_id);
 	},

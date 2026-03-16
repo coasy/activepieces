@@ -9,7 +9,6 @@ export const sendCards = createAction({
   auth: thanksterAuth,
   props: {
     templateID: Property.Dropdown({
-      auth: thanksterAuth,
       displayName: 'Select a Thankster Template',
       description: 'If you are passing text or images from prior steps in this step into the Thankster template chosen above, be sure to select a template that has corresponding text or images boxes to pass it into. Either way, the font and style of your cards will be taken from the template you select.',
       required: true,
@@ -28,7 +27,7 @@ export const sendCards = createAction({
           url: 'https://app.thankster.com/api/v1/api_projects/listUserProjects',
           headers: {
             partner: 'partner_active_pieces',
-            userApiKey: auth.secret_text
+            userApiKey: auth as string
           },
         });
 
@@ -198,7 +197,7 @@ export const sendCards = createAction({
       url: 'https://app.thankster.com/api/v1/api_projects/createQuickProject',
       headers: {
         partner: 'partner_active_pieces',
-        userApiKey: context.auth.secret_text
+        userApiKey: context.auth as string
       },
       body: {
         templateID: context.propsValue.templateID,

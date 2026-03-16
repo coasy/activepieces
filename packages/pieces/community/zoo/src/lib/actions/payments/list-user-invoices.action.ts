@@ -25,7 +25,7 @@ export const listUserInvoicesAction = createAction({
       method: HttpMethod.GET,
       url: 'https://api.zoo.dev/user/payment/invoices',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
       queryParams: {
         ...(propsValue.limit && { limit: propsValue.limit.toString() }),

@@ -21,7 +21,7 @@ export const getContentObjectAction = createAction({
     const { objectId, fields } = propsValue;
 
     try {
-      const client = new CognosClient(auth.props);
+      const client = new CognosClient(auth);
 
       const queryParams = [];
       if (fields && fields.trim()) {

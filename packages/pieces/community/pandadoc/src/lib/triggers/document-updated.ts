@@ -10,7 +10,6 @@ export const documentUpdated = createTrigger({
   auth: pandadocAuth,
   props: {
     template_filter: Property.MultiSelectDropdown({
-      auth: pandadocAuth,
       displayName: 'Filter by Templates',
       description: 'Only trigger for documents created from specific templates (leave empty for all)',
       required: false,
@@ -31,7 +30,7 @@ export const documentUpdated = createTrigger({
               name: string;
               date_created: string;
             }>;
-            }>(auth.secret_text, HttpMethod.GET, '/templates?count=100');
+          }>(auth as string, HttpMethod.GET, '/templates?count=100');
 
           const options = response.results.map((template) => ({
             label: `${template.name} - ${template.id.substring(0, 8)}...`,
@@ -52,7 +51,6 @@ export const documentUpdated = createTrigger({
       },
     }),
     folder_filter: Property.MultiSelectDropdown({
-      auth: pandadocAuth,
       displayName: 'Filter by Folders',
       description: 'Only trigger for documents in specific folders (leave empty for all)',
       required: false,
@@ -73,7 +71,7 @@ export const documentUpdated = createTrigger({
               name: string;
               date_created: string;
             }>;
-          }>(auth.secret_text, HttpMethod.GET, '/documents/folders?count=100');
+          }>(auth as string, HttpMethod.GET, '/documents/folders?count=100');
 
           const options = response.results.map((folder) => ({
             label: `${folder.name} - ${folder.uuid.substring(0, 8)}...`,
@@ -140,7 +138,7 @@ export const documentUpdated = createTrigger({
       method: HttpMethod.POST,
       url: 'https://api.pandadoc.com/public/v1/webhook-subscriptions',
       headers: {
-        Authorization: `API-Key ${(context.auth.secret_text)}`,
+        Authorization: `API-Key ${(context.auth as string)}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -162,7 +160,7 @@ export const documentUpdated = createTrigger({
           method: HttpMethod.DELETE,
           url: `https://api.pandadoc.com/public/v1/webhook-subscriptions/${webhookId}`,
           headers: {
-            Authorization: `API-Key ${(context.auth.secret_text)}`,
+            Authorization: `API-Key ${(context.auth as string)}`,
           },
         });
       } catch (error) {

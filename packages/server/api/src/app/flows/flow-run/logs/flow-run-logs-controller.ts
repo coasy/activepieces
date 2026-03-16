@@ -1,4 +1,3 @@
-import { securityAccess } from '@activepieces/server-shared'
 import { ActivepiecesError, ALL_PRINCIPAL_TYPES, assertNotNullOrUndefined, ErrorCode, FileType, isNil, UploadLogsBehavior, UploadLogsQueryParams } from '@activepieces/shared'
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
 import { Type } from '@sinclair/typebox'
@@ -10,7 +9,7 @@ import { flowRunLogsService } from './flow-run-logs-service'
 export const flowRunLogsController: FastifyPluginAsyncTypebox = async (app) => {
     app.put('/logs', {
         config: {
-            security: securityAccess.unscoped(ALL_PRINCIPAL_TYPES),
+            allowedPrincipals: ALL_PRINCIPAL_TYPES,
         },
         schema: {
             querystring: UploadLogsQueryParams,
@@ -41,7 +40,7 @@ export const flowRunLogsController: FastifyPluginAsyncTypebox = async (app) => {
 
     app.get('/logs', {
         config: {
-            security: securityAccess.unscoped(ALL_PRINCIPAL_TYPES),
+            allowedPrincipals: ALL_PRINCIPAL_TYPES,
         },
         schema: {
             querystring: UploadLogsQueryParams,

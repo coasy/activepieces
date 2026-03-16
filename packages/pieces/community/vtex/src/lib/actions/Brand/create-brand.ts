@@ -49,7 +49,7 @@ export const createBrand = createAction({
     }),
   },
   async run(context) {
-    const { hostUrl, appKey, appToken } = context.auth.props;
+    const { hostUrl, appKey, appToken } = context.auth;
     const brandData: Replace<
       typeof context.propsValue,
       { authentication?: typeof context.auth }

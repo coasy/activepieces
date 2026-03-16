@@ -21,17 +21,9 @@ export const sendSms = createAction({
       required: true,
       refreshers: ['auth'],
       refreshOnSearch: false,
-      auth: krispcallAuth,
       options: async ({ auth }) => {
-        if (!auth) {
-          return {
-            disabled: true,
-            options: [],
-            placeholder: 'Please connect your account first',
-          };
-        }
         try {
-          const authVaue = auth.props;
+          const authVaue = auth as PiecePropValueSchema<typeof krispcallAuth>;
           const res = await httpClient.sendRequest<Item[]>({
             method: HttpMethod.GET,
             url: 'https://app.krispcall.com/api/v3/platform/activepiece/get-numbers',
@@ -69,11 +61,12 @@ export const sendSms = createAction({
     }),
   },
   async run({ auth, propsValue }) {
+    console.log(auth.apiKey);
     const res = await httpClient.sendRequest<string[]>({
       method: HttpMethod.POST,
       url: 'https://app.krispcall.com/api/v3/platform/activepiece/send-sms',
       headers: {
-        'X-API-KEY': auth.props.apiKey,
+        'X-API-KEY': auth.apiKey,
       },
 
       body: {

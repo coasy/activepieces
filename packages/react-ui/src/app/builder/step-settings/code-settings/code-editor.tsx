@@ -8,7 +8,7 @@ import { useRef, useState } from 'react';
 
 import { useTheme } from '@/components/theme-provider';
 import { Button } from '@/components/ui/button';
-import { internalErrorToast } from '@/components/ui/sonner';
+import { INTERNAL_ERROR_TOAST, toast } from '@/components/ui/use-toast';
 import { flagsHooks } from '@/hooks/flags-hooks';
 import { cn } from '@/lib/utils';
 import { ApFlagId, SourceCode, deepMergeAndCast } from '@activepieces/shared';
@@ -83,7 +83,7 @@ const CodeEditor = ({
       onChange({ code, packageJson: JSON.stringify(json, null, 2) });
     } catch (e) {
       console.error(e);
-      internalErrorToast();
+      toast(INTERNAL_ERROR_TOAST);
     }
   }
 
@@ -113,7 +113,7 @@ const CodeEditor = ({
             </div>
           )}
         </div>
-        <div className="flex grow"></div>
+        <div className="flex flex-grow"></div>
         {codeApplicationEnabled ? (
           <Button
             variant="outline"

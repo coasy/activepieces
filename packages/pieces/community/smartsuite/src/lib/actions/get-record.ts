@@ -21,15 +21,15 @@ export const getRecord = createAction({
 			const tableResponse = await smartSuiteApiCall<{
 				structure: TableStucture[];
 			}>({
-				apiKey: auth.props.apiKey,
-				accountId: auth.props.accountId,
+				apiKey: auth.apiKey,
+				accountId: auth.accountId,
 				method: HttpMethod.GET,
 				resourceUri: `/applications/${tableId}`,
 			});
 			const tableSchema = tableResponse.structure;
 			const response = await smartSuiteApiCall<Record<string, any>>({
-				apiKey: auth.props.apiKey,
-				accountId: auth.props.accountId,
+				apiKey: auth.apiKey,
+				accountId: auth.accountId,
 				method: HttpMethod.GET,
 				resourceUri: `/applications/${tableId}/records/${recordId}/`,
 			});

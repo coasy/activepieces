@@ -2,7 +2,6 @@ import { Property } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { bitlyApiCall } from './client';
 import { BitlyAuthProps } from './client';
-import { bitlyAuth } from './auth';
 
 interface BitlyGroup {
   guid: string;
@@ -29,12 +28,8 @@ export const groupGuid = Property.Dropdown({
   description: 'The group where the item will be managed.',
   required: true,
   refreshers: [],
-  auth:bitlyAuth ,
   options: async ({ auth }) => {
-    if (!auth) {
-      return { disabled: true, options: [], placeholder: 'Please connect your Bitly account first.' };
-    }
-    const { accessToken } = auth.props;
+    const { accessToken } = auth as BitlyAuthProps;
     if (!accessToken) {
       return { disabled: true, options: [], placeholder: 'Please connect your Bitly account first.' };
     }
@@ -57,16 +52,12 @@ export const groupGuid = Property.Dropdown({
 });
 
 export const domain = Property.Dropdown({
-  auth: bitlyAuth,
     displayName: 'Domain',
     description: 'Domain to use for the Bitlink.',
     required: false,
     refreshers: ['group_guid'],
     options: async ({ auth, group_guid }) => {
-        if (!auth) {
-          return { disabled: true, options: [], placeholder: 'Please connect your Bitly account first.' };
-        }
-        const { accessToken } = auth.props;
+        const { accessToken } = auth as BitlyAuthProps;
         if (!accessToken || !group_guid) {
             return { disabled: true, options: [], placeholder: 'Please select a group first.' };
         }
@@ -93,13 +84,8 @@ export const bitlinkDropdown = Property.Dropdown({
     description: 'Select the Bitlink to modify.',
     required: true,
     refreshers: ['group_guid'],
-    auth: bitlyAuth,
     options: async ({ auth, group_guid }) => {
-
-        if (!auth) {
-          return { disabled: true, options: [], placeholder: 'Please connect your Bitly account first.' };
-        }
-        const { accessToken } = auth.props;
+        const { accessToken } = auth as BitlyAuthProps;
         if (!accessToken) return { disabled: true, options: [], placeholder: 'Please connect your Bitly account first.' };
         if (!group_guid) return { disabled: true, options: [], placeholder: 'Please select a group first.' };
         

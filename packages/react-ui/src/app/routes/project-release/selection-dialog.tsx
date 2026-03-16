@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react';
 
 import { Button, ButtonProps } from '@/components/ui/button';
-import { projectCollectionUtils } from '@/hooks/project-collection';
+import { projectHooks } from '@/hooks/project-hooks';
 import { ProjectReleaseType } from '@activepieces/shared';
 
 import { ProjectSelectionDialog } from './selection-release-dialog/project-dialog';
@@ -19,7 +19,7 @@ export function SelectionButton({
   defaultName,
   ...props
 }: SelectionButtonProps) {
-  const { project } = projectCollectionUtils.useCurrentProject();
+  const { project } = projectHooks.useCurrentProject();
   const [open, setOpen] = useState(false);
 
   return (

@@ -4,13 +4,10 @@ import {
   HttpMethod,
   QueryParams,
 } from '@activepieces/pieces-common';
-import { motionAuth } from '../..';
 
 export const BASE_URL = 'https://api.usemotion.com/v1';
 
 export const workspaceId =(displayName:string)=> Property.Dropdown({
- auth: motionAuth,
-
   displayName,
   refreshers: [],
   required: true,
@@ -29,7 +26,7 @@ export const workspaceId =(displayName:string)=> Property.Dropdown({
       method: HttpMethod.GET,
       url: `${BASE_URL}/workspaces`,
       headers: {
-        'X-API-Key': auth.secret_text,
+        'X-API-Key': auth as string,
       },
     });
 
@@ -44,7 +41,6 @@ export const workspaceId =(displayName:string)=> Property.Dropdown({
 });
 
 export const statusId = Property.Dropdown({
- auth: motionAuth,
   displayName: 'Status',
   refreshers: ['workspaceId'],
   required: false,
@@ -61,7 +57,7 @@ export const statusId = Property.Dropdown({
       method: HttpMethod.GET,
       url: `${BASE_URL}/statuses`,
       headers: {
-        'X-API-Key': auth.secret_text,
+        'X-API-Key': auth as string,
       },
       queryParams: {
         workspaceId: workspaceId as string,
@@ -79,7 +75,6 @@ export const statusId = Property.Dropdown({
 });
 
 export const projectId = Property.Dropdown({
- auth: motionAuth,
   displayName: 'Project',
   refreshers: ['workspaceId'],
   required: false,
@@ -98,7 +93,7 @@ export const projectId = Property.Dropdown({
       method: HttpMethod.GET,
       url: `${BASE_URL}/projects`,
       headers: {
-        'X-API-Key': auth.secret_text,
+        'X-API-Key': auth as string,
       },
       queryParams: {
         workspaceId: workspaceId as string,
@@ -116,7 +111,6 @@ export const projectId = Property.Dropdown({
 });
 
 export const userId = Property.Dropdown({
- auth: motionAuth,
   displayName: 'Assignee',
   refreshers: ['workspaceId'],
   required: false,
@@ -135,7 +129,7 @@ export const userId = Property.Dropdown({
       method: HttpMethod.GET,
       url: `${BASE_URL}/users`,
       headers: {
-        'X-API-Key': auth.secret_text,
+        'X-API-Key': auth as string,
       },
       queryParams: {
         workspaceId: workspaceId as string,
@@ -153,7 +147,6 @@ export const userId = Property.Dropdown({
 });
 
 export const taskId = Property.Dropdown({
- auth: motionAuth,
   displayName: 'Task ID',
   refreshers: ['workspaceId'],
   required: true,
@@ -183,7 +176,7 @@ export const taskId = Property.Dropdown({
         method: HttpMethod.GET,
         url: `${BASE_URL}/tasks`,
         headers: {
-          'X-API-Key': auth.secret_text,
+          'X-API-Key': auth as string,
         },
         queryParams: qs,
       });

@@ -30,7 +30,7 @@ export const localScraper = createAction({
       url: 'https://api.scrapegraphai.com/v1/localscraper',
       headers: {
         'Content-Type': 'application/json',
-        'SGAI-APIKEY': auth.secret_text,
+        'SGAI-APIKEY': auth,
       },
       body: {
         website_html: propsValue.website_html,

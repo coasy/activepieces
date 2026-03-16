@@ -3,14 +3,12 @@ import { foreplayCoApiCall } from '../common';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { findBrands as findBrandsProperties } from '../properties';
 import { findBrandsSchema } from '../schemas';
-import { foreplayCoAuth } from '../..';
 
 export const findBrands = createAction({
   name: 'findBrands',
   displayName: 'Find Brands',
   description: 'Search for brands by name with fuzzy matching.',
   props: findBrandsProperties(),
-  auth: foreplayCoAuth,
   async run({ auth, propsValue }) {
     // Validate props using Zod schema
     const validation = findBrandsSchema.safeParse(propsValue);
@@ -29,7 +27,7 @@ export const findBrands = createAction({
     }
 
     const response = await foreplayCoApiCall({
-      apiKey: auth,
+      apiKey: auth as string,
       method: HttpMethod.GET,
       resourceUri: '/api/discovery/brands',
       queryParams,

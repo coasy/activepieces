@@ -14,13 +14,12 @@ export const getPaymentActionsAction = createAction({
       required: true,
     }),
     paymentId: Property.Dropdown({
-      auth: checkoutComAuth,
       displayName: 'Payment ID',
       description: 'Select the payment to get actions for',
       required: true,
       refreshers: ['reference'],
       options: async ({ auth, reference }) => {
-        if (!reference || !auth) {
+        if (!reference) {
           return {
             disabled: true,
             options: [],
@@ -29,7 +28,7 @@ export const getPaymentActionsAction = createAction({
         }
 
         try {
-          const { baseUrl } = getEnvironmentFromApiKey(auth.secret_text);
+          const { baseUrl } = getEnvironmentFromApiKey(auth as string);
           
           const response = await httpClient.sendRequest({
             method: HttpMethod.GET,
@@ -39,7 +38,7 @@ export const getPaymentActionsAction = createAction({
               limit: '100',
             },
             headers: {
-              Authorization: `Bearer ${auth.secret_text}`,
+              Authorization: `Bearer ${auth}`,
               'Content-Type': 'application/json',
             },
           });
@@ -76,7 +75,7 @@ export const getPaymentActionsAction = createAction({
   async run(context) {
     const { paymentId } = context.propsValue;
     
-    const { baseUrl } = getEnvironmentFromApiKey(context.auth.secret_text);
+    const { baseUrl } = getEnvironmentFromApiKey(context.auth);
     
     if (!paymentId.match(/^pay_[a-zA-Z0-9]{26}$/)) {
       throw new Error('Invalid payment ID format. Must start with "pay_" followed by 26 alphanumeric characters.');
@@ -87,7 +86,7 @@ export const getPaymentActionsAction = createAction({
         method: HttpMethod.GET,
         url: `${baseUrl}/payments/${paymentId}/actions`,
         headers: {
-          Authorization: `Bearer ${context.auth.secret_text}`,
+          Authorization: `Bearer ${context.auth}`,
           'Content-Type': 'application/json',
         },
       });

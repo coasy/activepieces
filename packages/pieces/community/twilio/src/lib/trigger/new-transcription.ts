@@ -1,5 +1,4 @@
 import {
-  AppConnectionValueForAuthProperty,
   createTrigger,
   PiecePropValueSchema,
   TriggerStrategy,
@@ -31,7 +30,7 @@ interface TranscriptionsResponse {
 }
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof twilioAuth>,
+  PiecePropValueSchema<typeof twilioAuth>,
   Record<string, unknown>
 > = {
   strategy: DedupeStrategy.TIMEBASED,

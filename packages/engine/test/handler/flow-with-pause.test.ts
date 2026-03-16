@@ -1,5 +1,5 @@
-import { BranchOperator, FlowRunStatus, LoopStepOutput, RouterExecutionType, RouterStepOutput } from '@activepieces/shared'
-import { FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
+import { BranchOperator, LoopStepOutput, RouterExecutionType, RouterStepOutput } from '@activepieces/shared'
+import { ExecutionVerdict, FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
 import { StepExecutionPath } from '../../src/lib/handler/context/step-execution-path'
 import { flowExecutor } from '../../src/lib/handler/flow-executor'
 import { buildCodeAction, buildPieceAction, buildRouterWithOneCondition, buildSimpleLoopAction, generateMockEngineConstants } from './test-helper'
@@ -63,16 +63,16 @@ describe('flow with pause', () => {
         const pauseResult = await flowExecutor.execute({
             action: pauseFlowWithLoopAndBranch,
             executionState: FlowExecutorContext.empty().setPauseRequestId('requestId'),
-            constants: generateMockEngineConstants({ stepNames: ['loop'] }),
+            constants: generateMockEngineConstants(),
         })
-        expect(pauseResult.verdict).toEqual({
-            status: FlowRunStatus.PAUSED,
-            pauseMetadata: {
+        expect(pauseResult.verdict).toBe(ExecutionVerdict.PAUSED)
+        expect(pauseResult.verdictResponse).toEqual({
+            'pauseMetadata': {
                 response: {},
                 requestId: 'requestId',
-                requestIdToReply: undefined,
                 'type': 'WEBHOOK',
             },
+            'reason': 'PAUSED',
         })
         expect(Object.keys(pauseResult.steps)).toEqual(['loop'])
 
@@ -85,11 +85,8 @@ describe('flow with pause', () => {
 
         const resumeResultTwo = await flowExecutor.execute({
             action: pauseFlowWithLoopAndBranch,
-            executionState: pauseResult.setCurrentPath(StepExecutionPath.empty()).setVerdict({
-                status: FlowRunStatus.RUNNING,
-            }),
+            executionState: pauseResult.setCurrentPath(StepExecutionPath.empty()).setVerdict(ExecutionVerdict.RUNNING, undefined),
             constants: generateMockEngineConstants({
-                stepNames: ['loop'],
                 resumePayload: {
                     queryParams: {
                         action: 'approve',
@@ -100,10 +97,7 @@ describe('flow with pause', () => {
             }),
         })
         
-        expect(resumeResultTwo.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        },
-        )
+        expect(resumeResultTwo.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(Object.keys(resumeResultTwo.steps)).toEqual(['loop'])
         
         const loopOut = resumeResultTwo.steps.loop as LoopStepOutput
@@ -133,20 +127,18 @@ describe('flow with pause', () => {
                 },
             }),
         })
-        expect(resumeResult1.verdict).toStrictEqual({
-            status: FlowRunStatus.PAUSED,
-            pauseMetadata: {
+        expect(resumeResult1.verdict).toBe(ExecutionVerdict.PAUSED)
+        expect(resumeResult1.verdictResponse).toEqual({
+            'pauseMetadata': {
                 response: {},
                 requestId: 'requestId',
-                requestIdToReply: undefined,
                 'type': 'WEBHOOK',
             },
+            'reason': 'PAUSED',
         })
         const resumeResult2 = await flowExecutor.execute({
             action: flawWithTwoPause,
-            executionState: resumeResult1.setVerdict({
-                status: FlowRunStatus.RUNNING,
-            }),
+            executionState: resumeResult1.setVerdict(ExecutionVerdict.RUNNING, undefined),
             constants: generateMockEngineConstants({
                 resumePayload: {
                     queryParams: {
@@ -157,9 +149,7 @@ describe('flow with pause', () => {
                 },
             }),
         })
-        expect(resumeResult2.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(resumeResult2.verdict).toBe(ExecutionVerdict.RUNNING)
 
     })
 
@@ -170,14 +160,14 @@ describe('flow with pause', () => {
             executionState: FlowExecutorContext.empty().setPauseRequestId('requestId'),
             constants: generateMockEngineConstants(),
         })
-        expect(pauseResult.verdict).toStrictEqual({
-            status: FlowRunStatus.PAUSED,
-            pauseMetadata: {
+        expect(pauseResult.verdict).toBe(ExecutionVerdict.PAUSED)
+        expect(pauseResult.verdictResponse).toEqual({
+            'pauseMetadata': {
                 response: {},
                 requestId: 'requestId',
-                requestIdToReply: undefined,
                 'type': 'WEBHOOK',
             },
+            'reason': 'PAUSED',
         })
         const currentState = pauseResult.currentState()
         expect(Object.keys(currentState).length).toBe(1)
@@ -195,9 +185,7 @@ describe('flow with pause', () => {
                 },
             }),
         })
-        expect(resumeResult.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(resumeResult.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(resumeResult.currentState()).toEqual({
             'approval': {
                 approved: true,
@@ -249,14 +237,14 @@ describe('flow with pause', () => {
             constants: generateMockEngineConstants(),
         })
 
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.PAUSED,
-            pauseMetadata: {
+        expect(result.verdict).toBe(ExecutionVerdict.PAUSED)
+        expect(result.verdictResponse).toEqual({
+            'pauseMetadata': {
                 response: {},
                 requestId: 'requestId',
-                requestIdToReply: undefined,
                 'type': 'WEBHOOK',
             },
+            'reason': 'PAUSED',
         })
 
         const routerOutput = result.steps.router as RouterStepOutput

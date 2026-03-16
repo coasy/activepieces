@@ -76,7 +76,7 @@ export class AddUserEmailToReferral1709500213947 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        if (isNotOneOfTheseEditions([ApEdition.CLOUD, ApEdition.ENTERPRISE])) {
+        if (isNotOneOfTheseEditions([ApEdition.CLOUD])) {
             return
         }
         await queryRunner.query(`

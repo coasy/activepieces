@@ -16,35 +16,22 @@ export const PrivatePiecePackage = Type.Object({
     pieceName: Type.String(),
     pieceVersion: Type.String(),
     archiveId: Type.String(),
-    platformId: Type.String(),
+    archive: Type.Unknown(),
 })
 
 export type PrivatePiecePackage = Static<typeof PrivatePiecePackage>
 
-export const OfficialPiecePackage = Type.Object({
+export const PublicPiecePackage = Type.Object({
     packageType: Type.Literal(PackageType.REGISTRY),
-    pieceType: Type.Literal(PieceType.OFFICIAL),
+    pieceType: Type.Enum(PieceType),
     pieceName: Type.String(),
     pieceVersion: Type.String(),
 })
 
-export type OfficialPiecePackage = Static<typeof OfficialPiecePackage>
+export type PublicPiecePackage = Static<typeof PublicPiecePackage>
 
-export const CustomNpmPiecePackage = Type.Object({
-    packageType: Type.Literal(PackageType.REGISTRY),
-    pieceType: Type.Literal(PieceType.CUSTOM),
-    pieceName: Type.String(),
-    pieceVersion: Type.String(),
-    platformId: Type.String(),
-})
-
-export type CustomNpmPiecePackage = Static<typeof CustomNpmPiecePackage>
-
-export const PublicPiecePackage = Type.Union([OfficialPiecePackage, CustomNpmPiecePackage])
-export type PublicPiecePackage = OfficialPiecePackage | CustomNpmPiecePackage
-
-export const PiecePackage = Type.Union([PrivatePiecePackage, OfficialPiecePackage, CustomNpmPiecePackage])
-export type PiecePackage = PrivatePiecePackage | OfficialPiecePackage | CustomNpmPiecePackage
+export const PiecePackage = Type.Union([PrivatePiecePackage, PublicPiecePackage])
+export type PiecePackage = PrivatePiecePackage | PublicPiecePackage
 
 export enum PieceCategory {
     ARTIFICIAL_INTELLIGENCE = 'ARTIFICIAL_INTELLIGENCE',

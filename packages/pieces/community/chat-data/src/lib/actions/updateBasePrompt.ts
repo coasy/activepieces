@@ -1,15 +1,13 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { ChatDataClient } from '../common/client';
-import { chatDataAuth, UpdateChatbotSettingsDto } from '../common/types';
+import { UpdateChatbotSettingsDto } from '../common/types';
 
 export const updateBasePrompt = createAction({
-  auth: chatDataAuth,
   name: 'update_chatbot_settings',
   displayName: 'Update Chatbot Settings',
   description: 'Update comprehensive settings for a chatbot including name, prompts, behavior, and appearance',
   props: {
     chatbotId: Property.Dropdown({
-      auth: chatDataAuth,
       displayName: 'Chatbot',
       description: 'Select the chatbot to update',
       required: true,
@@ -23,7 +21,7 @@ export const updateBasePrompt = createAction({
           };
         }
         try {
-          const client = new ChatDataClient(auth.secret_text);
+          const client = new ChatDataClient(auth as string);
           const chatbots = await client.listChatbots();
           return {
             options: chatbots.map((chatbot) => ({
@@ -204,7 +202,7 @@ export const updateBasePrompt = createAction({
     }),
   },
   async run(context) {
-    const client = new ChatDataClient(context.auth.secret_text);
+    const client = new ChatDataClient(context.auth as string);
     
     const payload = UpdateChatbotSettingsDto.parse({
       chatbotId: context.propsValue.chatbotId,

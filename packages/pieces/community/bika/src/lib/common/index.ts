@@ -1,4 +1,4 @@
-import { AppConnectionValueForAuthProperty, DynamicPropsValue, PiecePropValueSchema, Property } from '@activepieces/pieces-framework';
+import { DynamicPropsValue, PiecePropValueSchema, Property } from '@activepieces/pieces-framework';
 import { BikaAuth } from '../..';
 import { BikaClient } from './client';
 import { BikaFieldType, BikaNumericFieldTypes } from './constants';
@@ -10,7 +10,6 @@ export function makeClient(auth: PiecePropValueSchema<typeof BikaAuth>) {
 
 export const BikaCommon = {
 	space_id: Property.Dropdown({
-		auth: BikaAuth,
 		displayName: 'Space',
 		required: true,
 		refreshers: [],
@@ -22,7 +21,7 @@ export const BikaCommon = {
 					placeholder: 'Connect your account first.',
 				};
 			}
-			const client = makeClient(auth.props);
+			const client = makeClient(auth as PiecePropValueSchema<typeof BikaAuth>);
 			const res = await client.listSpaces();
 			return {
 				disabled: false,
@@ -36,7 +35,6 @@ export const BikaCommon = {
 		},
 	}),
 	database_id: Property.Dropdown({
-		auth: BikaAuth,
 		displayName: 'Database',
 		required: true,
 		refreshers: ['space_id'],
@@ -48,7 +46,7 @@ export const BikaCommon = {
 					placeholder: 'Connect your account first and select space.',
 				};
 			}
-			const client = makeClient(auth.props);
+			const client = makeClient(auth as PiecePropValueSchema<typeof BikaAuth>);
 			const res = await client.listDatabases(space_id as string);
 
 			return {
@@ -63,7 +61,6 @@ export const BikaCommon = {
 		},
 	}),
 	fields: Property.DynamicProperties({
-		auth: BikaAuth,
 		displayName: 'Fields',
 		description: 'The fields to add to the record.',
 		required: true,
@@ -71,7 +68,7 @@ export const BikaCommon = {
 		props: async ({ auth, space_id, database_id }) => {
 			if(!auth || !space_id || !database_id) return {};
 			
-			const client = makeClient(auth.props);
+			const client = makeClient(auth as PiecePropValueSchema<typeof BikaAuth>);
 			const res = await client.getDatabaseFields(space_id as unknown as  string, database_id as unknown as string);
 
 			const props: DynamicPropsValue = {};
@@ -186,7 +183,7 @@ export const BikaCommon = {
 };
 
 export async function createNewFields(
-	auth: AppConnectionValueForAuthProperty<typeof BikaAuth>,
+	auth: PiecePropValueSchema<typeof BikaAuth>,
 	space_id: string,
 	database_id: string,
 	fields: Record<string, unknown>,
@@ -196,7 +193,7 @@ export async function createNewFields(
 
 	const newFields: Record<string, unknown> = {};
 
-	const client = makeClient(auth.props);
+	const client = makeClient(auth as PiecePropValueSchema<typeof BikaAuth>);
 	const res = await client.getDatabaseFields(space_id,database_id);
 
 	for(const field of res.data) {

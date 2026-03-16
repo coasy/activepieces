@@ -16,7 +16,6 @@ export const createTableAction = createAction({
     workbook_id: excelCommon.workbook_id,
     worksheet_id: excelCommon.worksheet_id,
     selectRange: Property.Dropdown({
-      auth: excelAuth,
       displayName: 'Select Range',
       description: 'How to select the range for the table',
       required: true,

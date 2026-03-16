@@ -1,14 +1,12 @@
 import { Property } from '@activepieces/pieces-framework';
 import { makeRequest } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { frontAuth } from './auth';
 
 export const conversationIdDropdown = Property.Dropdown({
   displayName: 'Conversation ID',
   description: 'Select the conversation',
   required: true,
   refreshers: [],
-  auth: frontAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -20,7 +18,7 @@ export const conversationIdDropdown = Property.Dropdown({
 
     try {
       const response = await makeRequest(
-       auth,
+        auth as unknown as string,
         HttpMethod.GET,
         '/conversations'
       );
@@ -48,7 +46,6 @@ export const contactIdDropdown = Property.Dropdown({
   description: 'Select the contact',
   required: true,
   refreshers: [],
-  auth: frontAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -60,7 +57,7 @@ export const contactIdDropdown = Property.Dropdown({
 
     try {
       const response = await makeRequest(
-       auth,
+        auth as unknown as string,
         HttpMethod.GET,
         '/contacts?limit=50'
       );
@@ -87,7 +84,6 @@ export const tagIdsDropdown = Property.MultiSelectDropdown({
   description: 'Select one or more tags',
   required: false,
   refreshers: [],
-  auth: frontAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -98,7 +94,7 @@ export const tagIdsDropdown = Property.MultiSelectDropdown({
     }
     try {
       const response = await makeRequest(
-       auth,
+        auth as unknown as string,
         HttpMethod.GET,
         '/tags?limit=50'
       );
@@ -125,7 +121,6 @@ export const teammateIdDropdown = Property.Dropdown({
   description: 'Select the teammate',
   required: true,
   refreshers: [],
-  auth: frontAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -136,7 +131,7 @@ export const teammateIdDropdown = Property.Dropdown({
     }
     try {
       const response = await makeRequest(
-       auth,
+        auth as unknown as string,
         HttpMethod.GET,
         '/teammates?limit=50'
       );
@@ -163,7 +158,6 @@ export const channelIdDropdown  = Property.Dropdown({
   description: 'Select the channel',
   required: true,
   refreshers: [],
-  auth: frontAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -174,7 +168,7 @@ export const channelIdDropdown  = Property.Dropdown({
     }
     try {
       const response = await makeRequest(
-       auth,
+        auth as unknown as string,
         HttpMethod.GET,
         '/channels'
       );
@@ -201,7 +195,6 @@ export const accountIdDropdown = Property.Dropdown({
   description: 'Select the account',
   required: true,
   refreshers: [],
-  auth: frontAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -212,7 +205,7 @@ export const accountIdDropdown = Property.Dropdown({
     }
     try {
       const response = await makeRequest(
-       auth,
+        auth as unknown as string,
         HttpMethod.GET,
         '/accounts'
       );
@@ -237,9 +230,8 @@ export const accountIdDropdown = Property.Dropdown({
 export const inboxIdDropdown = Property.Dropdown({
   displayName: 'Inbox ID',
   description: 'Select the inbox',
-  required: false,  
+  required: false,
   refreshers: [],
-  auth: frontAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -250,7 +242,7 @@ export const inboxIdDropdown = Property.Dropdown({
     }
     try {
       const response = await makeRequest(
-       auth,
+        auth as unknown as string,
         HttpMethod.GET,
         '/inboxes'
       );
@@ -276,8 +268,7 @@ export const linkIdDropdown = Property.Dropdown({
   displayName: 'Link ID',
   description: 'Select the link',
   required: false,
-  refreshers: [], 
-  auth: frontAuth,
+  refreshers: [],
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -288,7 +279,7 @@ export const linkIdDropdown = Property.Dropdown({
     }
     try {
       const response = await makeRequest(
-       auth,
+        auth as unknown as string,
         HttpMethod.GET,
         '/links'
       );
@@ -315,7 +306,6 @@ export const linkidsDropdown = Property.MultiSelectDropdown({
   description: 'Select one or more links',
   required: false,
   refreshers: [],
-  auth: frontAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -326,7 +316,7 @@ export const linkidsDropdown = Property.MultiSelectDropdown({
     }
     try {
       const response = await makeRequest(
-       auth,
+        auth as unknown as string,
         HttpMethod.GET,
         '/links'
       );

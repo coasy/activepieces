@@ -6,7 +6,6 @@ import {
   PropertyContext,
 } from '@activepieces/pieces-framework';
 import { EmailOctopusClient } from './client';
-import { emailOctopusAuth } from './auth';
 
 type AuthAndProps = {
   auth: string | undefined;
@@ -16,13 +15,12 @@ type AuthAndProps = {
 export const emailOctopusProps = {
   listId: (required = true) =>
     Property.Dropdown({
-      auth: emailOctopusAuth,
       displayName: 'List',
       description: 'The mailing list to use.',
       required: required,
       refreshers: [],
       options: async (context) => {
-        const { auth } = context;
+        const { auth } = context as AuthAndProps;
         if (!auth) {
           return {
             disabled: true,
@@ -30,7 +28,7 @@ export const emailOctopusProps = {
             options: [],
           };
         }
-        const client = new EmailOctopusClient(auth.secret_text);
+        const client = new EmailOctopusClient(auth);
         const lists = await client.getLists();
         return {
           disabled: false,
@@ -44,14 +42,13 @@ export const emailOctopusProps = {
 
   campaignId: (required = false) =>
     Property.Dropdown({
-      auth: emailOctopusAuth,
       displayName: 'Campaign',
       description:
         'Select a campaign to filter events. Leave blank to trigger for all campaigns.',
       required: required,
       refreshers: [],
       options: async (context) => {
-        const { auth } = context;
+        const { auth } = context as AuthAndProps;
         if (!auth) {
           return {
             disabled: true,
@@ -59,7 +56,7 @@ export const emailOctopusProps = {
             options: [],
           };
         }
-        const client = new EmailOctopusClient(auth.secret_text);
+        const client = new EmailOctopusClient(auth);
         const campaigns = await client.getCampaigns();
         return {
           disabled: false,
@@ -73,7 +70,6 @@ export const emailOctopusProps = {
 
   fields: () =>
     Property.DynamicProperties({
-      auth: emailOctopusAuth,
       displayName: 'Fields',
       description: "The contact's custom fields.",
       required: true,
@@ -83,7 +79,7 @@ export const emailOctopusProps = {
           return {};
         }
 
-        const client = new EmailOctopusClient(auth.secret_text);
+        const client = new EmailOctopusClient(auth as unknown as string);
         const listDetails = await client.getList(list_id as unknown as string);
 
         const fields: DynamicPropsValue = {};

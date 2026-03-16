@@ -50,7 +50,7 @@ export const chargeLevelTrigger = createTrigger({
 		};
 	},
 	async onEnable(context) {
-		const { clientId, apiKey, redirectUri } = context.auth.props;
+		const { clientId, apiKey, redirectUri } = context.auth;
 
 		const { vehicleTokenIds, operator, chargePercentage, coolDownPeriod, verificationToken } =
 			context.propsValue;
@@ -106,7 +106,7 @@ export const chargeLevelTrigger = createTrigger({
 		}
 	},
 	async onDisable(context) {
-		const { clientId, apiKey, redirectUri } = context.auth.props;
+		const { clientId, apiKey, redirectUri } = context.auth;
 		const dimo = new DimoClient({
 			clientId,
 			apiKey,

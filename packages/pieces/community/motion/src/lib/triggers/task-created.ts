@@ -1,5 +1,4 @@
 import {
-  AppConnectionValueForAuthProperty,
   createTrigger,
   PiecePropValueSchema,
   TriggerStrategy,
@@ -17,7 +16,7 @@ import { BASE_URL, workspaceId } from '../common/props';
 import dayjs from 'dayjs';
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof motionAuth>,
+  PiecePropValueSchema<typeof motionAuth>,
   { workspaceId: string }
 > = {
   strategy: DedupeStrategy.TIMEBASED,
@@ -42,7 +41,7 @@ const polling: Polling<
         method: HttpMethod.GET,
         url: `${BASE_URL}/tasks`,
         headers: {
-          'X-API-Key': auth.secret_text,
+          'X-API-Key': auth as string,
         },
         queryParams: qs,
       });

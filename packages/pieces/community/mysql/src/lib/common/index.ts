@@ -1,5 +1,4 @@
 import {
-  AppConnectionValueForAuthProperty,
   PiecePropValueSchema,
   Property,
   StaticPropsValue,
@@ -16,15 +15,15 @@ export const warningMarkdown = Property.MarkDown({
 });
 
 export async function mysqlConnect(
-  auth: AppConnectionValueForAuthProperty<typeof mysqlAuth>,
+  auth: PiecePropValueSchema<typeof mysqlAuth>,
   propsValue: StaticPropsValue<any>
 ): Promise<Connection> {
   const conn = await createConnection({
-    host: auth.props.host,
-    port: auth.props.port || 3306,
-    user: auth.props.user,
-    password: auth.props.password,
-    database: auth.props.database || undefined,
+    host: auth.host,
+    port: auth.port || 3306,
+    user: auth.user,
+    password: auth.password,
+    database: auth.database || undefined,
     timezone: propsValue.timezone,
   });
   return conn;
@@ -43,7 +42,6 @@ export const mysqlCommon = {
   }),
   table: (required = true) =>
     Property.Dropdown({
-      auth: mysqlAuth,
       displayName: 'Table',
       required,
       refreshers: [],
@@ -56,7 +54,7 @@ export const mysqlCommon = {
           };
         }
         const conn = await mysqlConnect(
-          auth,
+          auth as PiecePropValueSchema<typeof mysqlAuth>,
           { auth }
         );
         const tables = await mysqlGetTableNames(conn);

@@ -2,7 +2,7 @@ import { BaseEdge, EdgeProps } from '@xyflow/react';
 
 import { StepLocationRelativeToParent } from '@activepieces/shared';
 
-import { flowCanvasConsts } from '../utils/consts';
+import { flowUtilConsts } from '../utils/consts';
 import { ApLoopStartEdge } from '../utils/types';
 
 import { ApAddButton } from './add-button';
@@ -15,42 +15,41 @@ export const ApLoopStartLineCanvasEdge = ({
   source,
   id,
 }: EdgeProps & ApLoopStartEdge) => {
-  const startY =
-    sourceY + flowCanvasConsts.VERTICAL_SPACE_BETWEEN_STEP_AND_LINE;
+  const startY = sourceY + flowUtilConsts.VERTICAL_SPACE_BETWEEN_STEP_AND_LINE;
   const verticalLineLength =
-    flowCanvasConsts.VERTICAL_SPACE_BETWEEN_STEPS -
-    2 * flowCanvasConsts.VERTICAL_SPACE_BETWEEN_STEP_AND_LINE;
+    flowUtilConsts.VERTICAL_SPACE_BETWEEN_STEPS -
+    2 * flowUtilConsts.VERTICAL_SPACE_BETWEEN_STEP_AND_LINE;
 
   const horizontalLineLength =
-    Math.abs(targetX - sourceX) - 2 * flowCanvasConsts.ARC_LENGTH;
+    Math.abs(targetX - sourceX) - 2 * flowUtilConsts.ARC_LENGTH;
   const path = `M ${sourceX} ${startY} v${verticalLineLength / 2}
-  ${flowCanvasConsts.ARC_RIGHT_DOWN} h${horizontalLineLength}
-  ${flowCanvasConsts.ARC_RIGHT} v${verticalLineLength}
-   ${!data.isLoopEmpty ? flowCanvasConsts.ARROW_DOWN : ''}`;
+  ${flowUtilConsts.ARC_RIGHT_DOWN} h${horizontalLineLength}
+  ${flowUtilConsts.ARC_RIGHT} v${verticalLineLength}
+   ${!data.isLoopEmpty ? flowUtilConsts.ARROW_DOWN : ''}`;
 
   const showDebugForLineEndPoint = false;
   const buttonPosition = {
     x:
       sourceX -
-      flowCanvasConsts.AP_NODE_SIZE.ADD_BUTTON.width / 2 +
+      flowUtilConsts.AP_NODE_SIZE.ADD_BUTTON.width / 2 +
       horizontalLineLength +
-      flowCanvasConsts.ARC_LENGTH * 2,
-    y: startY + verticalLineLength + flowCanvasConsts.ARC_LENGTH,
+      flowUtilConsts.ARC_LENGTH * 2,
+    y: startY + verticalLineLength + flowUtilConsts.ARC_LENGTH,
   };
 
   return (
     <>
       <BaseEdge
         path={path}
-        style={{ strokeWidth: `${flowCanvasConsts.LINE_WIDTH}px` }}
+        style={{ strokeWidth: `${flowUtilConsts.LINE_WIDTH}px` }}
         className="relative"
       ></BaseEdge>
       {!data.isLoopEmpty && (
         <foreignObject
           x={buttonPosition.x}
           y={buttonPosition.y}
-          width={flowCanvasConsts.AP_NODE_SIZE.ADD_BUTTON.width}
-          height={flowCanvasConsts.AP_NODE_SIZE.ADD_BUTTON.height}
+          width={flowUtilConsts.AP_NODE_SIZE.ADD_BUTTON.width}
+          height={flowUtilConsts.AP_NODE_SIZE.ADD_BUTTON.height}
           className="overflow-visible cursor-default"
         >
           <ApAddButton

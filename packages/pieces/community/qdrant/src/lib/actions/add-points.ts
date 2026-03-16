@@ -58,8 +58,8 @@ export const addPointsToCollection = createAction({
   },
   run: async ({ auth, propsValue }) => {
     const client = new QdrantClient({
-      apiKey: auth.props.key,
-      url: auth.props.serverAddress,
+      apiKey: auth.key,
+      url: auth.serverAddress,
     });
     const embeddings = decodeEmbeddings(propsValue.embeddings.data);
 

@@ -31,8 +31,6 @@ export const imageGeneration = createAction({
       },
     }),
     model: Property.Dropdown({
-  auth: straicoAuth,
-
       displayName: 'Model',
       required: true,
       description: 'Select the image generation model.',
@@ -55,7 +53,7 @@ export const imageGeneration = createAction({
             method: HttpMethod.GET,
             authentication: {
               type: AuthenticationType.BEARER_TOKEN,
-              token: auth.secret_text,
+              token: auth as string,
             },
           });
 
@@ -125,7 +123,7 @@ export const imageGeneration = createAction({
       method: HttpMethod.POST,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: auth.secret_text,
+        token: auth as string,
       },
       body: {
         model: propsValue.model,

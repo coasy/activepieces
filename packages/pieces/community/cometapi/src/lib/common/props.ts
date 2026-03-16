@@ -5,11 +5,9 @@ import {
 } from '@activepieces/pieces-common';
 import { Property } from '@activepieces/pieces-framework';
 import { BASE_URL } from './auth';
-import { cometApiAuth } from './auth';
 
 export const modelIdDropdown = Property.Dropdown({
   displayName: 'Model',
-  auth: cometApiAuth,
   refreshers: [],
   required: true,
   options: async ({ auth }) => {
@@ -27,7 +25,7 @@ export const modelIdDropdown = Property.Dropdown({
       url: BASE_URL + '/models',
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: auth.secret_text,
+        token: auth as string,
       },
       method: HttpMethod.GET,
     });

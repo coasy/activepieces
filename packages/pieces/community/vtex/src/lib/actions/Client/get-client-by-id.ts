@@ -15,7 +15,7 @@ export const getClientById = createAction({
     }),
   },
   async run(context) {
-    const { hostUrl, appKey, appToken } = context.auth.props;
+    const { hostUrl, appKey, appToken } = context.auth;
     const { clientId } = context.propsValue;
 
     const client = new Client(hostUrl, appKey, appToken);

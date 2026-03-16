@@ -2,7 +2,7 @@ import { BaseEdge, EdgeProps } from '@xyflow/react';
 
 import { StepLocationRelativeToParent } from '@activepieces/shared';
 
-import { flowCanvasConsts } from '../utils/consts';
+import { flowUtilConsts } from '../utils/consts';
 import { ApRouterEndEdge } from '../utils/types';
 
 import { ApAddButton } from './add-button';
@@ -16,11 +16,11 @@ export const ApRouterEndCanvasEdge = ({
   id,
 }: EdgeProps & Omit<ApRouterEndEdge, 'position'>) => {
   const verticalLineLength =
-    flowCanvasConsts.VERTICAL_SPACE_BETWEEN_STEPS -
-    2 * flowCanvasConsts.VERTICAL_SPACE_BETWEEN_STEP_AND_LINE;
+    flowUtilConsts.VERTICAL_SPACE_BETWEEN_STEPS -
+    2 * flowUtilConsts.VERTICAL_SPACE_BETWEEN_STEP_AND_LINE;
 
   const horizontalLineLength =
-    (Math.abs(targetX - sourceX) - 2 * flowCanvasConsts.ARC_LENGTH) *
+    (Math.abs(targetX - sourceX) - 2 * flowUtilConsts.ARC_LENGTH) *
     (targetX > sourceX ? 1 : -1);
 
   const distanceBetweenTargetAndSource = Math.abs(targetX - sourceX);
@@ -28,22 +28,22 @@ export const ApRouterEndCanvasEdge = ({
   const generatePath = () => {
     // Start point
     let path = `M ${sourceX - 0.5} ${
-      sourceY - flowCanvasConsts.VERTICAL_SPACE_BETWEEN_STEP_AND_LINE
+      sourceY - flowUtilConsts.VERTICAL_SPACE_BETWEEN_STEP_AND_LINE * 2
     }`;
 
     // Vertical line from start
     path += `v ${data.verticalSpaceBetweenLastNodeInBranchAndEndLine}`;
 
     // Arc or vertical line based on distance
-    if (distanceBetweenTargetAndSource >= flowCanvasConsts.ARC_LENGTH) {
+    if (distanceBetweenTargetAndSource >= flowUtilConsts.ARC_LENGTH) {
       path +=
         targetX > sourceX
-          ? flowCanvasConsts.ARC_RIGHT_DOWN
-          : flowCanvasConsts.ARC_LEFT_DOWN;
+          ? flowUtilConsts.ARC_RIGHT_DOWN
+          : flowUtilConsts.ARC_LEFT_DOWN;
     } else {
       path += `v ${
-        flowCanvasConsts.ARC_LENGTH +
-        flowCanvasConsts.VERTICAL_SPACE_BETWEEN_STEP_AND_LINE +
+        flowUtilConsts.ARC_LENGTH +
+        flowUtilConsts.VERTICAL_SPACE_BETWEEN_STEP_AND_LINE +
         2
       }`;
     }
@@ -51,9 +51,7 @@ export const ApRouterEndCanvasEdge = ({
     // Optional horizontal line
     if (data.drawHorizontalLine) {
       path += `h ${horizontalLineLength} ${
-        targetX > sourceX
-          ? flowCanvasConsts.ARC_RIGHT
-          : flowCanvasConsts.ARC_LEFT
+        targetX > sourceX ? flowUtilConsts.ARC_RIGHT : flowUtilConsts.ARC_LEFT
       }`;
     }
 
@@ -61,7 +59,7 @@ export const ApRouterEndCanvasEdge = ({
     if (data.drawEndingVerticalLine) {
       path += `v${verticalLineLength}`;
       if (!data.isNextStepEmpty) {
-        path += flowCanvasConsts.ARROW_DOWN;
+        path += flowUtilConsts.ARROW_DOWN;
       }
     }
 
@@ -74,19 +72,23 @@ export const ApRouterEndCanvasEdge = ({
     <>
       <BaseEdge
         path={path}
-        style={{ strokeWidth: `${flowCanvasConsts.LINE_WIDTH}px` }}
+        style={{ strokeWidth: `${flowUtilConsts.LINE_WIDTH}px` }}
       />
 
       {data.drawEndingVerticalLine && (
         <foreignObject
           x={
             targetX -
-            flowCanvasConsts.AP_NODE_SIZE.ADD_BUTTON.width / 2 -
-            flowCanvasConsts.LINE_WIDTH / 2
+            flowUtilConsts.AP_NODE_SIZE.ADD_BUTTON.width / 2 -
+            flowUtilConsts.LINE_WIDTH / 2
           }
-          y={targetY - verticalLineLength}
-          width={flowCanvasConsts.AP_NODE_SIZE.ADD_BUTTON.width}
-          height={flowCanvasConsts.AP_NODE_SIZE.ADD_BUTTON.height}
+          y={
+            targetY -
+            verticalLineLength +
+            flowUtilConsts.AP_NODE_SIZE.ADD_BUTTON.height
+          }
+          width={flowUtilConsts.AP_NODE_SIZE.ADD_BUTTON.width}
+          height={flowUtilConsts.AP_NODE_SIZE.ADD_BUTTON.height}
           className="overflow-visible"
         >
           <ApAddButton

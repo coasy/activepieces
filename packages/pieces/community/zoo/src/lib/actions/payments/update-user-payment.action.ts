@@ -20,7 +20,7 @@ export const updateUserPaymentAction = createAction({
       method: HttpMethod.PUT,
       url: 'https://api.zoo.dev/user/payment',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
       body: {
         payment_method_id: propsValue.paymentMethodId,

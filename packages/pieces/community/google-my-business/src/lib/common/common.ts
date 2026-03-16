@@ -9,13 +9,11 @@ import {
   AuthenticationType,
   QueryParams,
 } from '@activepieces/pieces-common';
-import { googleAuth } from '../..';
 
 export const googleBusinessCommon = {
   account: Property.Dropdown({
     displayName: 'Account',
     required: true,
-    auth: googleAuth,
     refreshers: [],
     options: async (propsValue) => {
       if (!propsValue['auth']) {
@@ -54,7 +52,6 @@ export const googleBusinessCommon = {
   }),
   location: Property.Dropdown({
     displayName: 'Location',
-    auth: googleAuth, 
     required: true,
     refreshers: ['account'],
     options: async (propsValue) => {

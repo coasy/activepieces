@@ -1,14 +1,23 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { t } from 'i18next';
-import { toast } from 'sonner';
 
-import { flagsHooks } from '@/hooks/flags-hooks';
-import { platformHooks } from '@/hooks/platform-hooks';
-import { PiecesOAuth2AppsMap } from '@/lib/oauth2-utils';
+import { toast } from '@/components/ui/use-toast';
 import { UpsertOAuth2AppRequest } from '@activepieces/ee-shared';
-import { ApEdition, ApFlagId, AppConnectionType } from '@activepieces/shared';
+import { ApEdition, AppConnectionType } from '@activepieces/shared';
 
 import { oauthAppsApi } from './api/oauth-apps';
+
+export type PieceToClientIdMap = {
+  //key is set like this, to avoid issues reconnecting to a cloud oauth2 app after setting a platform oauth2 app
+  [
+    pieceName: `${string}-${
+      | AppConnectionType.CLOUD_OAUTH2
+      | AppConnectionType.PLATFORM_OAUTH2}`
+  ]: {
+    type: AppConnectionType.CLOUD_OAUTH2 | AppConnectionType.PLATFORM_OAUTH2;
+    clientId: string;
+  };
+};
 
 export const oauthAppsMutations = {
   useDeleteOAuthApp: (refetch: () => void, setOpen: (open: boolean) => void) =>
@@ -18,7 +27,9 @@ export const oauthAppsMutations = {
         refetch();
       },
       onSuccess: () => {
-        toast.success(t('OAuth2 Credentials Deleted'), {
+        toast({
+          title: t('Success'),
+          description: t('OAuth2 Credentials Deleted'),
           duration: 3000,
         });
         setOpen(false);
@@ -36,7 +47,9 @@ export const oauthAppsMutations = {
         refetch();
       },
       onSuccess: () => {
-        toast.success(t('OAuth2 Credentials Updated'), {
+        toast({
+          title: t('Success'),
+          description: t('OAuth2 Credentials Updated'),
           duration: 3000,
         });
         onConfigurationDone();
@@ -50,7 +63,7 @@ export const oauthAppsQueries = {
     const query = useQuery({
       queryKey: ['oauth2-apps-configured'],
       queryFn: async () => {
-        const response = await oauthAppsApi.listPlatformOAuth2Apps({
+        const response = await oauthAppsApi.listOAuthAppsCredentials({
           limit: 1000000,
         });
         return response.data;
@@ -65,11 +78,8 @@ export const oauthAppsQueries = {
       oauth2App: query.data,
     };
   },
-  usePiecesOAuth2AppsMap() {
-    const { platform } = platformHooks.useCurrentPlatform();
-    const { data: edition } = flagsHooks.useFlag<ApEdition>(ApFlagId.EDITION);
-
-    return useQuery<PiecesOAuth2AppsMap, Error>({
+  usePieceToClientIdMap(cloudAuthEnabled: boolean, edition: ApEdition) {
+    return useQuery<PieceToClientIdMap, Error>({
       queryKey: ['oauth-apps'],
       queryFn: async () => {
         const apps =
@@ -77,31 +87,24 @@ export const oauthAppsQueries = {
             ? {
                 data: [],
               }
-            : await oauthAppsApi.listPlatformOAuth2Apps({
+            : await oauthAppsApi.listOAuthAppsCredentials({
                 limit: 1000000,
                 cursor: undefined,
               });
-        const cloudApps = !platform.cloudAuthEnabled
+        const cloudApps = !cloudAuthEnabled
           ? {}
-          : await oauthAppsApi.listCloudOAuth2Apps(edition!);
-        const appsMap: PiecesOAuth2AppsMap = {};
-
-        Object.entries(cloudApps).forEach(([pieceName, app]) => {
-          appsMap[pieceName] = {
-            cloudOAuth2App: {
-              oauth2Type: AppConnectionType.CLOUD_OAUTH2,
-              clientId: app.clientId,
-            },
-            platformOAuth2App: null,
+          : await oauthAppsApi.listCloudOAuthApps(edition);
+        const appsMap: PieceToClientIdMap = {};
+        Object.keys(cloudApps).forEach((key) => {
+          appsMap[`${key}-${AppConnectionType.CLOUD_OAUTH2}`] = {
+            type: AppConnectionType.CLOUD_OAUTH2,
+            clientId: cloudApps[key].clientId,
           };
         });
         apps.data.forEach((app) => {
-          appsMap[app.pieceName] = {
-            platformOAuth2App: {
-              oauth2Type: AppConnectionType.PLATFORM_OAUTH2,
-              clientId: app.clientId,
-            },
-            cloudOAuth2App: appsMap[app.pieceName]?.cloudOAuth2App ?? null,
+          appsMap[`${app.pieceName}-${AppConnectionType.PLATFORM_OAUTH2}`] = {
+            type: AppConnectionType.PLATFORM_OAUTH2,
+            clientId: app.clientId,
           };
         });
         return appsMap;
@@ -109,17 +112,4 @@ export const oauthAppsQueries = {
       staleTime: 0,
     });
   },
-};
-
-export type PieceToClientIdMap = {
-  [
-    pieceName: `${string}-${
-      | AppConnectionType.CLOUD_OAUTH2
-      | AppConnectionType.PLATFORM_OAUTH2}`
-  ]: {
-    oauth2Type:
-      | AppConnectionType.CLOUD_OAUTH2
-      | AppConnectionType.PLATFORM_OAUTH2;
-    clientId: string;
-  };
 };

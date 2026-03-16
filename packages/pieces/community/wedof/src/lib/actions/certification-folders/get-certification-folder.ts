@@ -27,7 +27,7 @@ export const getCertificationFolder = createAction({
           context.propsValue.externalId,
         headers: {
           'Content-Type': 'application/json',
-          'X-Api-Key': context.auth.secret_text,
+          'X-Api-Key': context.auth as string,
         },
       })
     ).body;

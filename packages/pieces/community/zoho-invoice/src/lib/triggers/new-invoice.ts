@@ -1,5 +1,4 @@
 import {
-  AppConnectionValueForAuthProperty,
   PiecePropValueSchema,
   TriggerStrategy,
   createTrigger,
@@ -16,7 +15,7 @@ import dayjs from 'dayjs';
 import { zohoAuth } from '../..';
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof zohoAuth>,
+  PiecePropValueSchema<typeof zohoAuth>,
   Record<string, never>
 > = {
   strategy: DedupeStrategy.TIMEBASED,

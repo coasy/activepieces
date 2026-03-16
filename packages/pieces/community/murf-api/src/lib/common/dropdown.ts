@@ -1,7 +1,6 @@
 import { Property } from "@activepieces/pieces-framework";
 import { HttpMethod } from "@activepieces/pieces-common";
 import { makeRequest } from "./client";
-import { murfAuth } from "./auth";
 
 // Helper to fetch voices
 const getVoices = async (apiKey: string) => {
@@ -31,7 +30,6 @@ const getLanguages = async (apiKey: string) => {
 
 export const murfCommon = {
     language: Property.Dropdown({
-  auth: murfAuth,
         displayName: "Language",
         description: "Select your preferred language for the translated output.",
         required: true,
@@ -45,7 +43,7 @@ export const murfCommon = {
                 };
             }
 
-            const langs = await getLanguages(auth.secret_text);
+            const langs = await getLanguages(auth as string);
             return {
                 disabled: false,
                 options: langs,
@@ -54,7 +52,6 @@ export const murfCommon = {
     }),
 
     voiceId: Property.Dropdown({
-  auth: murfAuth,
         displayName: "Voice",
         description: "Choose a voice for converting text into speech",
         required: true,
@@ -68,7 +65,7 @@ export const murfCommon = {
                 };
             }
 
-            const voices = await getVoices(auth.secret_text);
+            const voices = await getVoices(auth as string);
             const filtered = voices.filter((v: any) =>
                 Object.keys(v.supportedLocales || {}).includes(language as string)
             );
@@ -83,7 +80,6 @@ export const murfCommon = {
         },
     }),
     sourceLocale: Property.Dropdown({
-  auth: murfAuth,
         displayName: "Source Locale",
         description: "Select the source locale for input text.",
         required: false,
@@ -97,7 +93,7 @@ export const murfCommon = {
                 };
             }
 
-            const voices = await getVoices(auth.secret_text);
+            const voices = await getVoices(auth as string);
 
             const localeMap = new Map<string, string>();
             voices.forEach((voice: any) => {

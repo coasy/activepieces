@@ -10,7 +10,6 @@ export const newInvoice = createTrigger({
 	auth: teamworkAuth,
 	props: {
 		projectId: Property.Dropdown({
-auth: teamworkAuth,
 			displayName: 'Project',
 			description: 'The project to watch for new invoices. If not specified, all projects will be watched.',
 			required: false,
@@ -23,7 +22,7 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const res = await teamworkRequest(auth, {
+				const res = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: '/projects.json',
 				});
@@ -40,7 +39,7 @@ auth: teamworkAuth,
 	},
 	type: TriggerStrategy.WEBHOOK,
 	async onEnable(context) {
-		const res = await teamworkRequest(context.auth, {
+		const res = await teamworkRequest(context.auth as PiecePropValueSchema<typeof teamworkAuth>, {
 			method: HttpMethod.POST,
 			path: '/webhooks.json',
 			body: {
@@ -56,7 +55,7 @@ auth: teamworkAuth,
 	async onDisable(context) {
 		const webhookId = await context.store.get('webhookId');
 		if (webhookId) {
-			await teamworkRequest(context.auth, {
+			await teamworkRequest(context.auth as PiecePropValueSchema<typeof teamworkAuth>, {
 				method: HttpMethod.DELETE,
 				path: `/webhooks/${webhookId}.json`,
 			});

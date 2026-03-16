@@ -21,8 +21,7 @@ export const drupalDeleteEntityAction = createAction({
       description: 'Choose the type of content to delete.',
       required: true,
       refreshers: [],
-      auth: drupalAuth,
-      options: async ({ auth }) => fetchEntityTypesForReading(auth),
+      options: async ({ auth }) => fetchEntityTypesForReading(auth as DrupalAuthType),
     }),
     entity_uuid: Property.ShortText({
       displayName: 'Entity UUID',
@@ -34,7 +33,7 @@ export const drupalDeleteEntityAction = createAction({
     const entityInfo = propsValue.entity_type as any;
     
     return await drupal.deleteEntity(
-      auth,
+      auth as DrupalAuthType,
       entityInfo.entity_type,
       entityInfo.bundle,
       propsValue.entity_uuid

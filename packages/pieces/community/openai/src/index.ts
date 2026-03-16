@@ -15,15 +15,10 @@ import { translateAction } from './lib/actions/translation';
 import { visionPrompt } from './lib/actions/vision-prompt';
 import { baseUrl } from './lib/common/common';
 import { extractStructuredDataAction } from './lib/actions/extract-structure-data.action';
+import { SUPPORTED_AI_PROVIDERS } from '@activepieces/common-ai';
 
 export const openaiAuth = PieceAuth.SecretText({
-  description: `Follow these instructions to get your OpenAI API Key:
-
-1. Visit the following website: https://platform.openai.com/account/api-keys.
-2. Once on the website, locate and click on the option to obtain your OpenAI API Key.
-
-It is strongly recommended that you add your credit card information to your OpenAI account and upgrade to the paid plan **before** generating the API Key. This will help you prevent 429 errors.
-`,
+  description: SUPPORTED_AI_PROVIDERS.find(p => p.provider === 'openai')?.markdown,
   displayName: 'API Key',
   required: true,
   validate: async (auth) => {
@@ -35,7 +30,7 @@ It is strongly recommended that you add your credit card information to your Ope
         method: HttpMethod.GET,
         authentication: {
           type: AuthenticationType.BEARER_TOKEN,
-          token: auth.auth,
+          token: auth.auth as string,
         },
       });
       return {
@@ -71,7 +66,7 @@ export const openai = createPiece({
       baseUrl: () => baseUrl,
       authMapping: async (auth) => {
         return {
-          Authorization: `Bearer ${auth.secret_text}`,
+          Authorization: `Bearer ${auth}`,
         };
       },
     }),

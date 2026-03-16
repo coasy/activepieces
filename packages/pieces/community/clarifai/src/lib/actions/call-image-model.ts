@@ -28,7 +28,7 @@ export const visualClassifierModelPredictAction = createAction({
     const input = fileToInput(file);
 
     const outputs = await callClarifaiModel({
-      auth: auth.secret_text,
+      auth,
       modelUrl,
       input,
     });
@@ -56,7 +56,7 @@ export const imageToTextModelPredictAction = createAction({
     const input = fileToInput(file);
 
     const outputs = await callClarifaiModel({
-      auth: auth.secret_text  ,
+      auth,
       modelUrl,
       input,
     });

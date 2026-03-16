@@ -18,14 +18,13 @@ export const updateProject = createAction({
       displayName: '',
       description: '',
       refreshers: ['auth', 'projectId'],
-      auth: CopperAuth,
       required: false,
       props: async ({ auth, projectId }: any): Promise<InputPropertyMap> => {
         if (!auth || !projectId) return {};
 
         const project = JSON.parse(projectId);
 
-        const map:InputPropertyMap= {
+        return {
           name: Property.ShortText({
             displayName: 'Name',
             description: 'The name of the project',
@@ -39,7 +38,6 @@ export const updateProject = createAction({
             defaultValue: project.details,
           }),
         };
-        return map;
       },
     }),
   },

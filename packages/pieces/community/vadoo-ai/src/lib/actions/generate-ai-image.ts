@@ -15,7 +15,6 @@ export const generateAiImage = createAction({
   description: 'Generates AI generated image based on prompt for a character.',
   props: {
     id: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Character',
       description: 'Select the character to generate an image for',
       required: true,
@@ -34,7 +33,7 @@ export const generateAiImage = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_all_characters',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
           });
 
@@ -101,7 +100,7 @@ export const generateAiImage = createAction({
       method: HttpMethod.POST,
       url: 'https://viralapi.vadoo.tv/api/generate_character_image',
       headers: {
-        'X-API-KEY': context.auth.secret_text,
+        'X-API-KEY': context.auth,
         'Content-Type': 'application/json',
       },
       body: requestBody,
@@ -124,7 +123,7 @@ export const generateAiImage = createAction({
         method: HttpMethod.GET,
         url: 'https://viralapi.vadoo.tv/api/get_character_image',
         headers: {
-          'X-API-KEY': context.auth.secret_text,
+          'X-API-KEY': context.auth,
           'Content-Type': 'application/json',
         },
         queryParams: {

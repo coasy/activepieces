@@ -1,11 +1,9 @@
 import { Property } from '@activepieces/pieces-framework';
 import {
   ApitemplateAuthConfig,
-  ApitemplateRegion,
   makeRequest,
 } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { ApitemplateAuth } from './auth';
 
 export const regionDropdown = Property.StaticDropdown({
   displayName: 'Region',
@@ -47,7 +45,6 @@ export const regionDropdown = Property.StaticDropdown({
 });
 
 export const templateIdDropdown = Property.Dropdown({
-  auth: ApitemplateAuth,
   displayName: 'Template ID',
   required: true,
   refreshers: ['auth'],
@@ -60,7 +57,8 @@ export const templateIdDropdown = Property.Dropdown({
       };
     }
 
-    const authConfig = auth.props;
+    // Type-safe auth casting
+    const authConfig = auth as ApitemplateAuthConfig;
 
     if (!authConfig.apiKey || !authConfig.region) {
       return {
@@ -77,7 +75,7 @@ export const templateIdDropdown = Property.Dropdown({
         '/list-templates',
         undefined,
         undefined,
-        authConfig.region as ApitemplateRegion
+        authConfig.region
       );
 
       // Handle the specific APITemplate.io response structure
@@ -110,7 +108,6 @@ export const templateIdDropdown = Property.Dropdown({
 });
 
 export const transactionRefDropdown = Property.Dropdown({
-  auth: ApitemplateAuth,
   displayName: 'Transaction Reference',
   description: 'Select a transaction reference to filter objects.',
   required: false,
@@ -124,7 +121,8 @@ export const transactionRefDropdown = Property.Dropdown({
       };
     }
 
-    const authConfig = auth.props;
+    // Type-safe auth casting
+    const authConfig = auth as ApitemplateAuthConfig;
 
     if (!authConfig.apiKey || !authConfig.region) {
       return {
@@ -141,7 +139,7 @@ export const transactionRefDropdown = Property.Dropdown({
         '/list-objects',
         undefined,
         undefined,
-        authConfig.region as ApitemplateRegion
+        authConfig.region
       );
 
       // Handle the specific APITemplate.io response structure

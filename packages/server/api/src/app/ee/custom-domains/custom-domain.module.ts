@@ -2,7 +2,6 @@ import {
     AddDomainRequest,
     ListCustomDomainsRequest,
 } from '@activepieces/ee-shared'
-import { securityAccess } from '@activepieces/server-shared'
 import { assertNotNullOrUndefined, PrincipalType } from '@activepieces/shared'
 import {
     FastifyPluginAsyncTypebox,
@@ -11,7 +10,7 @@ import {
 } from '@fastify/type-provider-typebox'
 import { HttpStatusCode } from 'axios'
 import { StatusCodes } from 'http-status-codes'
-import { platformMustHaveFeatureEnabled } from '../authentication/ee-authorization'
+import { platformMustBeOwnedByCurrentUser, platformMustHaveFeatureEnabled } from '../authentication/ee-authorization'
 import { customDomainService } from './custom-domain.service'
 
 const GetOneRequest = Type.Object({
@@ -21,6 +20,7 @@ type GetOneRequest = Static<typeof GetOneRequest>
 
 export const customDomainModule: FastifyPluginAsyncTypebox = async (app) => {
     app.addHook('preHandler', platformMustHaveFeatureEnabled((platform) => platform.plan.customDomainsEnabled))
+    app.addHook('preHandler', platformMustBeOwnedByCurrentUser)
     await app.register(customDomainController, { prefix: '/v1/custom-domains' })
 }
 
@@ -32,7 +32,7 @@ const customDomainController: FastifyPluginAsyncTypebox = async (app) => {
                 body: AddDomainRequest,
             },
             config: {
-                security: securityAccess.platformAdminOnly([PrincipalType.USER]),
+                allowedPrincipals: [PrincipalType.USER] as const,
             },
         },
         async (request, reply) => {
@@ -65,7 +65,7 @@ const customDomainController: FastifyPluginAsyncTypebox = async (app) => {
                 querystring: ListCustomDomainsRequest,
             },
             config: {
-                security: securityAccess.platformAdminOnly([PrincipalType.USER]),
+                allowedPrincipals: [PrincipalType.USER] as const,
             },
         },
         async (request) => {
@@ -86,7 +86,7 @@ const customDomainController: FastifyPluginAsyncTypebox = async (app) => {
                 params: GetOneRequest,
             },
             config: {
-                security: securityAccess.platformAdminOnly([PrincipalType.USER]),
+                allowedPrincipals: [PrincipalType.USER] as const,
             },
         },
         async (request) => {

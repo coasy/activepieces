@@ -19,7 +19,7 @@ export const findRunningTimerAction = createAction({
 		const { workspaceId } = context.propsValue;
 
 		const response = await clockifyApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.GET,
 			resourceUri: `/workspaces/${workspaceId}/time-entries/status/in-progress`,
 		});

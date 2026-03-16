@@ -17,7 +17,6 @@ export const updateContact = createAction({
   props: {
     contactId: systemeIoProps.contactIdDropdown,
     dynamicContactFields: Property.DynamicProperties({
-      auth: systemeIoAuth,
       displayName: 'Contact Fields',
       description: 'Select which contact fields to update',
       required: false,
@@ -29,7 +28,7 @@ export const updateContact = createAction({
 
         try {
           const response = await systemeIoCommon.getContactFields({
-            auth: auth.secret_text,
+            auth: auth as unknown as string,
           });
 
           let fields: any[] = [];
@@ -127,7 +126,7 @@ export const updateContact = createAction({
       method: HttpMethod.PATCH,
       url: `/contacts/${contactId}`,
       body: updateData,
-      auth: context.auth.secret_text,
+      auth: context.auth,
       headers: {
         'Content-Type': 'application/merge-patch+json',
       },

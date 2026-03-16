@@ -28,7 +28,7 @@ export const pushMessage = createAction({
       url: `https://api.line.me/v2/bot/message/push`,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: context.auth.secret_text,
+        token: context.auth,
       },
       body: {
         to: context.propsValue.userId,

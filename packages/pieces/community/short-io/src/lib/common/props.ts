@@ -1,7 +1,6 @@
 import { Property } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { shortIoApiCall, ShortioAuthProps } from './client';
-import { shortIoAuth } from './auth';
 
 interface ShortIoDomain {
   id: number;
@@ -27,9 +26,7 @@ interface ShortIoFoldersResponse {
   linkFolders: ShortIoFolder[];
 }
 
-export const domainIdDropdown =Property.Dropdown({
-  auth: shortIoAuth,
-
+export const domainIdDropdown = Property.Dropdown({
   displayName: 'Domain',
   description: 'Select the domain to use for the link',
   required: true,
@@ -72,9 +69,7 @@ export const domainIdDropdown =Property.Dropdown({
   },
 });
 
-export const linkIdDropdown =Property.Dropdown({
-  auth: shortIoAuth,
-
+export const linkIdDropdown = Property.Dropdown({
   displayName: 'Short Link',
   description: 'Select the short link from the domain',
   required: true,
@@ -127,9 +122,7 @@ export const linkIdDropdown =Property.Dropdown({
   },
 });
 
-export const folderIdDropdown =Property.Dropdown({
-  auth: shortIoAuth,
-
+export const folderIdDropdown = Property.Dropdown({
   displayName: 'Folder',
   description: 'Select the folder to add the link to.',
   required: false,

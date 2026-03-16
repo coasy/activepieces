@@ -43,7 +43,7 @@ export const createEmbeddings = createAction({
 					url: 'https://api.mistral.ai/v1/embeddings',
 					authentication: {
 						type: AuthenticationType.BEARER_TOKEN,
-						token: context.auth.secret_text,
+						token: context.auth,
 					},
 					body,
 					timeout: timeout ?? 30000,

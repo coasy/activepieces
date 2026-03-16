@@ -25,7 +25,7 @@ export const createOrganizationAction = createAction({
   },
   async run(context) {
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof flowluAuth>
     );
     return await client.createAccount({ type: 1, ...context.propsValue });
   },

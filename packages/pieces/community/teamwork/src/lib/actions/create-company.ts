@@ -29,7 +29,6 @@ export const createCompany = createAction({
 		profile: Property.LongText({ displayName: 'Profile', description: "Public company profile or 'About Us' text.", required: false }),
 		privateNotes: Property.LongText({ displayName: 'Private Notes', description: 'Notes visible only to internal users.', required: false }),
 		customFields: Property.DynamicProperties({
-			auth: teamworkAuth,
 			displayName: 'Custom Fields',
 			description: 'Custom fields for this company.',
 			required: false,
@@ -38,7 +37,7 @@ export const createCompany = createAction({
 				if (!auth) return {};
 
 				const fields: DynamicPropsValue = {};
-				const res = await teamworkRequest(auth, {
+				const res = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: '/projects/api/v3/customfields.json',
 					query: {

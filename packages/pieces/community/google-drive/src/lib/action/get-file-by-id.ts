@@ -7,7 +7,7 @@ import { common } from '../common';
 export const googleDriveGetResourceById = createAction({
   auth: googleDriveAuth,
   name: 'get-file-or-folder-by-id',
-  displayName: 'Get File Information',
+  displayName: 'Get File',
   description: 'Get a file folder for files/sub-folders',
   props: {
     id: Property.ShortText({

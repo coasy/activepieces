@@ -6,11 +6,9 @@ import {
   QueryParams,
 } from '@activepieces/pieces-common';
 import {
-  AppConnectionValueForAuthProperty,
   CustomAuthProps,
   StaticPropsValue,
 } from '@activepieces/pieces-framework';
-import { metabaseAuth } from '..';
 
 export async function queryMetabaseApi(
   params: {
@@ -21,16 +19,16 @@ export async function queryMetabaseApi(
     body?: object;
     responseType?: 'arraybuffer' | 'json' | 'blob' | 'text';
   },
-  auth: AppConnectionValueForAuthProperty<typeof metabaseAuth>
+  auth: StaticPropsValue<CustomAuthProps>
 ) {
   const request: HttpRequest = {
     method: params.method,
-    url: `${auth.props.baseUrl}/api/${params.endpoint}`,
+    url: `${auth.baseUrl}/api/${params.endpoint}`,
     queryParams: params.queryParams,
     headers: {
       ...params.headers,
       'Content-Type': 'application/json',
-      'X-API-KEY': auth.props.apiKey,
+      'X-API-KEY': auth.apiKey as string,
     },
     body: JSON.stringify(params.body),
     responseType: params.responseType,

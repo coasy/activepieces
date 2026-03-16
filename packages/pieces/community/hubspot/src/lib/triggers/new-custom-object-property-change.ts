@@ -8,22 +8,21 @@ import {
 import {
 	customObjectDropdown,
 	customObjectPropertiesDropdown,
+	standardObjectPropertiesDropdown,
 } from '../common/props';
 import { DedupeStrategy, Polling, pollingHelper } from '@activepieces/pieces-common';
-import { chunk, isNil } from '@activepieces/shared';
+import { chunk } from '@activepieces/shared';
 
 import { Client } from '@hubspot/api-client';
 import dayjs from 'dayjs';
 import { FilterOperatorEnum } from '../common/types';
-import { MAX_SEARCH_PAGE_SIZE, MAX_SEARCH_TOTAL_RESULTS } from '../common/constants';
 
 type Props = {
 	customObjectType?: string;
 	propertyName?: DynamicPropsValue;
 };
 
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-const polling: Polling<AppConnectionValueForAuthProperty<typeof hubspotAuth>, Props> = {
+const polling: Polling<PiecePropValueSchema<typeof hubspotAuth>, Props> = {
 	strategy: DedupeStrategy.TIMEBASED,
 	async items({ auth, propsValue, lastFetchEpochMS }) {
 		const client = new Client({ accessToken: auth.access_token, numberOfApiCallRetries: 3 });
@@ -49,10 +48,10 @@ const polling: Polling<AppConnectionValueForAuthProperty<typeof hubspotAuth>, Pr
 		}
 		//fetch updated custom objects
 		const updatedCustomObjects = [];
-		let after: string | undefined;
+		let after;
 		do {
 			const response = await client.crm.objects.searchApi.doSearch(customObjectType, {
-				limit: MAX_SEARCH_PAGE_SIZE,
+				limit: 100,
 				after,
 				sorts: ['-hs_lastmodifieddate'],
 				filterGroups: [
@@ -73,14 +72,6 @@ const polling: Polling<AppConnectionValueForAuthProperty<typeof hubspotAuth>, Pr
 			});
 			after = response.paging?.next?.after;
 			updatedCustomObjects.push(...response.results);
-
-			// Stop fetching if it exceeds max search results or will encounter 400 status
-			if (
-				!isNil(after) &&
-				parseInt(after) + MAX_SEARCH_PAGE_SIZE > MAX_SEARCH_TOTAL_RESULTS
-			) {
-				break;
-			}
 		} while (after);
 
 		if (updatedCustomObjects.length === 0) {

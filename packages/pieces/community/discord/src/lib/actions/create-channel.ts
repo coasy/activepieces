@@ -29,7 +29,7 @@ export const discordCreateChannel = createAction({
         name: configValue.propsValue.name,
       },
       headers: {
-        authorization: `Bot ${configValue.auth.secret_text}`,
+        authorization: `Bot ${configValue.auth}`,
         'Content-Type': 'application/json',
       },
     };

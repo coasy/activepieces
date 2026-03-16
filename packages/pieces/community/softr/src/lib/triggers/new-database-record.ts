@@ -1,4 +1,4 @@
-import { AppConnectionValueForAuthProperty, createTrigger, TriggerStrategy } from '@activepieces/pieces-framework';
+import { createTrigger, TriggerStrategy } from '@activepieces/pieces-framework';
 import { DedupeStrategy, Polling, pollingHelper, HttpMethod } from '@activepieces/pieces-common';
 import dayjs from 'dayjs';
 import { SoftrAuth } from '../common/auth';
@@ -11,7 +11,7 @@ type Props = {
 	tableId: string;
 };
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof SoftrAuth>, Props> = {
+const polling: Polling<string, Props> = {
 	strategy: DedupeStrategy.TIMEBASED,
 	items: async ({ auth, propsValue, lastFetchEpochMS }) => {
 		const { databaseId, tableId } = propsValue;

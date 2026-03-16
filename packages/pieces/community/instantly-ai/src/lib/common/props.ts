@@ -1,11 +1,9 @@
 import { HttpMethod, QueryParams } from '@activepieces/pieces-common';
 import { DropdownOption, Property } from '@activepieces/pieces-framework';
 import { makeRequest } from './client';
-import { instantlyAiAuth } from '../..';
 
 export const listId = (required = true) =>
   Property.Dropdown({
-    auth: instantlyAiAuth,
     displayName: 'List',
     refreshers: [],
     required,
@@ -33,7 +31,7 @@ export const listId = (required = true) =>
         const response = (await makeRequest({
           endpoint: 'lead-lists',
           method: HttpMethod.GET,
-          apiKey: auth,
+          apiKey: auth as string,
           queryParams: qs,
         })) as {
           next_starting_after?: string;
@@ -58,7 +56,6 @@ export const listId = (required = true) =>
 
 export const campaignId = (required = true) =>
   Property.Dropdown({
-    auth: instantlyAiAuth,
     displayName: 'Campaign',
     refreshers: [],
     required,
@@ -86,7 +83,7 @@ export const campaignId = (required = true) =>
         const response = (await makeRequest({
           endpoint: 'campaigns',
           method: HttpMethod.GET,
-          apiKey: auth,
+          apiKey: auth as string,
           queryParams: qs,
         })) as {
           next_starting_after?: string;
@@ -111,7 +108,6 @@ export const campaignId = (required = true) =>
 
 export const leadId = (required = true) =>
   Property.Dropdown({
-    auth: instantlyAiAuth,
     displayName: 'Lead',
     refreshers: [],
     required,
@@ -139,7 +135,7 @@ export const leadId = (required = true) =>
         const response = (await makeRequest({
           endpoint: 'leads/list',
           method: HttpMethod.POST,
-          apiKey: auth,
+          apiKey: auth as string,
           body
         })) as {
           next_starting_after?: string;

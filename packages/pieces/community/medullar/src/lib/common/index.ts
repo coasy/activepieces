@@ -1,6 +1,5 @@
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
-import { AppConnectionValueForAuthProperty, Property } from '@activepieces/pieces-framework';
-import { medullarAuth } from '../..';
+import { Property } from '@activepieces/pieces-framework';
 
 export const medullarCommon = {
   baseUrl: 'https://api.medullar.com',
@@ -9,7 +8,7 @@ export const medullarCommon = {
   aiUrl: 'https://api.medullar.com/ai/v1',
 };
 
-export async function getUser(authentication: AppConnectionValueForAuthProperty<typeof medullarAuth>) {
+export async function getUser(authentication: string) {
   const userResponse = await httpClient.sendRequest({
     method: HttpMethod.GET,
     url: `${medullarCommon.authUrl}/users/me/`,
@@ -31,14 +30,14 @@ export async function getUser(authentication: AppConnectionValueForAuthProperty<
   return userData;
 }
 
-export async function getUserSpaces(authentication: AppConnectionValueForAuthProperty<typeof medullarAuth>) {
+export async function getUserSpaces(authentication: string) {
   const userData = await getUser(authentication);
 
   const spaceListResponse = await httpClient.sendRequest({
     method: HttpMethod.GET,
     url: `${medullarCommon.aiUrl}/spaces/?user=${userData.uuid}&limit=1000&offset=0`,
     headers: {
-      Authorization: `Bearer ${authentication.secret_text}`,
+      Authorization: `Bearer ${authentication}`,
     },
   });
 
@@ -46,15 +45,14 @@ export async function getUserSpaces(authentication: AppConnectionValueForAuthPro
 }
 
 export const medullarPropsCommon = {
-  spaceId: Property.Dropdown<{ name: string; uuid: string },true,typeof medullarAuth>({
-    auth: medullarAuth,
+  spaceId: Property.Dropdown({
     displayName: 'Space',
     description: 'Select an Space',
     required: true,
     refreshers: ['auth'],
     refreshOnSearch: false,
     options: async ({ auth }) => {
-      const authentication = auth;
+      const authentication = auth as string;
       if (!authentication) {
         return {
           disabled: true,
@@ -78,8 +76,7 @@ export const medullarPropsCommon = {
       };
     },
   }),
-  chatId: Property.Dropdown<{ name: string; uuid: string },false,typeof medullarAuth>({
-    auth: medullarAuth,
+  chatId: Property.Dropdown({
     displayName: 'Chat',
     description:
       'Optional. Select a Chat where messages will be stored, if not selected, a default chat will be created with the name `automated`',
@@ -87,7 +84,7 @@ export const medullarPropsCommon = {
     refreshers: ['auth', 'spaceId'],
     refreshOnSearch: false,
     options: async ({ auth, spaceId }) => {
-      const authentication = auth;
+      const authentication = auth as string;
       if (!authentication) {
         return {
           disabled: true,

@@ -22,7 +22,6 @@ export const createOpportunityAction = createAction({
   description: 'Create a new opportunity.',
   props: {
     pipeline: Property.Dropdown({
-  auth: leadConnectorAuth,
       displayName: 'Pipeline',
       description: 'The ID of the pipeline to use.',
       required: true,
@@ -47,7 +46,6 @@ export const createOpportunityAction = createAction({
       },
     }),
     stage: Property.Dropdown({
-  auth: leadConnectorAuth,
       displayName: 'Stage',
       description: 'The stage of the pipeline to use.',
       required: true,
@@ -81,7 +79,6 @@ export const createOpportunityAction = createAction({
       required: true,
     }),
     contact: Property.Dropdown({
-  auth: leadConnectorAuth,
       displayName: 'Contact',
       description: 'The contact to use.',
       required: true,
@@ -105,7 +102,6 @@ export const createOpportunityAction = createAction({
       },
     }),
     status: Property.Dropdown({
-  auth: leadConnectorAuth,
       displayName: 'Status',
       required: true,
       refreshers: [],
@@ -123,7 +119,6 @@ export const createOpportunityAction = createAction({
       },
     }),
     assignedTo: Property.Dropdown({
-  auth: leadConnectorAuth,
       displayName: 'Assigned To',
       required: false,
       refreshers: [],

@@ -1,7 +1,5 @@
 import { HttpMethod, httpClient, AuthenticationType } from '@activepieces/pieces-common';
 import { baseUrl } from './common';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-import { textcortexAuth } from './auth';
 
 export interface TextCortexAuth {
     auth: string;
@@ -15,7 +13,7 @@ export const textcortexCommon = {
         body,
         headers = {},
     }: {
-        auth: AppConnectionValueForAuthProperty<typeof textcortexAuth>;
+        auth: string;
         method: HttpMethod;
         resourceUri: string;
         body?: any;
@@ -34,7 +32,7 @@ export const textcortexCommon = {
             headers: requestHeaders,
             authentication: {
                 type: AuthenticationType.BEARER_TOKEN,
-                token: auth.secret_text,
+                token: auth,
             } as const,
             body,
         };

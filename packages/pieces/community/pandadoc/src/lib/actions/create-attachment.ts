@@ -31,7 +31,7 @@ export const createAttachment = createAction({
     }
 
     return await pandadocClient.makeRequest(
-      auth.secret_text,
+      auth as string,
       HttpMethod.POST,
       `/documents/${propsValue.document_id}/attachments`,
       body

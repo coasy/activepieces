@@ -5,7 +5,7 @@ import {
   pollingHelper,
 } from '@activepieces/pieces-common';
 import {
-  AppConnectionValueForAuthProperty,
+  OAuth2PropertyValue,
   Property,
   TriggerStrategy,
   createTrigger,
@@ -58,7 +58,7 @@ export const newOrUpdatedRecord = createTrigger({
 });
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof salesforceAuth>,
+  OAuth2PropertyValue,
   { object: string | undefined; conditions: string | undefined }
 > = {
   strategy: DedupeStrategy.TIMEBASED,
@@ -77,7 +77,7 @@ const polling: Polling<
 };
 
 const getRecords = async (
-  authentication: AppConnectionValueForAuthProperty<typeof salesforceAuth>,
+  authentication: OAuth2PropertyValue,
   object: string,
   startDate: string,
   conditions: string | undefined

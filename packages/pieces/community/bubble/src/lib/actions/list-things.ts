@@ -70,7 +70,7 @@ export const bubbleListThingsAction = createAction({
     }),
   },
   async run(context) {
-    const { appname, token } = context.auth.props;
+    const { appname, token } = context.auth;
     const { typename, constraint, field, value, cursor, limit } =
       context.propsValue;
 

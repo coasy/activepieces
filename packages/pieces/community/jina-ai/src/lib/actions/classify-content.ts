@@ -80,7 +80,7 @@ export const classifyContentAction = createAction({
     const response = await JinaAICommon.makeRequest({
       url: JinaAICommon.classifierUrl,
       method: HttpMethod.POST,
-      auth: apiKey.secret_text,
+      auth: apiKey as string,
       body: requestBody,
     });
 

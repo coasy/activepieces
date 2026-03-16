@@ -6,7 +6,6 @@ import { OAuth2Client } from 'googleapis-common';
 export const folderIdProp = Property.Dropdown({
 	displayName: 'Folder',
 	refreshers: [],
-	auth: googleDocsAuth,
 	required: false,
 	options: async ({ auth }) => {
 		if (!auth) {

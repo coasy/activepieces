@@ -36,7 +36,7 @@
         createCustomApiCallAction({
           baseUrl: () => razorpayURL.apiURL,
           auth: razorpayAuth,
-          authMapping: (auth) => generateRazorpayAuthHeader(auth.props),
+          authMapping: (auth) => generateRazorpayAuthHeader(auth as RazorpayCredentials),
         }),
         createPaymentlink
       ],

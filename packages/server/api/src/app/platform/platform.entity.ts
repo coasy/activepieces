@@ -2,7 +2,10 @@ import { FilteredPieceBehavior, Platform, User } from '@activepieces/shared'
 import { EntitySchema } from 'typeorm'
 import {
     ApIdSchema,
+    ARRAY_COLUMN_TYPE,
     BaseColumnSchemaPart,
+    isPostgres,
+    JSONB_COLUMN_TYPE,
 } from '../database/database-common'
 
 type PlatformSchema = Platform & {
@@ -37,14 +40,19 @@ export const PlatformEntity = new EntitySchema<PlatformSchema>({
             type: String,
             nullable: false,
         },
+        smtp: {
+            type: JSONB_COLUMN_TYPE,    
+            nullable: true,
+        },
+
         cloudAuthEnabled: {
             type: Boolean,
             nullable: false,
             default: true,
         },
         filteredPieceNames: {
-            type: String,
-            array: true,
+            type: ARRAY_COLUMN_TYPE,
+            array: isPostgres(),
             nullable: false,
         },
         filteredPieceBehavior: {
@@ -53,8 +61,8 @@ export const PlatformEntity = new EntitySchema<PlatformSchema>({
             nullable: false,
         },
         allowedAuthDomains: {
-            type: String,
-            array: true,
+            type: ARRAY_COLUMN_TYPE,
+            array: isPostgres(),
         },
         enforceAllowedAuthDomains: {
             type: Boolean,
@@ -65,11 +73,11 @@ export const PlatformEntity = new EntitySchema<PlatformSchema>({
             nullable: false,
         },
         federatedAuthProviders: {
-            type: 'jsonb',
+            type: JSONB_COLUMN_TYPE,
         },
         pinnedPieces: {
-            type: String,
-            array: true,
+            type: ARRAY_COLUMN_TYPE,
+            array: isPostgres(),
             nullable: false,
         },
     },

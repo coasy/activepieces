@@ -1,5 +1,4 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
-
 import { CopperAuth, isNonEmptyStr } from '../common/constants';
 import { CopperApiService } from '../common/requests';
 

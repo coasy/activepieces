@@ -1,6 +1,6 @@
-import { LATEST_CONTEXT_VERSION } from '@activepieces/pieces-framework'
-import { FlowRunStatus, isNil, LoopOnItemsAction, LoopStepOutput, StepOutputStatus } from '@activepieces/shared'
+import { isNil, LoopOnItemsAction, LoopStepOutput, StepOutputStatus } from '@activepieces/shared'
 import { BaseExecutor } from './base-executor'
+import { ExecutionVerdict } from './context/flow-execution-context'
 import { flowExecutor } from './flow-executor'
 
 type LoopOnActionResolvedSettings = {
@@ -14,7 +14,7 @@ export const loopExecutor: BaseExecutor<LoopOnItemsAction> = {
         constants,
     }) {
         const stepStartTime = performance.now()
-        const { resolvedInput, censoredInput } = await constants.getPropsResolver(LATEST_CONTEXT_VERSION).resolve<LoopOnActionResolvedSettings>({
+        const { resolvedInput, censoredInput } = await constants.propsResolver.resolve<LoopOnActionResolvedSettings>({
             unresolvedInput: {
                 items: action.settings.items,
             },
@@ -27,18 +27,13 @@ export const loopExecutor: BaseExecutor<LoopOnItemsAction> = {
         let newExecutionContext = executionState.upsertStep(action.name, stepOutput)
 
         if (!Array.isArray(resolvedInput.items)) {
-            const errorMessage = JSON.stringify({
-                message: 'The items you have selected must be a list.',
-            })
             const failedStepOutput = stepOutput
                 .setStatus(StepOutputStatus.FAILED)
-                .setErrorMessage(errorMessage)
+                .setErrorMessage(JSON.stringify({
+                    message: 'The items you have selected must be a list.',
+                }))
                 .setDuration( performance.now() - stepStartTime)
-            return newExecutionContext.upsertStep(action.name, failedStepOutput).setVerdict({ status: FlowRunStatus.FAILED, failedStep: {
-                name: action.name,
-                displayName: action.displayName,
-                message: errorMessage,
-            } })
+            return newExecutionContext.upsertStep(action.name, failedStepOutput).setVerdict(ExecutionVerdict.FAILED)
         }
 
         const firstLoopAction = action.firstLoopAction
@@ -64,7 +59,7 @@ export const loopExecutor: BaseExecutor<LoopOnItemsAction> = {
 
             newExecutionContext = newExecutionContext.setCurrentPath(newExecutionContext.currentPath.removeLast())
 
-            if (newExecutionContext.verdict.status !== FlowRunStatus.RUNNING) {
+            if (newExecutionContext.verdict !== ExecutionVerdict.RUNNING) {
                 return newExecutionContext.upsertStep(action.name, stepOutput.setDuration(performance.now() - stepStartTime))
             }
 

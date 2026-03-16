@@ -9,20 +9,12 @@ export const findContact = createAction({
   description: 'Look up an existing contact by email address.',
   props: zohoCampaignsCommon.findContactProperties(),
   async run({ auth, propsValue }) {
-    const location = auth.props?.['location'] as string || 'zoho.com';
-    const accessToken = auth.access_token;
+    const { access_token: accessToken, location } = auth as any;
     await propsValidation.validateZod(
       propsValue,
       zohoCampaignsCommon.findContactSchema
     );
-    const {
-      listkey,
-      contactEmail: email,
-      status,
-      sort,
-      fromindex,
-      range,
-    } = propsValue;
+    const { listkey, contactEmail: email, status, sort, fromindex, range } = propsValue;
 
     const searchParams: any = {
       accessToken,
@@ -36,7 +28,7 @@ export const findContact = createAction({
 
     const contacts = await zohoCampaignsCommon.listContacts({
       ...searchParams,
-      location,
+      location
     });
     const needle = (email ?? '').trim().toLowerCase();
 

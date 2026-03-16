@@ -1,7 +1,6 @@
 import { Property } from '@activepieces/pieces-framework';
 import { foreplayCoApiCall } from './common';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { foreplayCoAuth } from '..';
 
 // Common dropdown options (keeping existing functionality)
 const orderOptions = () => ({
@@ -131,7 +130,6 @@ export const findAds = () => ({
     options: liveStatusOptions(),
   }),
   display_format: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Display Format',
     description: 'Filter by one or more display formats',
     required: false,
@@ -139,7 +137,6 @@ export const findAds = () => ({
     options: async () => displayFormatOptions(),
   }),
   publisher_platform: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Publisher Platform',
     description: 'Filter by one or more publisher platforms',
     required: false,
@@ -147,7 +144,6 @@ export const findAds = () => ({
     options: async () => publisherPlatformOptions(),
   }),
   niches: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Niches',
     description: 'Filter by one or more niches',
     required: false,
@@ -155,7 +151,6 @@ export const findAds = () => ({
     options: async () => nicheOptions(),
   }),
   market_target: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Market Target',
     description: 'Filter by market target',
     required: false,
@@ -163,7 +158,6 @@ export const findAds = () => ({
     options: async () => marketTargetOptions(),
   }),
   languages: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Languages',
     description: 'Filter by languages. Accepts various language formats.',
     required: false,
@@ -228,7 +222,6 @@ export const getAdsByPage = () => ({
     options: liveStatusOptions(),
   }),
   display_format: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Display Format',
     description: 'Filter by one or more display formats',
     required: false,
@@ -236,7 +229,6 @@ export const getAdsByPage = () => ({
     options: async () => displayFormatOptions(),
   }),
   publisher_platform: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Publisher Platform',
     description: 'Filter by one or more publisher platforms',
     required: false,
@@ -244,7 +236,6 @@ export const getAdsByPage = () => ({
     options: async () => publisherPlatformOptions(),
   }),
   niches: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Niches',
     description: 'Filter by one or more niches',
     required: false,
@@ -252,7 +243,6 @@ export const getAdsByPage = () => ({
     options: async () => nicheOptions(),
   }),
   market_target: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Market Target',
     description: 'Filter by market target',
     required: false,
@@ -260,7 +250,6 @@ export const getAdsByPage = () => ({
     options: async () => marketTargetOptions(),
   }),
   languages: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Languages',
     description: 'Filter by languages. Accepts various language formats.',
     required: false,
@@ -315,7 +304,6 @@ export const findBoards = () => ({
 // Trigger Properties
 export const newAdInBoard = () => ({
   board_id: Property.Dropdown({
-    auth: foreplayCoAuth,
     displayName: 'Board',
     description: 'Select the board to monitor for new ads.',
     required: true,
@@ -331,7 +319,7 @@ export const newAdInBoard = () => ({
 
       try {
         const response = await foreplayCoApiCall({
-          apiKey: auth,
+          apiKey: auth as string,
           method: HttpMethod.GET,
           resourceUri: '/api/boards',
         });
@@ -375,7 +363,6 @@ export const newAdInBoard = () => ({
     options: liveStatusOptions(),
   }),
   display_format: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Display Format',
     description: 'Filter by one or more display formats',
     required: false,
@@ -383,7 +370,6 @@ export const newAdInBoard = () => ({
     options: async () => displayFormatOptions(),
   }),
   publisher_platform: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Publisher Platform',
     description: 'Filter by one or more publisher platforms',
     required: false,
@@ -391,7 +377,6 @@ export const newAdInBoard = () => ({
     options: async () => publisherPlatformOptions(),
   }),
   niches: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Niches',
     description: 'Filter by one or more niches',
     required: false,
@@ -399,7 +384,6 @@ export const newAdInBoard = () => ({
     options: async () => nicheOptions(),
   }),
   market_target: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Market Target',
     description: 'Filter by market target',
     required: false,
@@ -407,7 +391,6 @@ export const newAdInBoard = () => ({
     options: async () => marketTargetOptions(),
   }),
   languages: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Languages',
     description: 'Filter by languages. Accepts various language formats.',
     required: false,
@@ -418,7 +401,6 @@ export const newAdInBoard = () => ({
 
 export const newAdInSpyder = () => ({
   brand_id: Property.Dropdown({
-    auth: foreplayCoAuth,
     displayName: 'Brand',
     description: 'Select the brand to monitor for new ads.',
     required: true,
@@ -434,7 +416,7 @@ export const newAdInSpyder = () => ({
 
       try {
         const response = await foreplayCoApiCall({
-          apiKey: auth,
+          apiKey: auth as string,
           method: HttpMethod.GET,
           resourceUri: '/api/spyder/brands',
         });
@@ -478,7 +460,6 @@ export const newAdInSpyder = () => ({
     options: liveStatusOptions(),
   }),
   display_format: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Display Format',
     description: 'Filter by one or more display formats',
     required: false,
@@ -486,7 +467,6 @@ export const newAdInSpyder = () => ({
     options: async () => displayFormatOptions(),
   }),
   publisher_platform: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Publisher Platform',
     description: 'Filter by one or more publisher platforms',
     required: false,
@@ -494,7 +474,6 @@ export const newAdInSpyder = () => ({
     options: async () => publisherPlatformOptions(),
   }),
   niches: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Niches',
     description: 'Filter by one or more niches',
     required: false,
@@ -502,7 +481,6 @@ export const newAdInSpyder = () => ({
     options: async () => nicheOptions(),
   }),
   market_target: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Market Target',
     description: 'Filter by market target',
     required: false,
@@ -510,7 +488,6 @@ export const newAdInSpyder = () => ({
     options: async () => marketTargetOptions(),
   }),
   languages: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Languages',
     description: 'Filter by languages. Accepts various language formats.',
     required: false,
@@ -543,7 +520,6 @@ export const newSwipefileAd = () => ({
     options: liveStatusOptions(),
   }),
   display_format: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Display Format',
     description: 'Filter by ad format (video, image, carousel, etc.).',
     required: false,
@@ -551,7 +527,6 @@ export const newSwipefileAd = () => ({
     options: async () => displayFormatOptions(),
   }),
   publisher_platform: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Publisher Platform',
     description: 'Filter by platform (Facebook, Instagram, etc.).',
     required: false,
@@ -559,7 +534,6 @@ export const newSwipefileAd = () => ({
     options: async () => publisherPlatformOptions(),
   }),
   niches: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Niches',
     description: 'Filter by industry/category.',
     required: false,
@@ -567,7 +541,6 @@ export const newSwipefileAd = () => ({
     options: async () => nicheOptions(),
   }),
   market_target: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
     displayName: 'Market Target',
     description: 'Filter by target audience (B2B, B2C).',
     required: false,
@@ -575,8 +548,7 @@ export const newSwipefileAd = () => ({
     options: async () => marketTargetOptions(),
   }),
   languages: Property.MultiSelectDropdown({
-    auth: foreplayCoAuth,
-      displayName: 'Languages',
+    displayName: 'Languages',
     description: 'Filter by ad language.',
     required: false,
     refreshers: [],

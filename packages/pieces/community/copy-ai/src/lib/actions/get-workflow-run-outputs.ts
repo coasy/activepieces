@@ -21,7 +21,7 @@ export const getWorkflowRunOutputsAction = createAction({
 	},
 	async run({ propsValue, auth }) {
 		const response = await makeRequest(
-			auth.secret_text,
+			auth as string,
 			HttpMethod.GET,
 			`/workflow/${propsValue.workflowId}/run/${propsValue.runId}`,
 		);

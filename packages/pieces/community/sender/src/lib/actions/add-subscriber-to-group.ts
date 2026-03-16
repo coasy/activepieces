@@ -21,7 +21,7 @@ export const addSubscriberToGroupAction = createAction({
       groups: context.propsValue.groups,
     };
     const response = await makeSenderRequest(
-      context.auth.secret_text,
+      context.auth,
       `/subscribers/${context.propsValue.subscriber}`,
       HttpMethod.PATCH,
       subscriberData

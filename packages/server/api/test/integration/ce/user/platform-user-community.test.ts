@@ -31,7 +31,7 @@ describe('User API', () => {
     describe('List users endpoint', () => {
         it('Returns a list of users', async () => {
             // arrange
-            const { mockPlatform: mockPlatformOne, mockOwner: mockOwnerOne } = await mockAndSaveBasicSetup()
+            const { mockPlatform: mockPlatformOne, mockOwner: mockOwnerOne, mockProject: mockProjectOne } = await mockAndSaveBasicSetup()
 
             // Create Another setup
             await mockAndSaveBasicSetup()
@@ -39,6 +39,7 @@ describe('User API', () => {
             const testToken = await generateMockToken({
                 id: mockOwnerOne.id,
                 type: PrincipalType.USER,
+                projectId: mockProjectOne.id,
                 platform: {
                     id: mockPlatformOne.id,
                 },
@@ -48,7 +49,9 @@ describe('User API', () => {
             const response = await app?.inject({
                 method: 'GET',
                 url: '/v1/users',
-                query: {},
+                query: {
+                    platformId: mockPlatformOne.id,
+                },
                 headers: {
                     authorization: `Bearer ${testToken}`,
                 },
@@ -68,17 +71,12 @@ describe('User API', () => {
             // arrange
             const { mockPlatform } = await mockAndSaveBasicSetup()
 
+            const { mockOwner: otherMockUser, mockProject: mockProjectOne } = await mockAndSaveBasicSetup()
 
-            const { mockUser: normalUser } = await mockBasicUser({
-                user: {
-                    platformId: mockPlatform.id,
-                    platformRole: PlatformRole.MEMBER,
-                    status: UserStatus.ACTIVE,
-                },
-            })
             const testToken = await generateMockToken({
-                id: normalUser.id,
+                id: otherMockUser.id,
                 type: PrincipalType.USER,
+                projectId: mockProjectOne.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -88,7 +86,9 @@ describe('User API', () => {
             const response = await app?.inject({
                 method: 'GET',
                 url: '/v1/users',
-                query: {},
+                query: {
+                    platformId: mockPlatform.id,
+                },
                 headers: {
                     authorization: `Bearer ${testToken}`,
                 },
@@ -105,7 +105,7 @@ describe('User API', () => {
     describe('Update user endpoint', () => {
         it('Updates user status to be INACTIVE', async () => {
             // arrange
-            const { mockOwner, mockPlatform } = await mockAndSaveBasicSetup()
+            const { mockOwner, mockPlatform, mockProject } = await mockAndSaveBasicSetup()
             const { mockUser } = await mockBasicUser({
                 user: {
                     platformId: mockPlatform.id,
@@ -115,6 +115,7 @@ describe('User API', () => {
             const testToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -141,7 +142,7 @@ describe('User API', () => {
         })
 
         it('Fails if user doesn\'t exist', async () => {
-            const { mockPlatform } = await mockAndSaveBasicSetup()
+            const { mockPlatform, mockProject } = await mockAndSaveBasicSetup()
 
             const { mockUser } = await mockBasicUser({
                 user: {
@@ -154,6 +155,7 @@ describe('User API', () => {
 
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -178,7 +180,7 @@ describe('User API', () => {
 
         it('Requires principal to be platform owner', async () => {
             // arrange
-            const { mockPlatform } = await mockAndSaveBasicSetup()
+            const { mockPlatform, mockProject } = await mockAndSaveBasicSetup()
 
             const { mockUser } = await mockBasicUser({
                 user: {
@@ -189,6 +191,7 @@ describe('User API', () => {
             const testToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -217,7 +220,7 @@ describe('User API', () => {
     describe('Delete user endpoint', () => {
         it('Removes a user', async () => {
             // arrange
-            const { mockOwner, mockPlatform } = await mockAndSaveBasicSetup()
+            const { mockOwner, mockPlatform, mockProject } = await mockAndSaveBasicSetup()
             const { mockUser: mockEditor } = await mockBasicUser({
                 user: {
                     platformId: mockPlatform.id,
@@ -228,6 +231,7 @@ describe('User API', () => {
             const mockOwnerToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -248,7 +252,7 @@ describe('User API', () => {
 
         it('Fails if user is not platform owner', async () => {
             // arrange
-            const { mockPlatform } = await mockAndSaveBasicSetup()
+            const { mockPlatform, mockProject } = await mockAndSaveBasicSetup()
 
             const { mockUser } = await mockBasicUser({
                 user: {
@@ -260,6 +264,7 @@ describe('User API', () => {
             const mockUserToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },

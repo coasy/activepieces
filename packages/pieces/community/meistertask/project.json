@@ -32,8 +32,7 @@
           }
         ],
         "buildableProjectDepsInPackageJsonType": "dependencies",
-        "updateBuildableProjectDepsInPackageJson": true,
-        "clean": false
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "nx-release-publish": {

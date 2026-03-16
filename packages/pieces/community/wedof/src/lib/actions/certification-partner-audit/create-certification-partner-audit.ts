@@ -21,7 +21,6 @@ export const createCertificationPartnerAudit = createAction({
       required: true,
     }),
     templateId: Property.DynamicProperties({
-      auth: wedofAuth,
       displayName: "Type du modèle d'audit",
       refreshers: ['certifInfo'],
       required: true,
@@ -78,7 +77,7 @@ export const createCertificationPartnerAudit = createAction({
           body: message,
           headers: {
             'Content-Type': 'application/json',
-            'X-Api-Key': context.auth.secret_text,
+            'X-Api-Key': context.auth as string,
           },
         })
       ).body;

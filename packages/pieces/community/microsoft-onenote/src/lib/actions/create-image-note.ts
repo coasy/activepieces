@@ -10,11 +10,10 @@ export const createImageNote = createAction({
 	description: 'Create a note containing an embedded image via a public image URL.',
 	props: {
 		notebook_id: Property.Dropdown({
-			auth: oneNoteAuth,
 			displayName: 'Notebook',
 			description: 'The notebook to create the image note in.',
 			required: true,
-			refreshers: [],	
+			refreshers: [],
 			options: async ({ auth }) => {
 				if (!(auth as OAuth2PropertyValue)?.access_token) {
 					return {
@@ -27,7 +26,6 @@ export const createImageNote = createAction({
 			},
 		}),
 		section_id: Property.Dropdown({
-			auth: oneNoteAuth,
 			displayName: 'Section',
 			description: 'The section to create the image note in.',
 			required: true,

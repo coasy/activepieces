@@ -1,21 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 import { t } from 'i18next';
-import { Key, Plus, Trash, Hash, Tag, Clock } from 'lucide-react';
+import { Key, Plus, Trash } from 'lucide-react';
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
-import { DashboardPageHeader } from '@/app/components/dashboard-page-header';
 import LockedFeatureGuard from '@/app/components/locked-feature-guard';
+import { DashboardPageHeader } from '@/components/custom/dashboard-page-header';
 import { ConfirmationDeleteDialog } from '@/components/delete-dialog';
 import { Button } from '@/components/ui/button';
 import { DataTable, RowDataWithActions } from '@/components/ui/data-table';
 import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
-import { FormattedDate } from '@/components/ui/formatted-date';
-import { internalErrorToast } from '@/components/ui/sonner';
+import { INTERNAL_ERROR_TOAST, toast } from '@/components/ui/use-toast';
 import { NewSigningKeyDialog } from '@/features/platform-admin/components/new-signing-key-dialog';
 import { signingKeyApi } from '@/features/platform-admin/lib/signing-key-api';
 import { platformHooks } from '@/hooks/platform-hooks';
+import { formatUtils } from '@/lib/utils';
 import { SigningKey } from '@activepieces/ee-shared';
 
 const SigningKeysPage = () => {
@@ -27,9 +27,8 @@ const SigningKeysPage = () => {
   const columns: ColumnDef<RowDataWithActions<SigningKey>>[] = [
     {
       accessorKey: 'id',
-      size: 200,
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('Id')} icon={Hash} />
+        <DataTableColumnHeader column={column} title={t('Id')} />
       ),
       cell: ({ row }) => {
         return <div className="text-left">{row.original.id}</div>;
@@ -37,9 +36,8 @@ const SigningKeysPage = () => {
     },
     {
       accessorKey: 'displayName',
-      size: 200,
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title={t('Name')} icon={Tag} />
+        <DataTableColumnHeader column={column} title={t('Name')} />
       ),
       cell: ({ row }) => {
         return <div className="text-left">{row.original.displayName}</div>;
@@ -47,18 +45,13 @@ const SigningKeysPage = () => {
     },
     {
       accessorKey: 'created',
-      size: 150,
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('Created')}
-          icon={Clock}
-        />
+        <DataTableColumnHeader column={column} title={t('Created')} />
       ),
       cell: ({ row }) => {
         return (
           <div className="text-left">
-            <FormattedDate date={new Date(row.original.created)} />
+            {formatUtils.formatDate(new Date(row.original.created))}
           </div>
         );
       },
@@ -123,7 +116,7 @@ const SigningKeysPage = () => {
                   }}
                   onError={(error) => {
                     console.error(error);
-                    internalErrorToast();
+                    toast(INTERNAL_ERROR_TOAST);
                   }}
                 >
                   <Button

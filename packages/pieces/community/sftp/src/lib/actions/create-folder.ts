@@ -1,8 +1,7 @@
   import { endClient, getClient, getProtocolBackwardCompatibility, sftpAuth } from '../../index';
 import { Property, createAction } from '@activepieces/pieces-framework';
 import Client from 'ssh2-sftp-client';
-import { Client as FTPClient, FTPError } from 'basic-ftp';
-import { getSftpError } from './common';
+import { Client as FTPClient } from 'basic-ftp';
 
 export const createFolderAction = createAction({
   auth: sftpAuth,
@@ -23,10 +22,10 @@ export const createFolderAction = createAction({
     }),
   },
   async run(context) {
-    const client = await getClient(context.auth.props);
+    const client = await getClient(context.auth);
     const directoryPath = context.propsValue.folderPath;
     const recursive = context.propsValue.recursive ?? false;
-    const protocolBackwardCompatibility = await getProtocolBackwardCompatibility(context.auth.props.protocol);
+    const protocolBackwardCompatibility = await getProtocolBackwardCompatibility(context.auth.protocol);
     try {
       switch (protocolBackwardCompatibility) {
         case 'ftps':
@@ -42,22 +41,13 @@ export const createFolderAction = createAction({
       return {
         status: 'success',
       };
-    } 
-    catch (err) {
-      if (err instanceof FTPError) {
-          console.error(getSftpError(err.code));
-          return {
-              status: 'error',
-              error: getSftpError(err.code),
-          };
-      } else {
-          return {
-              status: 'error',
-              error: err
-          }
-      }
+    } catch (err) {
+      return {
+        status: 'error',
+        error: err,
+      };
     } finally {
-      await endClient(client, context.auth.props.protocol);
+      await endClient(client, context.auth.protocol);
     }
   },
 });

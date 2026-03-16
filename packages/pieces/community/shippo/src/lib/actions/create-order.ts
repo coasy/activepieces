@@ -276,7 +276,7 @@ export const createOrder = createAction({
     } = context.propsValue;
 
     const client = new ShippoClient({
-      apiToken: context.auth.secret_text,
+      apiToken: context.auth,
     });
 
     // Build to address

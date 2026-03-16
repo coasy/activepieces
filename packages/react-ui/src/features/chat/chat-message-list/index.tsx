@@ -2,20 +2,19 @@ import { Static, Type } from '@sinclair/typebox';
 import { BotIcon } from 'lucide-react';
 import React from 'react';
 
+import {
+  ChatBubble,
+  ChatBubbleAvatar,
+  ChatBubbleMessage,
+} from '@/components/ui/chat/chat-bubble';
+import { ChatMessage } from '@/components/ui/chat/chat-input';
 import { cn } from '@/lib/utils';
 import {
   ApErrorParams,
   ChatUIResponse,
   FileResponseInterface,
-  isNil,
 } from '@activepieces/shared';
 
-import {
-  ChatBubble,
-  ChatBubbleAvatar,
-  ChatBubbleMessage,
-} from '../chat-bubble';
-import { ChatMessage } from '../chat-input';
 import { MultiMediaMessage } from '../chat-message';
 
 import { ErrorBubble } from './error-bubble';
@@ -36,7 +35,7 @@ interface ChatMessageListProps extends React.HTMLAttributes<HTMLDivElement> {
   sendingError?: ApErrorParams | null;
   isSending?: boolean;
   flowId?: string;
-  sendMessage?: (arg0: { isRetrying: boolean; message: ChatMessage }) => void;
+  sendMessage?: (arg0: { isRetrying: boolean; message?: ChatMessage }) => void;
   setSelectedImage?: (image: string | null) => void;
 }
 
@@ -59,7 +58,7 @@ const ChatMessageList = React.forwardRef<HTMLDivElement, ChatMessageListProps>(
   ) => {
     if (messages && messages.length > 0) {
       return (
-        <div className="h-full w-full max-w-3xl flex items-center justify-center overflow-y-auto">
+        <div className="h-full w-full flex items-center justify-center overflow-y-auto">
           <div
             className={cn('flex flex-col w-full h-full p-4 gap-2', className)}
             ref={messagesRef || ref}
@@ -104,14 +103,7 @@ const ChatMessageList = React.forwardRef<HTMLDivElement, ChatMessageListProps>(
                 chatUI={chatUI}
                 flowId={flowId}
                 sendingError={sendingError}
-                sendMessage={(arg0) => {
-                  if (!isNil(arg0.message)) {
-                    sendMessage({
-                      isRetrying: false,
-                      message: arg0.message!,
-                    });
-                  }
-                }}
+                sendMessage={sendMessage}
               />
             )}
             {isSending && (

@@ -15,7 +15,6 @@ export const deleteAction = createAction({
   description: 'Delete a subscriber from a list',
   props: {
     list: Property.Dropdown({
-      auth: sendyAuth,
       displayName: 'List',
       description: 'Select the list to delete from',
       required: true,

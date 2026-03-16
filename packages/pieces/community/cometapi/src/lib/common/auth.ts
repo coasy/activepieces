@@ -25,7 +25,7 @@ export const cometApiAuth = PieceAuth.SecretText({
         url: BASE_URL + '/models',
         authentication: {
           type: AuthenticationType.BEARER_TOKEN,
-          token: auth,
+          token: auth as string,
         },
         method: HttpMethod.GET,
       });

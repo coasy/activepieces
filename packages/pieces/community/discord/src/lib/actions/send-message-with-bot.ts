@@ -57,7 +57,7 @@ export const sendMessageWithBot = createAction({
       method: HttpMethod.POST,
       url: `https://discord.com/api/v10/channels/${channelId}/messages`,
       headers: {
-        authorization: `Bot ${configValue.auth.secret_text}`,
+        authorization: `Bot ${configValue.auth}`,
         'Content-Type': 'multipart/form-data',
       },
       body: formData,

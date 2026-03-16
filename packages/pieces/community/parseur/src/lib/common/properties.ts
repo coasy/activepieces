@@ -1,9 +1,8 @@
 import { Property } from '@activepieces/pieces-framework';
-import { parseurAuth, parseurCommon } from '.';
+import { parseurCommon } from '.';
 
 export const parserDropdown = ({ required = true }) =>
   Property.Dropdown({
-    auth: parseurAuth,
     displayName: 'Parser',
     description: 'Select the parser',
     required,
@@ -19,7 +18,7 @@ export const parserDropdown = ({ required = true }) =>
       }
       if (search != undefined) {
         const response = await parseurCommon.listMailboxes({
-          apiKey: apiKey.secret_text,
+          apiKey: apiKey as string,
           search,
         });
         return {
@@ -31,7 +30,7 @@ export const parserDropdown = ({ required = true }) =>
         };
       } else {
         const response = await parseurCommon.listMailboxes({
-          apiKey: apiKey.secret_text,
+          apiKey: apiKey as string,
         });
         return {
           disabled: false,
@@ -46,7 +45,6 @@ export const parserDropdown = ({ required = true }) =>
 
 export const documentDropdown = ({ required = true }) =>
   Property.Dropdown({
-    auth: parseurAuth,
     displayName: 'Document',
     description: 'Select the document',
     required,
@@ -69,7 +67,7 @@ export const documentDropdown = ({ required = true }) =>
       }
       if (search != undefined) {
         const response = await parseurCommon.listDocuments({
-          apiKey: apiKey.secret_text,
+          apiKey: apiKey as string,
           parserId: parserId as number,
           search,
         });
@@ -82,7 +80,7 @@ export const documentDropdown = ({ required = true }) =>
         };
       } else {
         const response = await parseurCommon.listDocuments({
-          apiKey: apiKey.secret_text,
+          apiKey: apiKey as string,
           parserId: parserId as number,
         });
         return {

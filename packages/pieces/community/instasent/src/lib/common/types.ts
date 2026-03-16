@@ -1,7 +1,9 @@
-import { AppConnectionValueForAuthProperty } from "@activepieces/pieces-framework";
-import { instasentAuth } from "../..";
+export interface InstasentAuthType {
+    apiKey: string;
+    projectId: string;
+    datasourceId: string;
+}
 
-export type InstasentAuthType = AppConnectionValueForAuthProperty<typeof instasentAuth>;
 export interface EventSpec {
     uid: string;
     name: string;

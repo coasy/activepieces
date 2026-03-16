@@ -174,7 +174,6 @@ export const createUserAction = createAction({
       required: false,
     }),
     user_fields: Property.DynamicProperties({
-      auth: zendeskAuth,
       displayName: 'User Fields',
       description: 'Custom user field values',
       required: false,
@@ -185,14 +184,14 @@ export const createUserAction = createAction({
         }
 
         try {
-          const authentication = auth;
+          const authentication = auth as AuthProps;
           const response = await httpClient.sendRequest({
-            url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/user_fields.json`,
+            url: `https://${authentication.subdomain}.zendesk.com/api/v2/user_fields.json`,
             method: HttpMethod.GET,
             authentication: {
               type: AuthenticationType.BASIC,
-              username: authentication.props.email + '/token',
-              password: authentication.props.token,
+              username: authentication.email + '/token',
+              password: authentication.token,
             },
           });
 
@@ -315,7 +314,7 @@ export const createUserAction = createAction({
     }),
   },
   async run({ propsValue, auth }) {
-    const authentication = auth;
+    const authentication = auth as AuthProps;
     const {
       name,
       email,
@@ -427,12 +426,12 @@ export const createUserAction = createAction({
     if (user_fields && typeof user_fields === 'object') {
       try {
         const fieldsResponse = await httpClient.sendRequest({
-          url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/user_fields.json`,
+          url: `https://${authentication.subdomain}.zendesk.com/api/v2/user_fields.json`,
           method: HttpMethod.GET,
           authentication: {
             type: AuthenticationType.BASIC,
-            username: authentication.props.email + '/token',
-            password: authentication.props.token,
+            username: authentication.email + '/token',
+            password: authentication.token,
           },
         });
 
@@ -493,15 +492,15 @@ export const createUserAction = createAction({
 
     try {
       const response = await httpClient.sendRequest({
-        url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/users.json`,
+        url: `https://${authentication.subdomain}.zendesk.com/api/v2/users.json`,
         method: HttpMethod.POST,
         headers: {
           'Content-Type': 'application/json',
         },
         authentication: {
           type: AuthenticationType.BASIC,
-          username: authentication.props.email + '/token',
-          password: authentication.props.token,
+          username: authentication.email + '/token',
+          password: authentication.token,
         },
         body: requestBody,
       });

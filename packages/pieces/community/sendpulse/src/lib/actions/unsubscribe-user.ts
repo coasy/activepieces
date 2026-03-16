@@ -41,7 +41,7 @@ export const unsubscribeUserAction = createAction({
     try {
       const result = await sendpulseApiCall<{ result: boolean }>({
         method: HttpMethod.DELETE,
-        auth: context.auth.props,
+        auth: context.auth,
         resourceUri: `/addressbooks/${mailingListId}/emails`,
         body,
       });

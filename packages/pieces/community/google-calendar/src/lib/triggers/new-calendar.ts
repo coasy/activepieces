@@ -1,6 +1,6 @@
 import {
   createTrigger,
-  AppConnectionValueForAuthProperty,
+  PiecePropValueSchema,
   Property,
 } from '@activepieces/pieces-framework';
 import { TriggerStrategy } from '@activepieces/pieces-framework';
@@ -14,7 +14,7 @@ import { getCalendars } from '../common/helper';
 import { CalendarObject } from '../common/types';
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof googleCalendarAuth>,
+  PiecePropValueSchema<typeof googleCalendarAuth>,
   {
     access_role_filter: string[] | undefined;
     calendar_name_filter: string | undefined;

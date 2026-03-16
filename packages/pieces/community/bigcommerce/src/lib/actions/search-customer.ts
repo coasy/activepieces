@@ -34,7 +34,7 @@ export const searchCustomer = createAction({
       params.append('phone:in', context.propsValue.phone);
 
     return await bigCommerceApiService.fetchCustomers({
-      auth: context.auth.props,
+      auth: context.auth,
       queryString: params.toString(),
     });
   },

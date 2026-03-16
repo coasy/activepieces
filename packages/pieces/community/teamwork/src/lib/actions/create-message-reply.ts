@@ -10,7 +10,6 @@ export const createMessageReply = createAction({
 	auth: teamworkAuth,
 	props: {
 		messageId: Property.Dropdown({
-auth: teamworkAuth,
 			displayName: 'Message',
 			description: 'The message to reply to.',
 			required: true,
@@ -23,7 +22,7 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const res = await teamworkRequest(auth, {
+				const res = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: '/posts.json',
 				});

@@ -1,7 +1,6 @@
 import { Property, DynamicPropsValue } from '@activepieces/pieces-framework';
 import { CustomField } from '../types';
 import { fetchCustomFields } from '../service';
-import { convertkitAuth } from '../../..';
 
 export const fieldsArray = Property.Array({
   displayName: 'Fields',
@@ -10,7 +9,6 @@ export const fieldsArray = Property.Array({
 });
 
 export const label = Property.Dropdown({
-  auth: convertkitAuth,
   displayName: 'Custom Label',
   required: true,
   refreshers: ['auth'],
@@ -23,7 +21,7 @@ export const label = Property.Dropdown({
       };
     }
 
-    const fields: CustomField[] = await fetchCustomFields(auth.secret_text);
+    const fields: CustomField[] = await fetchCustomFields(auth.toString());
 
     // loop through data and map to options
     const options = fields.map(
@@ -48,7 +46,6 @@ export const new_label = Property.ShortText({
 });
 
 export const allFields = Property.DynamicProperties({
-  auth: convertkitAuth,
   displayName: 'Custom Fields',
   description: 'The custom fields',
   required: false,
@@ -65,7 +62,7 @@ export const allFields = Property.DynamicProperties({
     const fields: DynamicPropsValue = {};
 
     const customFields: CustomField[] = await fetchCustomFields(
-      auth.secret_text
+      auth.toString()
     );
 
     // loop through data and map to fields

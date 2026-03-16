@@ -49,7 +49,7 @@ export const createTranscriptionCallbackAction = createAction({
       url: BASE_URL + '/listen',
       method: HttpMethod.POST,
       headers: {
-        Authorization: `Token ${context.auth.secret_text}`,
+        Authorization: `Token ${context.auth}`,
         'Content-Type': mimeType,
       },
       body: audioFile.data,

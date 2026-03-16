@@ -1,10 +1,8 @@
 import { Property } from '@activepieces/pieces-framework';
 import { makeRequest } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { aircallAuth } from './auth';
 
-export const callIdDropdown = Property.Dropdown<number,true,typeof aircallAuth>({
-  auth: aircallAuth,
+export const callIdDropdown = Property.Dropdown({
   displayName: 'Call',
   required: true,
   refreshers: [],
@@ -42,8 +40,7 @@ export const callIdDropdown = Property.Dropdown<number,true,typeof aircallAuth>(
   },
 });
 
-export const numberIdDropdown = Property.Dropdown<string,true,typeof aircallAuth>({
-  auth: aircallAuth,
+export const numberIdDropdown = Property.Dropdown({
   displayName: 'Number ID',
   required: true,
   refreshers: ['auth'],
@@ -58,7 +55,7 @@ export const numberIdDropdown = Property.Dropdown<string,true,typeof aircallAuth
 
     try {
       const response = await makeRequest(
-        auth,
+        auth as { username: string; password: string },
         HttpMethod.GET,
         '/numbers'
       );
@@ -79,8 +76,7 @@ export const numberIdDropdown = Property.Dropdown<string,true,typeof aircallAuth
   },
 });
 
-export const contactIdDropdown = Property.Dropdown<string,true,typeof aircallAuth>({
-  auth: aircallAuth,
+export const contactIdDropdown = Property.Dropdown({
   displayName: 'Contact ID',
   description: 'Select the contact to update',
   required: true,
@@ -97,7 +93,7 @@ export const contactIdDropdown = Property.Dropdown<string,true,typeof aircallAut
 
     try {
       const response = await makeRequest(
-        auth,
+        auth as { username: string; password: string },
         HttpMethod.GET,
         '/contacts'
       );
@@ -120,8 +116,7 @@ export const contactIdDropdown = Property.Dropdown<string,true,typeof aircallAut
   },
 });
 
-export const tagIdDropdown = Property.MultiSelectDropdown<number,false,typeof aircallAuth>({
-  auth: aircallAuth,
+export const tagIdDropdown = Property.MultiSelectDropdown({
   displayName: 'Tags',
   required: false,
   refreshers: ['auth'],

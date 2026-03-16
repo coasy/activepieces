@@ -77,7 +77,7 @@ export const stripeNewInvoice = createTrigger({
     const webhook = await stripeCommon.subscribeWebhook(
       'invoice.created',
       context.webhookUrl,
-      context.auth.secret_text
+      context.auth
     );
     await context.store.put<StripeWebhookInformation>('_new_invoice_trigger', {
       webhookId: webhook.id,
@@ -91,7 +91,7 @@ export const stripeNewInvoice = createTrigger({
     if (webhookInfo !== null && webhookInfo !== undefined) {
       await stripeCommon.unsubscribeWebhook(
         webhookInfo.webhookId,
-        context.auth.secret_text
+        context.auth
       );
     }
   },
@@ -100,7 +100,7 @@ export const stripeNewInvoice = createTrigger({
       method: HttpMethod.GET,
       url: 'https://api.stripe.com/v1/invoices',
       headers: {
-        Authorization: 'Bearer ' + context.auth.secret_text,
+        Authorization: 'Bearer ' + context.auth,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       queryParams: {

@@ -1,10 +1,10 @@
 import { ApplicationEventName } from '@activepieces/ee-shared'
-import { securityAccess } from '@activepieces/server-shared'
 import {
     apId,
     ApId,
     AppConnectionScope,
     AppConnectionWithoutSensitiveData,
+    EndpointScope,
     ListGlobalConnectionsRequestQuery,
     PrincipalType,
     SeekPage,
@@ -15,12 +15,13 @@ import {
 import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'
 import { StatusCodes } from 'http-status-codes'
 import { appConnectionService } from '../../app-connection/app-connection-service/app-connection-service'
-import { applicationEvents } from '../../helper/application-events'
+import { eventsHooks } from '../../helper/application-events'
 import { securityHelper } from '../../helper/security-helper'
-import { platformMustHaveFeatureEnabled } from '../authentication/ee-authorization'
+import { platformMustBeOwnedByCurrentUser, platformMustHaveFeatureEnabled } from '../authentication/ee-authorization'
 
 export const globalConnectionModule: FastifyPluginAsyncTypebox = async (app) => {
     app.addHook('preHandler', platformMustHaveFeatureEnabled((platform) => platform.plan.globalConnectionsEnabled))
+    app.addHook('preHandler', platformMustBeOwnedByCurrentUser)
     await app.register(globalConnectionController, { prefix: '/v1/global-connections' })
 }
 
@@ -36,9 +37,8 @@ const globalConnectionController: FastifyPluginAsyncTypebox = async (app) => {
             pieceName: request.body.pieceName,
             ownerId: await securityHelper.getUserIdFromRequest(request),
             scope: AppConnectionScope.PLATFORM,
-            pieceVersion: request.body.pieceVersion,
         })
-        applicationEvents(request.log).sendUserEvent(request, {
+        eventsHooks.get(request.log).sendUserEventFromRequest(request, {
             action: ApplicationEventName.CONNECTION_UPSERTED,
             data: {
                 connection: appConnection,
@@ -96,7 +96,7 @@ const globalConnectionController: FastifyPluginAsyncTypebox = async (app) => {
             scope: AppConnectionScope.PLATFORM,
             projectId: null,
         })
-        applicationEvents(request.log).sendUserEvent(request, {
+        eventsHooks.get(request.log).sendUserEventFromRequest(request, {
             action: ApplicationEventName.CONNECTION_DELETED,
             data: {
                 connection,
@@ -110,7 +110,8 @@ const DEFAULT_PAGE_SIZE = 10
 
 const UpsertGlobalConnectionRequest = {
     config: {
-        security: securityAccess.platformAdminOnly([PrincipalType.USER, PrincipalType.SERVICE]),
+        allowedPrincipals: [PrincipalType.USER, PrincipalType.SERVICE] as const,
+        scope: EndpointScope.PLATFORM,
     },
     schema: {
         tags: ['global-connections'],
@@ -124,7 +125,8 @@ const UpsertGlobalConnectionRequest = {
 
 const UpdateGlobalConnectionRequest = {
     config: {
-        security: securityAccess.platformAdminOnly([PrincipalType.USER, PrincipalType.SERVICE]),
+        allowedPrincipals: [PrincipalType.USER, PrincipalType.SERVICE] as const,
+        scope: EndpointScope.PLATFORM,
     },
     schema: {
         tags: ['global-connections'],
@@ -138,7 +140,8 @@ const UpdateGlobalConnectionRequest = {
 
 const ListGlobalConnectionsRequest = {
     config: {
-        security: securityAccess.platformAdminOnly([PrincipalType.USER, PrincipalType.SERVICE]),
+        allowedPrincipals: [PrincipalType.USER, PrincipalType.SERVICE] as const,
+        scope: EndpointScope.PLATFORM,
     },
     schema: {
         tags: ['global-connections'],
@@ -152,7 +155,8 @@ const ListGlobalConnectionsRequest = {
 
 const DeleteGlobalConnectionRequest = {
     config: {
-        security: securityAccess.platformAdminOnly([PrincipalType.USER, PrincipalType.SERVICE]),
+        allowedPrincipals: [PrincipalType.USER, PrincipalType.SERVICE] as const,
+        scope: EndpointScope.PLATFORM,
     },
     schema: {
         tags: ['global-connections'],

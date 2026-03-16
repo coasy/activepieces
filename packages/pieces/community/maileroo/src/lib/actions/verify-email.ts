@@ -17,7 +17,7 @@ export const verifyEmail = createAction({
   async run(context) {
     const result = await checkEmail(
       context.propsValue.content,
-      context.auth.props.apiKey
+      context.auth.apiKey
     );
 
     return result.body;

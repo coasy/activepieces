@@ -24,7 +24,7 @@ export const videoGenerationFailedTrigger = createTrigger({
 
 	async onEnable(context) {
 		const webhook = (await heygenApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth as string,
 			method: HttpMethod.POST,
 			resourceUri: '/webhook/endpoint.add',
 			apiVersion: 'v1',
@@ -42,7 +42,7 @@ export const videoGenerationFailedTrigger = createTrigger({
 
 		if (webhookId) {
 			await heygenApiCall({
-				apiKey: context.auth.secret_text,
+				apiKey: context.auth as string,
 				method: HttpMethod.DELETE,
 				resourceUri: '/webhook/endpoint.delete',
 				apiVersion: 'v1',

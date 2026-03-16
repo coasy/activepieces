@@ -1,16 +1,16 @@
-import { AppConnectionValueForAuthProperty, OAuth2PropertyValue, OAuth2Props, PieceAuth, PiecePropValueSchema, Property, ShortTextProperty, StaticPropsValue } from '@activepieces/pieces-framework';
+import { PiecePropValueSchema } from '@activepieces/pieces-framework';
 import {
 	httpClient,
 	HttpMethod,
 	AuthenticationType,
 	HttpRequest,
 } from '@activepieces/pieces-common';
-import { AppConnectionType, isNil, isString } from '@activepieces/shared';
+import { isNil, isString } from '@activepieces/shared';
 import { google } from 'googleapis';
 import { OAuth2Client } from 'googleapis-common';
+import { googleSheetsAuth } from '../../';
 import { mapRowsToColumnLabels } from '../triggers/helpers';
 
-export type GoogleSheetsAuthValue = AppConnectionValueForAuthProperty<typeof googleSheetsAuth>
 export const googleSheetsCommon = {
 	baseUrl: 'https://sheets.googleapis.com/v4/spreadsheets',
 	getGoogleSheetRows,
@@ -21,11 +21,12 @@ export const googleSheetsCommon = {
 };
 
 export async function findSheetName(
-	auth: GoogleSheetsAuthValue,
+	access_token: string,
 	spreadsheetId: string,
 	sheetId: string | number,
 ) {
-	const sheets = await listSheetsName(auth, spreadsheetId);
+	const sheets = await listSheetsName(access_token, spreadsheetId);
+	// don't use === because sheetId can be a string when dynamic values are used
 	const sheetName = sheets.find((f) => f.properties.sheetId == sheetId)?.properties.title;
 	if (!sheetName) {
 		throw Error(`Sheet with ID ${sheetId} not found in spreadsheet ${spreadsheetId}`);
@@ -33,7 +34,7 @@ export async function findSheetName(
 	return sheetName;
 }
 
-async function listSheetsName(auth: GoogleSheetsAuthValue, spreadsheet_id: string) {
+async function listSheetsName(access_token: string, spreadsheet_id: string) {
 	return (
 		await httpClient.sendRequest<{
 			sheets: { properties: { title: string; sheetId: number } }[];
@@ -42,7 +43,7 @@ async function listSheetsName(auth: GoogleSheetsAuthValue, spreadsheet_id: strin
 			url: `https://sheets.googleapis.com/v4/spreadsheets/` + spreadsheet_id,
 			authentication: {
 				type: AuthenticationType.BEARER_TOKEN,
-				token: await getAccessToken(auth),
+				token: access_token,
 			},
 		})
 	).body.sheets;
@@ -50,7 +51,7 @@ async function listSheetsName(auth: GoogleSheetsAuthValue, spreadsheet_id: strin
 
 type GetGoogleSheetRowsProps = {
 	spreadsheetId: string;
-	auth: GoogleSheetsAuthValue;
+	accessToken: string;
 	sheetId: number;
 	rowIndex_s: number | undefined;
 	rowIndex_e: number | undefined;
@@ -59,13 +60,15 @@ type GetGoogleSheetRowsProps = {
 
 async function getGoogleSheetRows({
 	spreadsheetId,
-	auth,
+	accessToken,
 	sheetId,
 	rowIndex_s,
 	rowIndex_e,
 	headerRow = 1,
 }: GetGoogleSheetRowsProps): Promise<{ row: number; values: { [x: string]: string } }[]> {
-	const sheetName = await findSheetName(auth, spreadsheetId, sheetId);
+	// Define the API endpoint and headers
+	// Send the API request
+	const sheetName = await findSheetName(accessToken, spreadsheetId, sheetId);
 	if (!sheetName) {
 		return [];
 	}
@@ -82,7 +85,7 @@ async function getGoogleSheetRows({
 		url: `${googleSheetsCommon.baseUrl}/${spreadsheetId}/values/${encodeURIComponent(`${sheetName}${range}`)}`,
 		authentication: {
 			type: AuthenticationType.BEARER_TOKEN,
-			token: await getAccessToken(auth),
+			token: accessToken,
 		},
 	});
 	if (rowsResponse.body.values === undefined) return [];
@@ -92,7 +95,7 @@ async function getGoogleSheetRows({
 		url: `${googleSheetsCommon.baseUrl}/${spreadsheetId}/values/${encodeURIComponent(`${sheetName}!A${headerRow}:ZZZ${headerRow}`)}`,
 		authentication: {
 			type: AuthenticationType.BEARER_TOKEN,
-			token: await getAccessToken(auth),
+			token: accessToken,
 		},
 	});
 
@@ -116,18 +119,18 @@ async function getGoogleSheetRows({
 
 type GetHeaderRowProps = {
 	spreadsheetId: string;
-	auth: GoogleSheetsAuthValue;
+	accessToken: string;
 	sheetId: number;
 };
 
 export async function getHeaderRow({
 	spreadsheetId,
-	auth,
+	accessToken,
 	sheetId,
 }: GetHeaderRowProps): Promise<string[] | undefined> {
 	const rows = await getGoogleSheetRows({
 		spreadsheetId,
-		auth,
+		accessToken,
 		sheetId,
 		rowIndex_s: 1,
 		rowIndex_e: 1,
@@ -185,7 +188,7 @@ export async function mapRowsToHeaderNames(
 	spreadsheetId: string,
 	sheetId: number,
 	headerRow: number,
-	auth: GoogleSheetsAuthValue,
+	accessToken: string
 ): Promise<any[]> {
 	if (!useHeaderNames) {
 		return rows;
@@ -193,7 +196,7 @@ export async function mapRowsToHeaderNames(
 
 	const headerRows = await getGoogleSheetRows({
 		spreadsheetId,
-		auth,
+		accessToken,
 		sheetId,
 		rowIndex_s: headerRow,
 		rowIndex_e: headerRow,
@@ -229,14 +232,14 @@ async function deleteRow(
 	spreadsheetId: string,
 	sheetId: number,
 	rowIndex: number,
-	auth: GoogleSheetsAuthValue,
+	accessToken: string,
 ) {
 	const request: HttpRequest = {
 		method: HttpMethod.POST,
 		url: `${googleSheetsCommon.baseUrl}/${spreadsheetId}/:batchUpdate`,
 		authentication: {
 			type: AuthenticationType.BEARER_TOKEN,
-			token: await getAccessToken(auth),
+			token: accessToken,
 		},
 		body: {
 			requests: [
@@ -259,7 +262,7 @@ async function deleteRow(
 async function clearSheet(
 	spreadsheetId: string,
 	sheetId: number,
-	auth: GoogleSheetsAuthValue,
+	accessToken: string,
 	rowIndex: number,
 	numOfRows: number,
 ) {
@@ -268,7 +271,7 @@ async function clearSheet(
 		url: `${googleSheetsCommon.baseUrl}/${spreadsheetId}/:batchUpdate`,
 		authentication: {
 			type: AuthenticationType.BEARER_TOKEN,
-			token: await getAccessToken(auth),
+			token: accessToken,
 		},
 		body: {
 			requests: [
@@ -298,86 +301,15 @@ export enum Dimension {
 	COLUMNS = 'COLUMNS',
 }
 
-export async function createGoogleClient(auth: GoogleSheetsAuthValue): Promise<OAuth2Client> {
-	if(auth.type === AppConnectionType.CUSTOM_AUTH)
-	{
-		const serviceAccount = JSON.parse(auth.props.serviceAccount);
-		return new google.auth.JWT({
-			email: serviceAccount.client_email,
-			key: serviceAccount.private_key,
-			scopes: googleSheetsScopes,
-			subject: auth.props.userEmail,
-		});
-	}
+export async function createGoogleSheetClient(auth: PiecePropValueSchema<typeof googleSheetsAuth>) {
 	const authClient = new OAuth2Client();
-    authClient.setCredentials(auth);
-	return authClient;
-}
+	authClient.setCredentials(auth);
 
-export const getAccessToken = async (auth: GoogleSheetsAuthValue): Promise<string> => {
-	if(auth.type === AppConnectionType.CUSTOM_AUTH)
-	{
-		const googleClient = await createGoogleClient(auth);
-	    const response = await googleClient.getAccessToken();
-		if(response.token)
-		{
-			return response.token;
-		}
-		else {
-			throw new Error('Could not retrieve access token from service account json');
-		}
-	}
-	return auth.access_token;
+	const googleSheetClient = google.sheets({ version: 'v4', auth: authClient });
+	return googleSheetClient;
 }
 
 export function areSheetIdsValid(spreadsheetId: string | null | undefined, sheetId: string | number | null | undefined): boolean {
     return !isNil(spreadsheetId) && spreadsheetId !== "" &&
            !isNil(sheetId) && sheetId !== "";
 }
-
-export const googleSheetsScopes = [
-	'https://www.googleapis.com/auth/spreadsheets',
-	'https://www.googleapis.com/auth/drive.readonly',
-	'https://www.googleapis.com/auth/drive',
-  ]
-
-export const googleSheetsAuth =[PieceAuth.OAuth2({
-	description: '',
-	authUrl: 'https://accounts.google.com/o/oauth2/auth',
-	tokenUrl: 'https://oauth2.googleapis.com/token',
-	required: true,
-	scope:googleSheetsScopes ,
-  }), PieceAuth.CustomAuth({
-	displayName: 'Service Account (Advanced)',
-	description: 'Authenticate via service account from https://console.cloud.google.com/ > IAM & Admin > Service Accounts > Create Service Account > Keys > Add key.  <br> <br> You can optionally use domain-wide delegation (https://support.google.com/a/answer/162106?hl=en#zippy=%2Cset-up-domain-wide-delegation-for-a-client) to access spreadsheets without adding the service account to each one. <br> <br> **Note:** Without a user email, the service account only has access to files/folders you explicitly share with it.',
-	required: true,
-	props: {
-	  serviceAccount: Property.ShortText({
-		displayName: 'Service Account JSON Key',
-		required: true,
-	  } 
-	) , 
-	userEmail: Property.ShortText({
-		displayName: 'User Email',
-		required: false,
-		description: 'Email address of the user to impersonate for domain-wide delegation.',
-	  }),},
-	  validate: async ({auth})=>{
-		try{
-			await getAccessToken({
-				type: AppConnectionType.CUSTOM_AUTH,
-				props: {...auth}
-			});
-		}catch(e){
-			return {
-				valid: false,
-				error: (e as Error).message,
-			};
-		}
-		return {
-			valid: true,
-		};
-	  }
-	})];
-
-	

@@ -1,10 +1,8 @@
 import { Property } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { CognosClient } from './cognos-client';
-import { ibmCognoseAuth } from '../..';
 
 export const contentObjectDropdown = Property.Dropdown({
-  auth: ibmCognoseAuth,
   displayName: 'Content Object',
   description: 'Select a content object',
   required: true,
@@ -19,7 +17,7 @@ export const contentObjectDropdown = Property.Dropdown({
     }
 
     try {
-      const client = new CognosClient(auth.props);
+      const client = new CognosClient(auth as any);
       const response = await client.makeAuthenticatedRequest('/content', HttpMethod.GET);
 
       if (response.status === 200) {

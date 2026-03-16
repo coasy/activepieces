@@ -23,7 +23,7 @@ export const screenAction = createAction({
   },
   async run(context) {
     const { userId, name, properties } = context.propsValue;
-    const { apiKey, baseUrl } = context.auth.props;
+    const { apiKey, baseUrl } = context.auth;
 
     try {
       const response = await httpClient.sendRequest({

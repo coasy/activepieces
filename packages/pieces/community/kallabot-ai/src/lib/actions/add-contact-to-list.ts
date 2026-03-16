@@ -10,7 +10,6 @@ export const addContactToListAction = createAction({
 
     props: {
         list_id: Property.Dropdown({
-            auth: kallabotAuth,
             displayName: 'Contact List',
             description: 'Select the contact list to add contacts to.',
             required: true,
@@ -29,7 +28,7 @@ export const addContactToListAction = createAction({
                         method: HttpMethod.GET,
                         url: 'https://api.kallabot.com/contacts/lists',
                         headers: {
-                            'Authorization': `Bearer ${auth.secret_text}`,
+                            'Authorization': `Bearer ${auth}`,
                             'Content-Type': 'application/json'
                         }
                     });

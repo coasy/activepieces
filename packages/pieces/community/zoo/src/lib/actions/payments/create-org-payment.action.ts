@@ -20,7 +20,7 @@ export const createOrgPaymentAction = createAction({
       method: HttpMethod.POST,
       url: 'https://api.zoo.dev/org/payment',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
       body: {
         payment_method_id: propsValue.paymentMethodId,

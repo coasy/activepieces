@@ -7,7 +7,6 @@ export enum TriggerTestStrategy {
 }
 
 export const TestTriggerRequestBody = Type.Object({
-    projectId: ApId,
     flowId: ApId,
     flowVersionId: ApId,
     testStrategy: Type.Enum(TriggerTestStrategy),
@@ -17,7 +16,6 @@ export type TestTriggerRequestBody = Static<typeof TestTriggerRequestBody>
 
 
 export const CancelTestTriggerRequestBody = Type.Object({
-    projectId: ApId,
     flowId: ApId,
 })
 

@@ -44,12 +44,14 @@ export const ntfy = createPiece({
   actions: [
     sendNotification,
     createCustomApiCallAction({
-     baseUrl: (auth) => (auth?.props.base_url ?? ''),
+      baseUrl: (auth) => (auth as { base_url: string }).base_url,
       auth: ntfyAuth,
       authMapping: async (auth) => ({
-        Authorization: `Bearer ${auth.props.access_token}`,
+        Authorization: `Bearer ${
+          (auth as { access_token: string }).access_token
+        }`,
       }),
     }),
   ],
-  triggers: [],  
+  triggers: [],
 });

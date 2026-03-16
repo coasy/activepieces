@@ -65,7 +65,7 @@ export const createEmailListAction = createAction({
   },
 
   async run({ auth, propsValue }) {
-    const client = makeClient(auth.secret_text);
+    const client = makeClient(auth as string);
     return await client.createEmailList(propsValue);
   },
 });

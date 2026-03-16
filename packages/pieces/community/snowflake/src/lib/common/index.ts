@@ -94,7 +94,6 @@ export async function execute(
 
 export const snowflakeCommonProps = {
   database: Property.Dropdown({
-    auth: snowflakeAuth,
     displayName: 'Database',
     refreshers: [],
     required: true,
@@ -107,9 +106,9 @@ export const snowflakeCommonProps = {
         };
       }
 
-      const authValue = auth;
+      const authValue = auth as PiecePropValueSchema<typeof snowflakeAuth>;
 
-      const connection = configureConnection(authValue.props);
+      const connection = configureConnection(authValue);
 
       await connect(connection);
 
@@ -131,7 +130,6 @@ export const snowflakeCommonProps = {
     },
   }),
   schema: Property.Dropdown({
-    auth: snowflakeAuth,
     displayName: 'Schema',
     refreshers: ['database'],
     required: true,
@@ -151,9 +149,9 @@ export const snowflakeCommonProps = {
         };
       }
 
-      const authValue = auth;
+      const authValue = auth as PiecePropValueSchema<typeof snowflakeAuth>;
 
-      const connection = configureConnection(authValue.props);
+      const connection = configureConnection(authValue);
 
       await connect(connection);
 
@@ -179,7 +177,6 @@ export const snowflakeCommonProps = {
     },
   }),
   table: Property.Dropdown({
-    auth: snowflakeAuth,
     displayName: 'Table',
     refreshers: ['database', 'schema'],
     required: true,
@@ -206,9 +203,9 @@ export const snowflakeCommonProps = {
         };
       }
 
-      const authValue = auth;
+      const authValue = auth as PiecePropValueSchema<typeof snowflakeAuth>;
 
-      const connection = configureConnection(authValue.props);
+      const connection = configureConnection(authValue);
 
       await connect(connection);
 
@@ -234,7 +231,6 @@ export const snowflakeCommonProps = {
     },
   }),
   table_column_values: Property.DynamicProperties({
-    auth: snowflakeAuth,
     displayName: 'Rows',
     required: true,
     refreshers: ['database', 'schema', 'table'],
@@ -242,9 +238,9 @@ export const snowflakeCommonProps = {
       if (!auth) return {};
       if (!table) return {};
 
-      const authValue = auth;
+      const authValue = auth as PiecePropValueSchema<typeof snowflakeAuth>;
 
-      const connection = configureConnection(authValue.props);
+      const connection = configureConnection(authValue);
       await connect(connection);
       const response = await execute(connection, `DESCRIBE TABLE ${table}`, []);
       await destroy(connection);

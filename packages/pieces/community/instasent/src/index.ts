@@ -39,7 +39,7 @@ export const instasentAuth = PieceAuth.CustomAuth({
         })
     },
     validate: async ({ auth }) => {
-        const authData = auth;
+        const authData = auth as InstasentAuthType;
 
         try {
             const baseUrl = getBaseUrl(authData);

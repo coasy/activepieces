@@ -50,7 +50,6 @@ export const generateVideoFromImage = createAction({
 			required: false 
 		}),
 		ratio: Property.DynamicProperties({
-			auth: runwayAuth,
 			displayName: 'Video Resolution',
 			description: 'Available resolutions depend on the selected model',
 			required: true,
@@ -111,7 +110,6 @@ export const generateVideoFromImage = createAction({
 			},
 		}),
 		duration: Property.DynamicProperties({
-			auth: runwayAuth,
 			displayName: 'Video Duration',
 			description: 'Available durations depend on the selected model',
 			required: true,
@@ -162,7 +160,6 @@ export const generateVideoFromImage = createAction({
 			required: false 
 		}),
 		contentModeration: Property.DynamicProperties({
-			auth: runwayAuth,
 			displayName: 'Content Moderation',
 			description: 'Content moderation settings (not available for veo3)',
 			required: false,
@@ -249,7 +246,7 @@ export const generateVideoFromImage = createAction({
 			imageUrl = propsValue.promptImageUrl as string;
 		}
 
-		const apiKey = auth.secret_text;
+		const apiKey = auth as string;
 		const client = new RunwayML({ apiKey });
 
 		// Build request body according to SDK specification

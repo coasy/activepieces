@@ -1,16 +1,14 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { ChatDataClient } from '../common/client';
-import { chatDataAuth, RetrainOptions } from '../common/types';
+import { RetrainOptions } from '../common/types';
 
 export const retrainChatbot = createAction({
-  auth: chatDataAuth,
   name: 'retrain_chatbot',
   displayName: 'Retrain Chatbot',
   description:
     'Retrain an existing chatbot with new data or remove existing data (custom-data-upload model only)',
   props: {
     chatbotId: Property.Dropdown({
-      auth: chatDataAuth,
       displayName: 'Chatbot',
       description: 'Select the chatbot to retrain',
       required: true,
@@ -24,7 +22,7 @@ export const retrainChatbot = createAction({
           };
         }
         try {
-          const client = new ChatDataClient(auth.secret_text);
+          const client = new ChatDataClient(auth as string);
           const chatbots = await client.listChatbots();
           return {
             options: chatbots.map((chatbot) => ({
@@ -148,7 +146,7 @@ export const retrainChatbot = createAction({
     }),
   },
   async run(context) {
-    const client = new ChatDataClient(context.auth.secret_text);
+    const client = new ChatDataClient(context.auth as string);
 
     const payload = RetrainOptions.parse({
       chatbotId: context.propsValue.chatbotId,

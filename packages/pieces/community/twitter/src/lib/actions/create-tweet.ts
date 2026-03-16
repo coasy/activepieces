@@ -27,7 +27,7 @@ export const createTweet = createAction({
     });
 
     const { consumerKey, consumerSecret, accessToken, accessTokenSecret } =
-      context.auth.props;
+      context.auth;
     const userClient = new TwitterApi({
       appKey: consumerKey,
       appSecret: consumerSecret,

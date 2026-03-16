@@ -48,7 +48,6 @@ export const PiecesCardList: React.FC<PiecesCardListProps> = ({
   );
   const { isLoading: isLoadingPieces, data: categories } =
     piecesHooks.usePiecesSearch({
-      shouldCaptureEvent: true,
       searchQuery,
       type:
         operation.type === FlowOperationType.UPDATE_TRIGGER
@@ -74,13 +73,7 @@ export const PiecesCardList: React.FC<PiecesCardListProps> = ({
   const showActionsOrTriggersList =
     searchQuery.length === 0 && !isMobile && !noResultsFound && !isLoading;
   const showPiecesList = !noResultsFound && !isLoading;
-  if (
-    [
-      PieceSelectorTabType.EXPLORE,
-      PieceSelectorTabType.AI_AND_AGENTS,
-      PieceSelectorTabType.APPROVALS,
-    ].includes(selectedTab)
-  ) {
+  if (selectedTab === PieceSelectorTabType.EXPLORE) {
     return null;
   }
   return (

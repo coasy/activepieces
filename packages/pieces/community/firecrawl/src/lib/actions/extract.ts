@@ -53,8 +53,7 @@ export const extract = createAction({
       },
     }),
     schema: Property.DynamicProperties({
-      displayName: 'Data Definition',   
-      auth: firecrawlAuth,
+      displayName: 'Data Definition',
       required: true,
       refreshers: ['mode'],
       props: async (propsValue) => {
@@ -152,7 +151,7 @@ export const extract = createAction({
       url: `${FIRECRAWL_API_BASE_URL}/extract`,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${auth.secret_text}`,
+        'Authorization': `Bearer ${auth}`,
       },
       body: body,
     });
@@ -161,7 +160,7 @@ export const extract = createAction({
 
     // polling
     const timeoutSeconds = propsValue.timeout || 300;
-    const result = await polling(jobId, auth.secret_text, timeoutSeconds, 'extract')
+    const result = await polling(jobId, auth, timeoutSeconds, 'extract')
     return result;
   },
 });

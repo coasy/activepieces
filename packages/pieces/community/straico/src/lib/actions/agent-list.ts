@@ -38,7 +38,7 @@ export const agentList = createAction({
       method: HttpMethod.GET,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: auth.secret_text,
+        token: auth as string,
       },
     });
 

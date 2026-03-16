@@ -1,10 +1,10 @@
 import { ApplicationEventName, ManagedAuthnRequestBody } from '@activepieces/ee-shared'
-import { securityAccess } from '@activepieces/server-shared'
 import {
+    ALL_PRINCIPAL_TYPES,
     AuthenticationResponse,
 } from '@activepieces/shared'
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
-import { applicationEvents } from '../../helper/application-events'
+import { eventsHooks } from '../../helper/application-events'
 import { managedAuthnService } from './managed-authn-service'
 
 export const managedAuthnController: FastifyPluginAsyncTypebox = async (
@@ -19,7 +19,7 @@ export const managedAuthnController: FastifyPluginAsyncTypebox = async (
             const response = await managedAuthnService(req.log).externalToken({
                 externalAccessToken,
             })
-            applicationEvents(req.log).sendUserEvent(req, {
+            eventsHooks.get(req.log).sendUserEventFromRequest(req, {
                 action: ApplicationEventName.USER_SIGNED_UP,
                 data: {
                     source: 'managed',
@@ -32,7 +32,7 @@ export const managedAuthnController: FastifyPluginAsyncTypebox = async (
 
 const ManagedAuthnRequest = {
     config: {
-        security: securityAccess.public(),
+        allowedPrincipals: ALL_PRINCIPAL_TYPES,
     },
     schema: {
         body: ManagedAuthnRequestBody,

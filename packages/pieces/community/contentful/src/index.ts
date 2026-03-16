@@ -25,7 +25,7 @@ export const contentful = createPiece({
       baseUrl: () => `https://api.contentful.com`,
       auth: ContentfulAuth,
       authMapping: async (auth) => ({
-        Authorization: `Bearer ${auth.props.apiKey}`,
+        Authorization: `Bearer ${(auth as { apiKey: string }).apiKey}`,
       }),
     }),
   ],

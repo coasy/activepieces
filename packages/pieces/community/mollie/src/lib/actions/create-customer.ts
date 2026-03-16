@@ -69,7 +69,7 @@ export const mollieCreateCustomer = createAction({
   },
 
   async run({ auth, propsValue }) {
-    const apiKey = auth;
+    const apiKey = auth as string;
 
     const customerData: Record<string, unknown> = {};
 

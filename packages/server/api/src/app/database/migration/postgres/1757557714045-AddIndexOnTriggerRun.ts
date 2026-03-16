@@ -1,9 +1,5 @@
-import { AppSystemProp, DatabaseType } from '@activepieces/server-shared'
 import { MigrationInterface, QueryRunner } from 'typeorm'
 import { system } from '../../../helper/system/system'
-
-const databaseType = system.get(AppSystemProp.DB_TYPE)
-const isPGlite = databaseType === DatabaseType.PGLITE
 
 export class AddIndexOnTriggerRun1757557714045 implements MigrationInterface {
     name = 'AddIndexOnTriggerRun1757557714045'
@@ -15,8 +11,6 @@ export class AddIndexOnTriggerRun1757557714045 implements MigrationInterface {
             name: 'AddIndexOnTriggerRun1757557714045',
             message: 'up',
         })
-        const concurrent = !isPGlite
-
         await queryRunner.query(`
             ALTER TABLE "trigger_run" DROP CONSTRAINT IF EXISTS "fk_trigger_run_flow_id";
         `)
@@ -27,45 +21,19 @@ export class AddIndexOnTriggerRun1757557714045 implements MigrationInterface {
             ALTER TABLE "trigger_run" DROP COLUMN IF EXISTS "flowId";
         `)
 
-        if (concurrent) {
-            await queryRunner.query(`
-                ALTER TABLE "trigger_run"
-                ADD CONSTRAINT "fk_trigger_run_payload_file_id" FOREIGN KEY ("payloadFileId") REFERENCES "file"("id") ON DELETE CASCADE ON UPDATE NO ACTION NOT VALID;
-            `)
-        }
-        else {
-            await queryRunner.query(`
-                ALTER TABLE "trigger_run"
-                ADD CONSTRAINT "fk_trigger_run_payload_file_id" FOREIGN KEY ("payloadFileId") REFERENCES "file"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
-            `)
-        }
+        await queryRunner.query(`
+            ALTER TABLE "trigger_run"
+            ADD CONSTRAINT "fk_trigger_run_payload_file_id" FOREIGN KEY ("payloadFileId") REFERENCES "file"("id") ON DELETE CASCADE ON UPDATE NO ACTION NOT VALID;
+        `)
+        await queryRunner.query(`
+            CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_trigger_run_trigger_source_id" 
+            ON "trigger_run" ("triggerSourceId");
+        `)
 
-        if (concurrent) {
-            await queryRunner.query(`
-                CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_trigger_run_trigger_source_id" 
-                ON "trigger_run" ("triggerSourceId");
-            `)
-        }
-        else {
-            await queryRunner.query(`
-                CREATE INDEX IF NOT EXISTS "idx_trigger_run_trigger_source_id" 
-                ON "trigger_run" ("triggerSourceId");
-            `)
-        }
-
-        if (concurrent) {
-            await queryRunner.query(`
-                CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_trigger_run_payload_file_id" 
-                ON "trigger_run" ("payloadFileId");
-            `)
-        }
-        else {
-            await queryRunner.query(`
-                CREATE INDEX IF NOT EXISTS "idx_trigger_run_payload_file_id" 
-                ON "trigger_run" ("payloadFileId");
-            `)
-        }
-
+        await queryRunner.query(`
+            CREATE INDEX CONCURRENTLY IF NOT EXISTS "idx_trigger_run_payload_file_id" 
+            ON "trigger_run" ("payloadFileId");
+        `)
         system.globalLogger().info({
             name: 'AddIndexOnTriggerRun1757557714045',
             message: 'completed',

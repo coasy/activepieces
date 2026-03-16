@@ -51,7 +51,6 @@ export const createOrganizationAction = createAction({
       required: false,
     }),
     organization_fields: Property.DynamicProperties({
-      auth: zendeskAuth,
       displayName: 'Organization Fields',
       description: 'Custom organization field values',
       required: false,
@@ -62,14 +61,14 @@ export const createOrganizationAction = createAction({
         }
 
         try {
-          const authentication = auth;
+          const authentication = auth as AuthProps;
           const response = await httpClient.sendRequest({
-            url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/organization_fields.json`,
+            url: `https://${authentication.subdomain}.zendesk.com/api/v2/organization_fields.json`,
             method: HttpMethod.GET,
             authentication: {
               type: AuthenticationType.BASIC,
-              username: authentication.props.email + '/token',
-              password: authentication.props.token,
+              username: authentication.email + '/token',
+              password: authentication.token,
             },
           });
 
@@ -197,7 +196,7 @@ export const createOrganizationAction = createAction({
     }),
   },
   async run({ propsValue, auth }) {
-    const authentication = auth;
+    const authentication = auth as AuthProps;
     const {
       name,
       details,
@@ -235,12 +234,12 @@ export const createOrganizationAction = createAction({
     if (organization_fields && typeof organization_fields === 'object') {
       try {
         const fieldsResponse = await httpClient.sendRequest({
-          url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/organization_fields.json`,
+          url: `https://${authentication.subdomain}.zendesk.com/api/v2/organization_fields.json`,
           method: HttpMethod.GET,
           authentication: {
             type: AuthenticationType.BASIC,
-            username: authentication.props.email + '/token',
-            password: authentication.props.token,
+            username: authentication.email + '/token',
+            password: authentication.token,
           },
         });
 
@@ -278,15 +277,15 @@ export const createOrganizationAction = createAction({
 
     try {
       const response = await httpClient.sendRequest({
-        url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/organizations.json`,
+        url: `https://${authentication.subdomain}.zendesk.com/api/v2/organizations.json`,
         method: HttpMethod.POST,
         headers: {
           'Content-Type': 'application/json',
         },
         authentication: {
           type: AuthenticationType.BASIC,
-          username: authentication.props.email + '/token',
-          password: authentication.props.token,
+          username: authentication.email + '/token',
+          password: authentication.token,
         },
         body: {
           organization,

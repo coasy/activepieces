@@ -2,14 +2,13 @@ import {
 	createAction,
 	Property,
 	PiecePropValueSchema,
-	AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import { teamworkAuth } from '../common/auth';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { teamworkRequest } from '../common/client';
 
 // Helper to fetch all tasks, handling pagination
-async function getAllTasks(auth: AppConnectionValueForAuthProperty<typeof teamworkAuth>) {
+async function getAllTasks(auth: PiecePropValueSchema<typeof teamworkAuth>) {
 	let allTasks: any[] = [];
 	let page = 1;
 	let moreTasks = true;
@@ -39,7 +38,6 @@ export const updateTask = createAction({
 	auth: teamworkAuth,
 	props: {
 		taskId: Property.Dropdown({
-auth: teamworkAuth,
 			displayName: 'Task',
 			description: 'The task to update.',
 			required: true,
@@ -52,7 +50,7 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const tasks = await getAllTasks(auth);
+				const tasks = await getAllTasks(auth as PiecePropValueSchema<typeof teamworkAuth>);
 				const options = tasks.map((task: { id: string; content: string }) => ({
 					label: task.content,
 					value: task.id,
@@ -74,7 +72,6 @@ auth: teamworkAuth,
 			required: false,
 		}),
 		'responsible-party-id': Property.MultiSelectDropdown({
-auth: teamworkAuth,
 			displayName: 'Responsible Parties',
 			description: 'The new users responsible for the task.',
 			required: false,
@@ -87,14 +84,14 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const taskRes = await teamworkRequest(auth, {
+				const taskRes = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: `/tasks/${taskId}.json`,
 				});
 				const projectId = taskRes.data['todo-item']['project-id'];
 				if (!projectId) return { disabled: true, placeholder: 'Could not determine project.', options: [] };
 
-				const peopleRes = await teamworkRequest(auth, {
+				const peopleRes = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: `/projects/${projectId}/people.json`,
 				});
@@ -132,7 +129,6 @@ auth: teamworkAuth,
 			},
 		}),
 		tagIds: Property.MultiSelectDropdown({
-auth: teamworkAuth,
 			displayName: 'Tags',
 			description: 'New tags to associate with the task.',
 			required: false,
@@ -145,7 +141,7 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const res = await teamworkRequest(auth, {
+				const res = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: '/tags.json',
 				});

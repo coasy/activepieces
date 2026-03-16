@@ -61,7 +61,7 @@ export const findContact = createAction({
 					cursor?: string;
 					data: Record<string, any>[];
 				}>({
-					accessToken: context.auth.secret_text,
+					accessToken: context.auth,
 					method: HttpMethod.POST,
 					resourceUri: '/data/search/',
 					body: {

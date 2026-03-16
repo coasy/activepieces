@@ -1,9 +1,12 @@
 import {
+    AGENT_PIECE_NAME,
     AgentPieceProps,
     FlowActionType,
     flowStructureUtil,
     FlowVersion,
     isNil,
+    McpTool,
+    McpToolType,
     PopulatedFlow,
 } from '@activepieces/shared'
 import { databaseConnection } from '../../../database/database-connection'
@@ -15,8 +18,8 @@ export const moveAgentsToFlowVerion: Migration = {
         const db = databaseConnection()
 
         const agentsAndMcpPromises = await Promise.all(
-            flowStructureUtil.getAllSteps(flowVersion.trigger).map(async (step): Promise<{ agent: Record<string, unknown>, tools: { type: string, toolName: string, pieceMetadata: { pieceName: string, pieceVersion: string, actionName: string, connectionExternalId: string }, flowId: string }[] } | null> => {
-                if (step.type === FlowActionType.PIECE && step.settings.pieceName === '@activepieces/piece-agent') {
+            flowStructureUtil.getAllSteps(flowVersion.trigger).map(async (step): Promise<{ agent: Record<string, unknown>, tools: McpTool[] } | null> => {
+                if (step.type === FlowActionType.PIECE && step.settings.pieceName === AGENT_PIECE_NAME) {
                     const agentResults = await db.query('SELECT * FROM agent WHERE "externalId" = $1', [step.settings.input['agentId']])
                     if (isNil(agentResults) || agentResults.length === 0) {
                         return null
@@ -29,13 +32,13 @@ export const moveAgentsToFlowVerion: Migration = {
                     const dbTools = await db.query('SELECT * FROM mcp_tool WHERE "mcpId" = $1', [agent.mcpId])
 
                     const tools = dbTools.map((tool: {
-                        type: string
+                        type: McpToolType
                         pieceMetadata: string | Record<string, unknown>
                         mcpId: string
                         flow: string
                         flowId: string
                     }) => {
-                        if (tool.type === 'PIECE') {
+                        if (tool.type === McpToolType.PIECE) {
                             const pieceMetadata = typeof tool.pieceMetadata === 'string' ? JSON.parse(tool.pieceMetadata) : tool.pieceMetadata
                             return {
                                 type: tool.type,
@@ -45,9 +48,6 @@ export const moveAgentsToFlowVerion: Migration = {
                             }
                         }
                         else {
-                            if (isNil(tool.flow)) {
-                                return null
-                            }
                             const populatedFlow = JSON.parse(tool.flow) as PopulatedFlow
                             return {
                                 type: tool.type,
@@ -61,7 +61,7 @@ export const moveAgentsToFlowVerion: Migration = {
 
                     return {
                         agent,
-                        tools: tools.filter((tool: unknown) => !isNil(tool)),
+                        tools,
                     }
                 }
                 return null
@@ -69,7 +69,7 @@ export const moveAgentsToFlowVerion: Migration = {
         )
 
         const newVersion = flowStructureUtil.transferFlow(flowVersion, (step) => {
-            if (step.type === FlowActionType.PIECE && step.settings.pieceName === '@activepieces/piece-agent') {
+            if (step.type === FlowActionType.PIECE && step.settings.pieceName === AGENT_PIECE_NAME) {
                 const prompt = step.settings.input['prompt']
                 const agentAndTools = agentsAndMcpPromises.find((agentAndMcp) => agentAndMcp?.agent?.externalId === step.settings.input['agentId'])
 
@@ -91,10 +91,11 @@ export const moveAgentsToFlowVerion: Migration = {
                     pieceVersion: '0.3.0',
                     input: {
                         [AgentPieceProps.PROMPT]: `${agent?.systemPrompt}, ${prompt}`,
-                        'model': 'openai-gpt-4o',
+                        [AgentPieceProps.AI_MODEL]: 'openai-gpt-4o',
                         [AgentPieceProps.MAX_STEPS]: agent?.maxSteps,
                         [AgentPieceProps.STRUCTURED_OUTPUT]: typeof agent?.outputFields === 'string' ? JSON.parse(agent?.outputFields as string || '[]') : [],
-                        [AgentPieceProps.AGENT_TOOLS]: tools                    },
+                        [AgentPieceProps.AGENT_TOOLS]: tools,
+                    },
                 }
             }
             return step

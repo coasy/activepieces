@@ -15,10 +15,10 @@ export const deleteFile = createAction({
     }),
   },
   async run(context) {
-    const { bucket } = context.auth.props
+    const { bucket } = context.auth;
     const { key } = context.propsValue;
 
-    const s3 = createS3(context.auth.props);
+    const s3 = createS3(context.auth);
 
     const response = await s3.deleteObject({
       Bucket: bucket,

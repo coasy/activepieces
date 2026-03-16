@@ -1,22 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
-import {
-  InfoIcon,
-  Network,
-  Server,
-  ServerOff,
-  Activity,
-  Cpu,
-  HardDrive,
-  MemoryStick,
-  Box,
-  Clock,
-  GitBranch,
-} from 'lucide-react';
+import { InfoIcon, Network, Server, ServerOff } from 'lucide-react';
 
-import { DashboardPageHeader } from '@/app/components/dashboard-page-header';
 import { CircularIcon } from '@/components/custom/circular-icon';
+import { DashboardPageHeader } from '@/components/custom/dashboard-page-header';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
@@ -39,7 +27,6 @@ const DEMO_WORKERS_DATA: WorkerMachineWithStatus[] = [
     updated: dayjs().subtract(10, 'seconds').toISOString(),
     information: {
       workerId: 'hbAcAzqbOEQLzvIi6PMCF',
-      totalCpuCores: 1,
       diskInfo: {
         total: 337374281728,
         free: 220669583360,
@@ -64,7 +51,6 @@ const DEMO_WORKERS_DATA: WorkerMachineWithStatus[] = [
     updated: dayjs().subtract(1, 'minute').toISOString(),
     information: {
       workerId: 'kpMnBxRtYuWvZsQi9NLCJ',
-      totalCpuCores: 1,
       diskInfo: {
         total: 536870912000,
         free: 322122547200,
@@ -125,13 +111,8 @@ export default function WorkersPage() {
         columns={[
           {
             accessorKey: 'information.ip',
-            size: 150,
             header: ({ column }) => (
-              <DataTableColumnHeader
-                column={column}
-                title={t('IP Address')}
-                icon={Network}
-              />
+              <DataTableColumnHeader column={column} title={t('IP Address')} />
             ),
             cell: ({ row }) => {
               return (
@@ -144,13 +125,8 @@ export default function WorkersPage() {
           },
           {
             accessorKey: 'status',
-            size: 100,
             header: ({ column }) => (
-              <DataTableColumnHeader
-                column={column}
-                title={t('Status')}
-                icon={Activity}
-              />
+              <DataTableColumnHeader column={column} title={t('Status')} />
             ),
             cell: ({ row }) => {
               const status = row.original.status;
@@ -173,13 +149,9 @@ export default function WorkersPage() {
           },
           {
             accessorKey: 'information.cpuUsagePercentage',
-            size: 100,
+
             header: ({ column }) => (
-              <DataTableColumnHeader
-                column={column}
-                title={t('CPU')}
-                icon={Cpu}
-              />
+              <DataTableColumnHeader column={column} title={t('CPU Usage')} />
             ),
             cell: ({ row }) => {
               return (
@@ -194,13 +166,8 @@ export default function WorkersPage() {
 
           {
             accessorKey: 'information.diskInfo.percentage',
-            size: 120,
             header: ({ column }) => (
-              <DataTableColumnHeader
-                column={column}
-                title={t('Disk')}
-                icon={HardDrive}
-              />
+              <DataTableColumnHeader column={column} title={t('Disk Usage')} />
             ),
             cell: ({ row }) => {
               const diskInfo = row.original.information.diskInfo;
@@ -223,13 +190,8 @@ export default function WorkersPage() {
           },
           {
             accessorKey: 'information.ramUsagePercentage',
-            size: 120,
             header: ({ column }) => (
-              <DataTableColumnHeader
-                column={column}
-                title={t('RAM')}
-                icon={MemoryStick}
-              />
+              <DataTableColumnHeader column={column} title={t('RAM Usage')} />
             ),
             cell: ({ row }) => {
               const ramUsage = row.original.information.ramUsagePercentage;
@@ -250,12 +212,10 @@ export default function WorkersPage() {
           },
           {
             accessorKey: 'information.sandboxes',
-            size: 120,
             header: ({ column }) => (
               <DataTableColumnHeader
                 column={column}
-                title={t('Sandboxes')}
-                icon={Box}
+                title={t('Sandboxes Free')}
               />
             ),
             cell: ({ row }) => {
@@ -273,12 +233,10 @@ export default function WorkersPage() {
           },
           {
             accessorKey: 'updated',
-            size: 120,
             header: ({ column }) => (
               <DataTableColumnHeader
                 column={column}
                 title={t('Last Contact')}
-                icon={Clock}
               />
             ),
             cell: ({ row }) => {
@@ -289,13 +247,8 @@ export default function WorkersPage() {
           },
           {
             accessorKey: 'version',
-            size: 100,
             header: ({ column }) => (
-              <DataTableColumnHeader
-                column={column}
-                title={t('Version')}
-                icon={GitBranch}
-              />
+              <DataTableColumnHeader column={column} title={t('Version')} />
             ),
             cell: ({ row }) => {
               return (

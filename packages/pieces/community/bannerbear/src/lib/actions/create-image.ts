@@ -18,7 +18,6 @@ export const bannerbearCreateImageAction = createAction({
   description: 'Create image from Bannerbear template',
   props: {
     template: Property.Dropdown({
-      auth: bannerbearAuth,
       displayName: 'Template',
       description: 'The template to use in image creation.',
       required: true,
@@ -37,7 +36,7 @@ export const bannerbearCreateImageAction = createAction({
           url: `https://api.bannerbear.com/v2/templates`,
           authentication: {
             type: AuthenticationType.BEARER_TOKEN,
-            token: auth.secret_text,
+            token: auth as string,
           },
         });
 
@@ -66,7 +65,6 @@ export const bannerbearCreateImageAction = createAction({
       required: false,
     }),
     modifications: Property.DynamicProperties({
-      auth: bannerbearAuth,
       displayName: 'Template modifications',
       description: 'A list of modifications you want to make on the template.',
       required: true,
@@ -153,7 +151,7 @@ export const bannerbearCreateImageAction = createAction({
       body,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: auth.secret_text,
+        token: auth,
       },
     };
 

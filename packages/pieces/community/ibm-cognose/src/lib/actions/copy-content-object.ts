@@ -31,7 +31,7 @@ export const copyContentObjectAction = createAction({
     }
 
     try {
-      const client = new CognosClient(auth.props);
+      const client = new CognosClient(auth);
 
       const copyRequest = {
         source_id: sourceId,

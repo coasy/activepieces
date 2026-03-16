@@ -1,7 +1,7 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { createDiscussion } from '../api';
 import { buildMemberSpacesDropdown } from '../props';
-import { bettermodeAuth } from '../auth';
+import { bettermodeAuth, BettermodeAuthType } from '../auth';
 
 export const createDiscussionAction = createAction({
   name: 'create_discussion',
@@ -10,13 +10,12 @@ export const createDiscussionAction = createAction({
   description: 'Create a new discussion post in a space',
   props: {
     spaceId: Property.Dropdown({
-      auth: bettermodeAuth,
       displayName: 'Space',
       description: 'The space to create the discussion in',
       required: true,
       refreshers: [],
       options: async ({ auth }) =>
-        await buildMemberSpacesDropdown(auth?.props),
+        await buildMemberSpacesDropdown(auth as BettermodeAuthType),
     }),
     title: Property.ShortText({
       displayName: 'Title',
@@ -42,7 +41,7 @@ export const createDiscussionAction = createAction({
   },
   async run(context) {
     return await createDiscussion(
-      context.auth.props,
+      context.auth as BettermodeAuthType,
       context.propsValue.spaceId,
       context.propsValue.tagNames ?? '',
       context.propsValue.title,

@@ -2,10 +2,8 @@ import { DynamicPropsValue, Property } from '@activepieces/pieces-framework';
 import { makeRequest } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { TableField } from './types';
-import { SoftrAuth } from './auth';
 
 export const databaseIdDropdown = Property.Dropdown({
-	auth: SoftrAuth,
 	displayName: 'Database ID',
 	description: 'Select the database to insert the record into',
 	required: true,
@@ -22,7 +20,7 @@ export const databaseIdDropdown = Property.Dropdown({
 		try {
 			const databases = await makeRequest<{
 				data: { id: string; name: string }[];
-			}>(auth, HttpMethod.GET, '/databases');
+			}>(auth as string, HttpMethod.GET, '/databases');
 			return {
 				disabled: false,
 				options: databases.data.map((database) => ({
@@ -45,7 +43,6 @@ export const tableIdDropdown = Property.Dropdown({
 	description: 'Select the table to insert the record into',
 	required: true,
 	refreshers: ['auth', 'databaseId'],
-	auth: SoftrAuth,
 	options: async ({ auth, databaseId }) => {
 		if (!auth || !databaseId) {
 			return {
@@ -58,7 +55,7 @@ export const tableIdDropdown = Property.Dropdown({
 		try {
 			const tables = await makeRequest<{
 				data: { id: string; name: string }[];
-			}>(auth, HttpMethod.GET, `/databases/${databaseId}/tables`);
+			}>(auth as string, HttpMethod.GET, `/databases/${databaseId}/tables`);
 			return {
 				disabled: false,
 				options: tables.data.map((table) => ({
@@ -84,7 +81,6 @@ export const recordIdField = Property.ShortText({
 export const tableFieldIdDropdown = Property.Dropdown({
 	displayName:'Field',
 	refreshers: ['auth', 'databaseId', 'tableId'],
-	auth: SoftrAuth,
 	required:true,
 	options:async ({auth,databaseId,tableId})=>{
 		if (!auth || !databaseId || !tableId) {
@@ -100,7 +96,7 @@ export const tableFieldIdDropdown = Property.Dropdown({
 				data: {
 					fields: TableField[];
 				};
-			}>(auth, HttpMethod.GET, `/databases/${databaseId}/tables/${tableId}`);
+			}>(auth as unknown as string, HttpMethod.GET, `/databases/${databaseId}/tables/${tableId}`);
 
 			return {
 				disabled: false,
@@ -124,9 +120,8 @@ export const tableFields = Property.DynamicProperties({
 	displayName: 'Fields',
 	required: true,
 	refreshers: ['auth', 'databaseId', 'tableId'],
-	auth: SoftrAuth,
 	props: async ({ auth, databaseId, tableId }) => {
-		if (!databaseId || !tableId||!auth) {
+		if (!databaseId || !tableId) {
 			return {};
 		}
 
@@ -135,7 +130,7 @@ export const tableFields = Property.DynamicProperties({
 				data: {
 					fields: TableField[];
 				};
-			}>(auth, HttpMethod.GET, `/databases/${databaseId}/tables/${tableId}`);
+			}>(auth as unknown as string, HttpMethod.GET, `/databases/${databaseId}/tables/${tableId}`);
 
 			const tableData = response.data || response;
 			const fields = tableData.fields || [];

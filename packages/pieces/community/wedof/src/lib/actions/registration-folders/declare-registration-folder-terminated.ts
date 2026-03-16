@@ -24,7 +24,6 @@ export const declareRegistrationFolderTerminated = createAction({
       defaultValue: dayjs(new Date()).format('YYYY-MM-DD'),
     }),
     code: Property.Dropdown({
-      auth: wedofAuth,
       displayName: 'Raison de la sortie de formation',
       description: 'Sélectionner la raison de sortie de formation',
       required: true,
@@ -45,7 +44,7 @@ export const declareRegistrationFolderTerminated = createAction({
               '/registrationFoldersReasons?type=terminated',
             headers: {
               'Content-Type': 'application/json',
-              'X-Api-Key': auth.secret_text,
+              'X-Api-Key': auth as string,
             },
           })
         ).body;
@@ -88,7 +87,7 @@ export const declareRegistrationFolderTerminated = createAction({
         body: message,
         headers: {
           'Content-Type': 'application/json',
-          'X-Api-Key': context.auth.secret_text,
+          'X-Api-Key': context.auth as string,
         },
       })
     ).body;

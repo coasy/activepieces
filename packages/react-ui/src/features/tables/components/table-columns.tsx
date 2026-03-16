@@ -1,10 +1,22 @@
+import { t } from 'i18next';
 import { Plus } from 'lucide-react';
 import { ReactNode } from 'react';
 import { Column, RenderCellProps } from 'react-data-grid';
 
+import {
+  TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+} from '@/components/ui/tooltip';
 import { useAuthorization } from '@/hooks/authorization-hooks';
 import { flagsHooks } from '@/hooks/flags-hooks';
-import { ApFlagId, isNil, Permission } from '@activepieces/shared';
+import { platformHooks } from '@/hooks/platform-hooks';
+import {
+  ApFlagId,
+  isNil,
+  Permission,
+  PlatformUsageMetric,
+} from '@activepieces/shared';
 
 import { ClientRecordData } from '../lib/store/ap-tables-client-state';
 import { Row } from '../lib/types';
@@ -138,7 +150,22 @@ type AddRecordButtonProps = {
 };
 
 function AddRecordButton({ handleClick, icon }: AddRecordButtonProps) {
-  return (
+  const exccedTableLimit = platformHooks.useCheckResourceIsLocked(
+    PlatformUsageMetric.TABLES,
+  );
+
+  return exccedTableLimit ? (
+    <Tooltip>
+      <TooltipTrigger className="w-full h-full border-t border-border bg-muted text-muted-foreground flex items-center justify-start pl-4">
+        {icon}
+      </TooltipTrigger>
+      <TooltipContent>
+        {t(
+          'Table limit exceeded. Delete unnecessary tables or upgrade to unlock access.',
+        )}
+      </TooltipContent>
+    </Tooltip>
+  ) : (
     <div
       className="w-full h-full border-t border-border  flex items-center justify-start cursor-pointer pl-4"
       onClick={handleClick}
@@ -149,7 +176,22 @@ function AddRecordButton({ handleClick, icon }: AddRecordButtonProps) {
 }
 
 function AddFieldButton() {
-  return (
+  const exccedTableLimit = platformHooks.useCheckResourceIsLocked(
+    PlatformUsageMetric.TABLES,
+  );
+
+  return exccedTableLimit ? (
+    <Tooltip>
+      <TooltipTrigger className="w-full h-full bg-muted text-muted-foreground flex items-center justify-center new-field">
+        <Plus className="h-4 w-4" />
+      </TooltipTrigger>
+      <TooltipContent>
+        {t(
+          'You have exceeded tables limit please delete extra tables or upgrade to retain access',
+        )}
+      </TooltipContent>
+    </Tooltip>
+  ) : (
     <NewFieldPopup>
       <div className="w-full h-full flex items-center justify-center cursor-pointer new-field">
         <Plus className="h-4 w-4" />

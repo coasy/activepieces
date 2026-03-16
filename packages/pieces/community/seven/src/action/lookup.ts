@@ -36,7 +36,7 @@ export const lookup = createAction({
         number: numbers.join(','),
       },
       method: HttpMethod.GET
-    }, `lookup/${type}`, context.auth.secret_text);
+    }, `lookup/${type}`, context.auth as string);
 
     return response.body;
 

@@ -6,13 +6,11 @@ import {
 import { OAuth2PropertyValue, Property } from '@activepieces/pieces-framework';
 import { MarkdownVariant } from '@activepieces/shared';
 import dayjs from 'dayjs';
-import { oneDriveAuth } from '../..';
 
 export const oneDriveCommon = {
   baseUrl: 'https://graph.microsoft.com/v1.0/me/drive',
 
   parentFolder: Property.Dropdown({
-    auth: oneDriveAuth,
     displayName: 'Parent Folder',
     required: false,
     refreshers: ['auth'],

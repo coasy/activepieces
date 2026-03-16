@@ -20,7 +20,7 @@ export const updateUserSubscriptionAction = createAction({
       method: HttpMethod.PUT,
       url: 'https://api.zoo.dev/user/payment/subscriptions',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
       body: {
         plan_id: propsValue.planId,

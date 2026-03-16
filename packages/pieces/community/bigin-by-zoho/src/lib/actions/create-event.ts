@@ -38,7 +38,6 @@ export const createEvent = createAction({
       required: false,
     }),
     recurringInfo: Property.DynamicProperties({
-      auth: biginAuth,
       displayName: 'Recurring Info',
       refreshers: ['enableRecurring'],
       required: false,
@@ -126,12 +125,10 @@ export const createEvent = createAction({
       required: false,
     }),
     reminderInfo: Property.DynamicProperties({
-      auth: biginAuth,
       displayName: 'Reminder Information',
       refreshers: ['enableReminder'],
       required: false,
       props: (propsValue, ctx): any => {
-
         if (propsValue['enableReminder']) {
           return {
             reminderList: Property.Array({
@@ -182,7 +179,6 @@ export const createEvent = createAction({
       },
     }),
     relatedTo: Property.Dropdown({
-      auth: biginAuth,
       displayName: 'Related To',
       description: 'Select the specific record the event is related to',
       required: false,
@@ -192,8 +188,7 @@ export const createEvent = createAction({
         if (!auth) return handleDropdownError('Please connect your account first');
         if (!relatedModule) return { options: [] };
 
-        const { access_token, data } = auth;
-        const api_domain = data['api_domain'];
+        const { access_token, api_domain } = auth as any;
 
         const fetchMap: Record<string, () => Promise<any>> = {
           Contacts: () =>
@@ -248,8 +243,7 @@ export const createEvent = createAction({
     tag: tagsDropdown('Events'),
   },
   async run({ auth, propsValue }) {
-    const { access_token, data } = auth;
-    const api_domain = data['api_domain'];
+    const { access_token, api_domain } = auth as any;
     const startDate = new Date(propsValue.startDateTime);
     const endDate = new Date(propsValue.endDateTime);
 

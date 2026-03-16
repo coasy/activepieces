@@ -5,10 +5,8 @@ import {
 } from '@activepieces/pieces-framework';
 import { makeRequest } from './index';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { cognitoFormsAuth } from '../..';
 
 export const formIdDropdown = Property.Dropdown({
-  auth: cognitoFormsAuth,
   displayName: 'Form',
   required: true,
   refreshers: [],
@@ -21,7 +19,7 @@ export const formIdDropdown = Property.Dropdown({
       };
     }
 
-    const apiKey = auth;
+    const apiKey = auth as string;
     const forms = await makeRequest(apiKey, HttpMethod.GET, '/forms');
 
     const options: DropdownOption<string>[] = forms.map((form: any) => ({
@@ -38,13 +36,12 @@ export const formIdDropdown = Property.Dropdown({
 
 export const formFields = Property.DynamicProperties({
   displayName: 'Fields',
-  auth: cognitoFormsAuth,
   refreshers: ['formId'],
   required: true,
   props: async ({ auth, formId }) => {
     if (!auth || !formId) return {};
 
-    const apiKey = auth;
+    const apiKey = auth as unknown as string;
     const response = await makeRequest(
       apiKey,
       HttpMethod.GET,

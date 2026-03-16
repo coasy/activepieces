@@ -39,7 +39,7 @@ export const findTimeEntryAction = createAction({
 		const { workspaceId, projectId, start, end, description, taskId } = context.propsValue;
 
 		const currentUserResponse = await clockifyApiCall<{ id: string; email: string }>({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.GET,
 			resourceUri: `/user`,
 		});
@@ -51,11 +51,11 @@ export const findTimeEntryAction = createAction({
 		if (description) qs['description'] = description;
 		if (start) qs['start'] = start;
 		if (end) qs['end'] = end;
-		if (projectId) qs['project'] = projectId as string;
-		if (taskId) qs['task'] = taskId as string;
+		if (projectId) qs['project'] = projectId;
+		if (taskId) qs['task'] = taskId;
 
 		const response = await clockifyApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.GET,
 			resourceUri: `/workspaces/${workspaceId}/user/${userId}/time-entries`,
 			query: qs,

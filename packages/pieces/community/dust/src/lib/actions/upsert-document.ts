@@ -46,7 +46,7 @@ export const upsertDocument = createAction({
     }),
   },
   async run({ auth, propsValue }) {
-    const dustAuth = auth.props;
+    const dustAuth = auth as DustAuthType;
     const tags = propsValue.title
       ? [`title:${propsValue.title}`, ...(propsValue.tags as string[])]
       : (propsValue.tags as string[]);
@@ -59,7 +59,7 @@ export const upsertDocument = createAction({
       )}`,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${auth.props.apiKey}`,
+        Authorization: `Bearer ${auth.apiKey}`,
       },
       body: JSON.stringify(
         {

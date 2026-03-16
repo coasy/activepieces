@@ -3,13 +3,11 @@ import { HttpMethod } from '@activepieces/pieces-common';
 import { randomUUID } from 'crypto';
 import { SEARCH_ENGINE_OPTIONS } from '../../common/search-engines';
 import { serpstatApiCall } from '../../common/client';
-import { serpstatAuth } from '../../common/auth';
 
 export const getSuggestions = createAction({
   name: 'get_suggestions',
   displayName: 'Get Suggestions',
   description: 'Get keyword suggestions from Serpstat > Keyword Analysis.',
-  auth: serpstatAuth,
   props: {
     keyword: Property.ShortText({
       displayName: 'Keyword',
@@ -44,7 +42,7 @@ export const getSuggestions = createAction({
     }),
   },
   async run({ auth, propsValue }) {
-    const token = auth;
+    const token = auth as string;
     const id = randomUUID();
 
     // Build params object
@@ -63,7 +61,7 @@ export const getSuggestions = createAction({
     };
 
     return await serpstatApiCall({
-      apiToken: token.secret_text,
+      apiToken: token,
       method: HttpMethod.POST,
       resourceUri: '/',
       body,

@@ -49,7 +49,6 @@ export const xeroUploadAttachment = createAction({
       },
     }),
     resource_id: Property.Dropdown({
-      auth: xeroAuth,
       displayName: 'Resource',
       description: 'Select the specific resource to attach the file to.',
       required: true,

@@ -11,7 +11,6 @@ export const updateTaskListAction = createAction({
     description: 'Updates an existing task list.',
     props: {
         task_list_id: Property.Dropdown({
-   auth: microsoftToDoAuth,
             displayName: 'Task List',
             description: 'The task list to update.',
             required: true,

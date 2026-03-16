@@ -6,11 +6,9 @@ import {
     httpClient,
 } from '@activepieces/pieces-common';
 import { OAuth2PropertyValue, Property } from '@activepieces/pieces-framework';
-import { salesforceAuth } from '../..';
 
 export const salesforcesCommon = {
     account: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Account',
         required: false,
         refreshers: [],
@@ -36,8 +34,7 @@ export const salesforcesCommon = {
             };
         },
     }),
-    object: Property.Dropdown<string,true,typeof salesforceAuth>({
-        auth: salesforceAuth,
+    object: Property.Dropdown<string>({
         displayName: 'Object',
         required: true,
         description: 'Select the Object',
@@ -68,7 +65,6 @@ export const salesforcesCommon = {
         },
     }),
     record: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Record',
         description: 'The record to select. The list shows the 20 most recently created records.',
         required: true,
@@ -128,7 +124,6 @@ export const salesforcesCommon = {
         },
     }),
     recipient: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Recipient',
         required: true,
         refreshers: [],
@@ -165,8 +160,7 @@ export const salesforcesCommon = {
             };
         },
     }),
-    field: Property.Dropdown<string,true,typeof salesforceAuth>({
-        auth: salesforceAuth,
+    field: Property.Dropdown<string>({
         displayName: 'Field',
         description: 'Select the Field',
         required: true,
@@ -195,7 +189,6 @@ export const salesforcesCommon = {
         },
     }),
     campaign: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Campaign',
         required: true,
         refreshers: [],
@@ -222,7 +215,6 @@ export const salesforcesCommon = {
         },
     }),
     contact: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Contact',
         required: true,
         refreshers: [],
@@ -249,7 +241,6 @@ export const salesforcesCommon = {
         },
     }),
     lead: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Lead',
         required: true,
         refreshers: [],
@@ -276,7 +267,6 @@ export const salesforcesCommon = {
         },
     }),
     status: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Status',
         description: "The campaign member status (e.g., 'Sent', 'Responded').",
         required: true,
@@ -313,7 +303,6 @@ export const salesforcesCommon = {
         },
     }),
     leadSource: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Lead Source',
         required: false,
         refreshers: [],
@@ -353,7 +342,6 @@ export const salesforcesCommon = {
         },
     }),
     owner: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Owner',
         description: 'The owner of the task.',
         required: true,
@@ -377,7 +365,6 @@ export const salesforcesCommon = {
         },
     }),
     opportunity: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Opportunity',
         required: true,
         refreshers: [],
@@ -400,7 +387,6 @@ export const salesforcesCommon = {
         },
     }),
     report: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Report',
         required: true,
         refreshers: [],
@@ -423,7 +409,6 @@ export const salesforcesCommon = {
         },
     }),
     parentRecord: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Parent Record',
         description: 'The parent record to find child records for. The list shows the 20 most recently created records.',
         required: true,
@@ -448,7 +433,6 @@ export const salesforcesCommon = {
     }),
 
     childRelationship: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Child Relationship',
         description: 'The child relationship to retrieve records from.',
         required: true,
@@ -477,7 +461,6 @@ export const salesforcesCommon = {
         },
     }),
     optionalContact: Property.Dropdown({
-        auth: salesforceAuth,
         displayName: 'Contact',
         required: false, 
         refreshers: [],
@@ -550,7 +533,6 @@ function createSalesforcePicklistDropdown(config: {
     description?: string,
 }) {
     return Property.Dropdown({
-        auth: salesforceAuth,
         displayName: config.displayName,
         description: config.description,
         required: config.required,

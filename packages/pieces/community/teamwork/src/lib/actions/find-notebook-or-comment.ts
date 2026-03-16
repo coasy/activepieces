@@ -26,7 +26,6 @@ export const findNotebookOrComment = createAction({
 			required: true,
 		}),
 		projectId: Property.Dropdown({
-auth: teamworkAuth,
 			displayName: 'Project',
 			description: 'Limit the search to a specific project.',
 			required: false,
@@ -39,7 +38,7 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const res = await teamworkRequest(auth, {
+				const res = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: '/projects.json',
 				});

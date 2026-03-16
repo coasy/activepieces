@@ -5,10 +5,10 @@ import {
   HttpMessageBody,
   QueryParams,
 } from '@activepieces/pieces-common';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-import { shortIoAuth } from './auth';
 
-export type ShortioAuthProps = AppConnectionValueForAuthProperty<typeof shortIoAuth>;
+export type ShortioAuthProps = {
+  apiKey: string;
+};
 
 export type ShortioApiCallParams = {
   method: HttpMethod;
@@ -42,7 +42,7 @@ export async function shortIoApiCall<T extends HttpMessageBody>({
     method,
     url: finalUrl,
     headers: {
-      authorization: auth.props.apiKey,
+      authorization: auth.apiKey,
       'Content-Type': 'application/json',
       accept: 'application/json',
     },

@@ -10,7 +10,6 @@ export const createTimeEntryOnTask = createAction({
 	auth: teamworkAuth,
 	props: {
 		taskId: Property.Dropdown({
-auth: teamworkAuth,
 			displayName: 'Task',
 			required: true,
 			refreshers: [],
@@ -22,7 +21,7 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const res = await teamworkRequest(auth, {
+				const res = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: '/tasks.json',
 				});

@@ -50,7 +50,7 @@ export const startBrowsingTask = createAction({
       method: HttpMethod.POST,
       url: `${API_BASE_URL}/browse`,
       headers: {
-        'x-api-key': context.auth.secret_text,
+        'x-api-key': context.auth,
         'Content-Type': 'application/json',
       },
       body: {
@@ -77,7 +77,7 @@ export const startBrowsingTask = createAction({
         method: HttpMethod.GET,
         url: pollingUrl,
         headers: {
-          'x-api-key': context.auth.secret_text,
+          'x-api-key': context.auth,
           'Content-Type': 'application/json',
         },
       });

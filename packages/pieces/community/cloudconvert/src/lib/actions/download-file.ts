@@ -10,7 +10,6 @@ const downloadFileProps = () => ({
     required: true,
   }),
   include: Property.MultiSelectDropdown({
-    auth: cloudconvertAuth,
     displayName: 'Include Additional Data',
     description: 'Additional data to include in the response',
     required: false,

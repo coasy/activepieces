@@ -22,7 +22,7 @@ export const updateTaskAction = createAction({
   },
   async run(context) {
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof flowluAuth>
     );
     return await client.updateTask(context.propsValue.task_id!, {
       name: context.propsValue.name,

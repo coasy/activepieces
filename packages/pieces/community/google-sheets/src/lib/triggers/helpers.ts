@@ -1,16 +1,22 @@
 import { google } from 'googleapis';
+import { OAuth2Client } from 'googleapis-common';
+
+import { googleSheetsAuth } from '../..';
+import { PiecePropValueSchema } from '@activepieces/pieces-framework';
+
 import { nanoid } from 'nanoid';
 import dayjs from 'dayjs';
 import crypto from 'crypto';
-import { columnToLabel, createGoogleClient, GoogleSheetsAuthValue } from '../common/common';
+import { columnToLabel } from '../common/common';
 import { isNil } from '@activepieces/shared';
 
 export async function getWorkSheetName(
-	auth: GoogleSheetsAuthValue,
+	auth: PiecePropValueSchema<typeof googleSheetsAuth>,
 	spreadSheetId: string,
 	sheetId: number,
 ) {
-	const authClient = await createGoogleClient(auth);
+	const authClient = new OAuth2Client();
+	authClient.setCredentials(auth);
 
 	const sheets = google.sheets({ version: 'v4', auth: authClient });
 
@@ -26,11 +32,12 @@ export async function getWorkSheetName(
 }
 
 export async function getWorkSheetGridSize(
-	auth: GoogleSheetsAuthValue,
+	auth: PiecePropValueSchema<typeof googleSheetsAuth>,
 	spreadSheetId: string,
 	sheetId: number,
 ) {
-	const authClient = await createGoogleClient(auth);
+	const authClient = new OAuth2Client();
+	authClient.setCredentials(auth);
 
 	const sheets = google.sheets({ version: 'v4', auth: authClient });
 
@@ -45,11 +52,12 @@ export async function getWorkSheetGridSize(
 }
 
 export async function getWorkSheetValues(
-	auth: GoogleSheetsAuthValue,
+	auth: PiecePropValueSchema<typeof googleSheetsAuth>,
 	spreadsheetId: string,
 	range?: string,
 ) {
-	const authClient = await createGoogleClient(auth);
+	const authClient = new OAuth2Client();
+	authClient.setCredentials(auth);
 
 	const sheets = google.sheets({ version: 'v4', auth: authClient });
 
@@ -62,12 +70,13 @@ export async function getWorkSheetValues(
 }
 
 export async function createFileNotification(
-	auth: GoogleSheetsAuthValue,
+	auth: PiecePropValueSchema<typeof googleSheetsAuth>,
 	fileId: string,
 	url: string,
 	includeTeamDrives?: boolean,
 ) {
-	const authClient = await createGoogleClient(auth);
+	const authClient = new OAuth2Client();
+	authClient.setCredentials(auth);
 
 	const drive = google.drive({ version: 'v3', auth: authClient });
 
@@ -86,11 +95,12 @@ export async function createFileNotification(
 }
 
 export async function deleteFileNotification(
-	auth: GoogleSheetsAuthValue,
+	auth: PiecePropValueSchema<typeof googleSheetsAuth>,
 	channelId: string,
 	resourceId: string,
 ) {
-	const authClient = await createGoogleClient(auth);
+	const authClient = new OAuth2Client();
+	authClient.setCredentials(auth);
 
 	const drive = google.drive({ version: 'v3', auth: authClient });
 

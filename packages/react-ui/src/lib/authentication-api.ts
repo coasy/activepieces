@@ -1,7 +1,6 @@
 import { api } from '@/lib/api';
 import {
   CreateOtpRequestBody,
-  GetCurrentProjectMemberRoleQuery,
   ResetPasswordRequestBody,
   VerifyEmailRequestBody,
 } from '@activepieces/ee-shared';
@@ -13,6 +12,7 @@ import {
   SignInRequest,
   SignUpRequest,
   SwitchPlatformRequest,
+  SwitchProjectRequest,
   ThirdPartyAuthnProviderEnum,
   UserIdentity,
 } from '@activepieces/shared';
@@ -35,8 +35,8 @@ export const authenticationApi = {
       providerName,
     });
   },
-  getCurrentProjectRole(query: GetCurrentProjectMemberRoleQuery) {
-    return api.get<ProjectRole | null>('/v1/project-members/role', query);
+  getCurrentProjectRole() {
+    return api.get<ProjectRole | null>('/v1/project-members/role');
   },
   claimThirdPartyRequest(request: ClaimTokenRequest) {
     return api.post<AuthenticationResponse>(
@@ -52,6 +52,12 @@ export const authenticationApi = {
   },
   verifyEmail(request: VerifyEmailRequestBody) {
     return api.post<UserIdentity>('/v1/authn/local/verify-email', request);
+  },
+  switchProject(request: SwitchProjectRequest) {
+    return api.post<AuthenticationResponse>(
+      `/v1/authentication/switch-project`,
+      request,
+    );
   },
   switchPlatform(request: SwitchPlatformRequest) {
     return api.post<AuthenticationResponse>(

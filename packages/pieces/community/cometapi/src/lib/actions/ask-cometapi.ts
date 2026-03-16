@@ -117,7 +117,7 @@ export const askCometApiAction = createAction({
       body: requestBody,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: context.auth.secret_text,
+        token: context.auth,
       },
       headers: {
         'Content-Type': 'application/json',

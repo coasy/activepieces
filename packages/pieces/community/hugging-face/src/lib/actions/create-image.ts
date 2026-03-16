@@ -42,8 +42,7 @@ export const createImage = createAction({
       displayName: 'Image Generation Model',
       description: 'Select the best model for your use case',
       required: true,
-      refreshers: ['useCase'],    
-      auth: huggingFaceAuth,
+      refreshers: ['useCase'],
       options: async ({ useCase }) => {
         const getModelsByUseCase = (type: string) => {
           switch (type) {
@@ -302,7 +301,7 @@ export const createImage = createAction({
         numInferenceSteps = 25;
     }
 
-    const hf = new InferenceClient(context.auth.secret_text);
+    const hf = new InferenceClient(context.auth as string);
 
     // Build parameters object
     const parameters: Record<string, unknown> = {

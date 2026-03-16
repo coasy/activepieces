@@ -2,7 +2,6 @@ import { PlatformId, ProjectId, TriggerRunStatus, TriggerStatusReport } from '@a
 import { FastifyBaseLogger } from 'fastify'
 import Redis from 'ioredis'
 import { apDayjs, apDayjsDuration } from './dayjs-helper'
-import { redisHelper } from './redis'
 
 export const triggerRunStats = (_log: FastifyBaseLogger, redisConnection: Redis) => ({
     async save({ platformId, pieceName, status }: SaveParams): Promise<void> {
@@ -16,7 +15,7 @@ export const triggerRunStats = (_log: FastifyBaseLogger, redisConnection: Redis)
 
     async getStatusReport(params: GetStatusReportParams): Promise<TriggerStatusReport> {
         const { platformId } = params
-        const redisKeys = await redisHelper.scanAll(redisConnection, triggerRunRedisKey(platformId, '*', '*', '*'))
+        const redisKeys = await redisConnection.keys(triggerRunRedisKey(platformId, '*', '*', '*'))
         if (redisKeys.length === 0) {
             return { pieces: {} }
         }

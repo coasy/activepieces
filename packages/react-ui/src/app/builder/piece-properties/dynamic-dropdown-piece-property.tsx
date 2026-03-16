@@ -1,21 +1,20 @@
 import deepEqual from 'deep-equal';
 import { t } from 'i18next';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { FieldValues, UseFormReturn, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { useBuilderStateContext } from '@/app/builder/builder-hooks';
 import { SearchableSelect } from '@/components/custom/searchable-select';
 import { piecesHooks } from '@/features/pieces/lib/pieces-hooks';
-import { authenticationSession } from '@/lib/authentication-session';
 import { DropdownState, PropertyType } from '@activepieces/pieces-framework';
-import { AUTHENTICATION_PROPERTY_NAME, isNil } from '@activepieces/shared';
+import { FlowAction, isNil, FlowTrigger } from '@activepieces/shared';
 
 import { MultiSelectPieceProperty } from '../../../components/custom/multi-select-piece-property';
 
 import { DynamicPropertiesErrorBoundary } from './dynamic-piece-properties-error-boundary';
 import { DynamicPropertiesContext } from './dynamic-properties-context';
 
-type DynamicDropdownProps = {
+type SelectPiecePropertyProps = {
   refreshers: string[];
   propertyName: string;
   value?: unknown;
@@ -24,28 +23,20 @@ type DynamicDropdownProps = {
   onChange: (value: unknown | undefined) => void;
   showDeselect?: boolean;
   shouldRefreshOnSearch?: boolean;
-  actionOrTriggerName: string;
-  pieceName: string;
-  pieceVersion: string;
-  form: UseFormReturn<FieldValues, any, undefined>;
-  placedInside: 'stepSettings' | 'predefinedAgentInputs';
 };
 const DynamicDropdownPiecePropertyImplementation = React.memo(
-  (props: DynamicDropdownProps) => {
+  (props: SelectPiecePropertyProps) => {
     const [flowVersion, readonly] = useBuilderStateContext((state) => [
       state.flowVersion,
       state.readonly,
     ]);
-
+    const form = useFormContext<FlowAction | FlowTrigger>();
     const isFirstRender = useRef(true);
     const previousValues = useRef<undefined | unknown[]>(undefined);
     const firstDropdownState = useRef<DropdownState<unknown> | undefined>(
       undefined,
     );
-    const refreshersWithAuth = [
-      ...props.refreshers,
-      AUTHENTICATION_PROPERTY_NAME,
-    ];
+    const newRefreshers = [...props.refreshers, 'auth'];
     const [dropdownState, setDropdownState] = useState<DropdownState<unknown>>({
       disabled: false,
       placeholder: t('Select an option'),
@@ -72,29 +63,29 @@ const DynamicDropdownPiecePropertyImplementation = React.memo(
       throw error;
     }
 
-    const refresherValues = useWatch({
-      name: refreshersWithAuth.map((refresher) => {
-        if (props.placedInside === 'stepSettings') {
-          return `settings.input.${refresher}`;
-        }
-        return refresher;
+    /* eslint-disable react-hooks/rules-of-hooks */
+    const refresherValues = newRefreshers.map((refresher) =>
+      useWatch({
+        name: `settings.input.${refresher}` as const,
+        control: form.control,
       }),
-      control: props.form.control,
-    });
-
+    );
+    /* eslint-enable react-hooks/rules-of-hooks */
     const refresh = (term?: string) => {
       const input: Record<string, unknown> = {};
-      refreshersWithAuth.forEach((refresher, index) => {
+      newRefreshers.forEach((refresher, index) => {
         input[refresher] = refresherValues[index];
       });
+      const { settings } = form.getValues();
+      const actionOrTriggerName = settings.actionName ?? settings.triggerName;
+      const { pieceName, pieceVersion } = settings;
       mutate(
         {
           request: {
-            projectId: authenticationSession.getProjectId()!,
-            pieceName: props.pieceName,
-            pieceVersion: props.pieceVersion,
+            pieceName,
+            pieceVersion,
             propertyName: props.propertyName,
-            actionOrTriggerName: props.actionOrTriggerName,
+            actionOrTriggerName: actionOrTriggerName,
             input,
             flowVersionId: flowVersion.id,
             flowId: flowVersion.flowId,
@@ -172,7 +163,7 @@ const DynamicDropdownPiecePropertyImplementation = React.memo(
 );
 
 const DynamicDropdownPieceProperty = React.memo(
-  (props: DynamicDropdownProps) => {
+  (props: SelectPiecePropertyProps) => {
     return (
       <DynamicPropertiesErrorBoundary>
         <DynamicDropdownPiecePropertyImplementation {...props} />

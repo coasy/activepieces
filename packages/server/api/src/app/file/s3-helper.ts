@@ -113,22 +113,26 @@ export const s3Helper = (log: FastifyBaseLogger) => ({
         const bucketName = getS3BucketName()
         const testKey = `activepieces-${apId()}-validation-test-key`
 
-        await client.putObject({
-            Bucket: bucketName,
-            Key: testKey,
-            Body: 'activepieces-test',
-        })
+        try {
+            await client.putObject({
+                Bucket: bucketName,
+                Key: testKey,
+                Body: 'activepieces-test',
+            })
 
-        await client.headObject({
-            Bucket: bucketName,
-            Key: testKey,
-        })
+            await client.headObject({
+                Bucket: bucketName,
+                Key: testKey,
+            })
 
-        await client.deleteObject({
-            Bucket: bucketName,
-            Key: testKey,
-        })
-
+            await client.deleteObject({
+                Bucket: bucketName,
+                Key: testKey,
+            })
+        }
+        catch (error: unknown) {
+            throw new Error(`S3 validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+        }
     },
 })
 

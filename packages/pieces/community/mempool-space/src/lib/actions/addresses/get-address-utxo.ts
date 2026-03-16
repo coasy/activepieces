@@ -1,9 +1,8 @@
-import { createAction, PieceAuth, Property } from '@activepieces/pieces-framework';
+import { createAction, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { MEMPOOL_API_BASE_URL } from '../../common';
 
 export const getAddressUtxo = createAction({
- auth:PieceAuth.None(),
     name: 'get_address_utxo',
     displayName: 'Get Address UTXO',
     description: 'Returns unspent transaction outputs for an address',

@@ -22,7 +22,6 @@ export const updateOpportunity = createAction({
       required: true,
     }),
     updateFields: Property.DynamicProperties({
-      auth: CopperAuth,
       displayName: '',
       description: '',
       required: false,
@@ -47,7 +46,6 @@ export const updateOpportunity = createAction({
     }),
     pipelineId: pipelinesDropdown({ refreshers: ['auth'] }),
     pipelineStageId: Property.Dropdown({
-      auth: CopperAuth,
       displayName: 'Pipeline Stage',
       description: 'Select a stage',
       refreshers: ['auth', 'pipelineId'],

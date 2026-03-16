@@ -19,7 +19,6 @@ export const createOrUpdateContact = createAction({
   auth: pandadocAuth,
   props: {
     contact_id: Property.Dropdown({
-      auth: pandadocAuth,
       displayName: 'Contact ID (for Update)',
       description: 'Select a contact to update. Leave empty to create a new contact.',
       required: false,
@@ -41,7 +40,7 @@ export const createOrUpdateContact = createAction({
               last_name: string | null;
               email: string | null;
             }>;
-          }>(auth.secret_text, HttpMethod.GET, '/contacts?count=100');
+          }>(auth as string, HttpMethod.GET, '/contacts?count=100');
 
           const options = response.results.map((contact) => {
             const name = [contact.first_name, contact.last_name].filter(Boolean).join(' ') || 'Unnamed';
@@ -166,14 +165,14 @@ export const createOrUpdateContact = createAction({
 
     if (propsValue.contact_id) {
       return await pandadocClient.makeRequest(
-      auth.secret_text,
+        auth as string,
         HttpMethod.PATCH,
         `/contacts/${propsValue.contact_id}`,
         body
       );
     } else {
       return await pandadocClient.makeRequest(
-      auth.secret_text,
+        auth as string,
         HttpMethod.POST,
         '/contacts',
         body

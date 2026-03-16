@@ -18,7 +18,7 @@ export const newPresentationTrigger = createTrigger({
       method: HttpMethod.POST,
       url: BASE_URL + '/webhook/subscribe',
       headers: {
-        'X-API-key': apiKey.secret_text,
+        'X-API-key': apiKey,
       },
       body: {
         endpoint: context.webhookUrl,
@@ -36,7 +36,7 @@ export const newPresentationTrigger = createTrigger({
         method: HttpMethod.DELETE,
         url: BASE_URL + '/webhook/unsubscribe',
         headers: {
-          'X-API-key': apiKey.secret_text,
+          'X-API-key': apiKey,
         },
         body: {
           webhook_id: webhookId,

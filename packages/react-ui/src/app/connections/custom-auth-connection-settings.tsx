@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { GenericPropertiesForm } from '@/app/builder/piece-properties/generic-properties-form';
+import { AutoPropertiesFormComponent } from '@/app/builder/piece-properties/auto-properties-form';
 import { CustomAuthProperty } from '@activepieces/pieces-framework';
 
 type CustomAuthConnectionSettingsProps = {
@@ -10,12 +10,11 @@ type CustomAuthConnectionSettingsProps = {
 const CustomAuthConnectionSettings = React.memo(
   ({ authProperty }: CustomAuthConnectionSettingsProps) => {
     return (
-      <GenericPropertiesForm
+      <AutoPropertiesFormComponent
         prefixValue="request.value.props"
         props={authProperty.props}
         useMentionTextInput={false}
-        propertySettings={null}
-        dynamicPropsInfo={null}
+        allowDynamicValues={false}
       />
     );
   },

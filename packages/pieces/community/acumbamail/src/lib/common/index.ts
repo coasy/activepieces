@@ -10,12 +10,10 @@ import {
   GetTemplatesResponse,
   SubscriberListField,
 } from './types';
-import { acumbamailAuth } from '../..';
 
 export const acumbamailCommon = {
   baseUrl: 'https://acumbamail.com/api/1',
   listId: Property.Dropdown({
-    auth: acumbamailAuth,
     displayName: 'Subscriber List',
     required: true,
     refreshers: [],
@@ -31,7 +29,7 @@ export const acumbamailCommon = {
       const request: HttpRequest = {
         method: HttpMethod.GET,
         url: acumbamailCommon.baseUrl + '/getLists/',
-        queryParams: { auth_token: auth.secret_text },
+        queryParams: { auth_token: auth as string },
       };
 
       const res = await httpClient.sendRequest<GetListsResponse>(request);
@@ -47,7 +45,6 @@ export const acumbamailCommon = {
     },
   }),
   listMergeFields: Property.DynamicProperties({
-    auth: acumbamailAuth,
     displayName: 'Merge Fields',
     refreshers: ['listId'],
     required: true,
@@ -61,7 +58,7 @@ export const acumbamailCommon = {
         method: HttpMethod.GET,
         url: acumbamailCommon.baseUrl + '/getListFields/',
         queryParams: {
-          auth_token: auth.secret_text,
+          auth_token: auth as unknown as string,
           list_id: listId as unknown as string,
         },
       };
@@ -137,7 +134,6 @@ export const acumbamailCommon = {
     },
   }),
   templateId: Property.Dropdown({
-    auth: acumbamailAuth,
     displayName: 'Origin Template',
     required: true,
     refreshers: [],
@@ -153,7 +149,7 @@ export const acumbamailCommon = {
       const request: HttpRequest = {
         method: HttpMethod.GET,
         url: acumbamailCommon.baseUrl + '/getTemplates/',
-        queryParams: { auth_token: auth.secret_text },
+        queryParams: { auth_token: auth as string },
       };
 
       const res = await httpClient.sendRequest<GetTemplatesResponse[]>(request);

@@ -1,5 +1,5 @@
 import { GitBranchType } from '@activepieces/ee-shared'
-import { PlatformRole, PrincipalType } from '@activepieces/shared'
+import { PrincipalType } from '@activepieces/shared'
 import { faker } from '@faker-js/faker'
 import { FastifyInstance } from 'fastify'
 import { StatusCodes } from 'http-status-codes'
@@ -30,7 +30,7 @@ afterAll(async () => {
 describe('Git API', () => {
     describe('Create API', () => {
         it('should not allow create git repo for other projects', async () => {
-            const { mockPlatform, mockProject } = await mockAndSaveBasicSetup({
+            const { mockPlatform, mockProject, mockOwner } = await mockAndSaveBasicSetup({
                 platform: {
                 },
                 plan: {
@@ -41,7 +41,6 @@ describe('Git API', () => {
             const { mockUser: mockUser2 } = await mockBasicUser({
                 user: {
                     platformId: mockPlatform.id,
-                    platformRole: PlatformRole.MEMBER,
                 },
             })
 
@@ -49,7 +48,7 @@ describe('Git API', () => {
             await databaseConnection().getRepository('project').save(mockProject2)
 
             const request = {
-                projectId: mockProject.id,
+                projectId: mockProject2.id,
                 remoteUrl: `git@${faker.internet.url()}`,
                 sshPrivateKey: faker.hacker.noun(),
                 branch: 'main',
@@ -58,7 +57,8 @@ describe('Git API', () => {
             }
 
             const token = await generateMockToken({
-                id: mockUser2.id,
+                id: mockOwner.id,
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -96,7 +96,7 @@ describe('Git API', () => {
             }
             const token = await generateMockToken({
                 id: mockOwner.id,
-                
+                projectId: mockProject.id,
                 type: PrincipalType.USER,
                 platform: {
                     id: mockProject.platformId,
@@ -139,7 +139,7 @@ describe('Git API', () => {
 
             const token = await generateMockToken({
                 id: mockOwner.id,
-                
+                projectId: mockProject.id,
                 type: PrincipalType.USER,
                 platform: {
                     id: mockProject.platformId,
@@ -156,32 +156,26 @@ describe('Git API', () => {
             expect(response?.statusCode).toBe(StatusCodes.NO_CONTENT)
         })
         it('should not allow delete git repo for other projects', async () => {
-            const { mockPlatform, mockProject } = await mockAndSaveBasicSetup({
+            const { mockPlatform, mockProject, mockOwner } = await mockAndSaveBasicSetup({
                 platform: {
                 },
                 plan: {
                     environmentsEnabled: true,
                 },
-                user: {
-                    platformRole: PlatformRole.MEMBER,
-                },
             })
-            const mockGitRepo = createMockGitRepo({ projectId: mockProject.id })
-            await databaseConnection()
-                .getRepository('git_repo')
-                .save([mockGitRepo])
 
-            const { mockUser: mockUser2 } = await mockBasicUser({
-                user: {
-                    platformId: mockPlatform.id,
-                    platformRole: PlatformRole.MEMBER,
-                },
-            })
-            const mockProject2 = createMockProject({ platformId: mockPlatform.id, ownerId: mockUser2.id })
+            const mockProject2 = createMockProject({ platformId: mockPlatform.id, ownerId: mockOwner.id })
             await databaseConnection().getRepository('project').save(mockProject2)
 
+            const mockGitRepo = createMockGitRepo({ projectId: mockProject.id })
+            const mockGitRepo2 = createMockGitRepo({ projectId: mockProject2.id })
+            await databaseConnection()
+                .getRepository('git_repo')
+                .save([mockGitRepo, mockGitRepo2])
+
             const token = await generateMockToken({
-                id: mockUser2.id,
+                id: mockOwner.id,
+                projectId: mockProject.id,
                 type: PrincipalType.USER,
                 platform: {
                     id: mockProject.platformId,
@@ -190,13 +184,13 @@ describe('Git API', () => {
 
             const response = await app?.inject({
                 method: 'DELETE',
-                url: '/v1/git-repos/' + mockGitRepo.id,
+                url: '/v1/git-repos/' + mockGitRepo2.id,
                 headers: {
                     authorization: `Bearer ${token}`,
                 },
             })
 
-            expect(response?.statusCode).toBe(StatusCodes.FORBIDDEN)
+            expect(response?.statusCode).toBe(StatusCodes.NOT_FOUND)
         })
     })
 
@@ -267,7 +261,7 @@ describe('Git API', () => {
 
             const token = await generateMockToken({
                 id: mockOwner.id,
-                
+                projectId: mockProject.id,
                 type: PrincipalType.USER,
                 platform: {
                     id: mockProject.platformId,
@@ -306,7 +300,7 @@ describe('Git API', () => {
 
             const token = await generateMockToken({
                 id: mockOwner.id,
-                
+                projectId: mockProject.id,
                 type: PrincipalType.USER,
                 platform: {
                     id: mockProject.platformId,

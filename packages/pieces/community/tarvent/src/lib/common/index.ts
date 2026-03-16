@@ -1,17 +1,14 @@
-import { AppConnectionValueForAuthProperty, DynamicPropsValue, PiecePropValueSchema, Property } from '@activepieces/pieces-framework';
+import { DynamicPropsValue, PiecePropValueSchema, Property } from '@activepieces/pieces-framework';
 import { tarventAuth } from '../../';
 import { TarventClient } from './client';
 
-export function makeClient(auth: AppConnectionValueForAuthProperty<typeof tarventAuth>) {
-    const client = new TarventClient(auth.props.accountId, auth.props.apiKey);
+export function makeClient(auth: PiecePropValueSchema<typeof tarventAuth>) {
+    const client = new TarventClient(auth.accountId, auth.apiKey);
     return client;
 }
 
 export const tarventCommon = {
     customEventId: (required = false, description = '') => Property.Dropdown({
-      auth: tarventAuth,
-
-  
         displayName: 'Custom event',
         description,
         required,
@@ -24,7 +21,7 @@ export const tarventCommon = {
                     options: [],
                 };
             }
-            const client = makeClient(auth);
+            const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
             const res = await client.listCustomEvents();
 
             return {
@@ -40,8 +37,6 @@ export const tarventCommon = {
     }),
     campaignId: (required = false, description = '', ignoreStatus = false, isEvent = false) =>
         Property.Dropdown({
-      auth: tarventAuth,
-
             displayName: 'Campaign',
             description,
             required,
@@ -54,7 +49,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listCampaigns(ignoreStatus, isEvent);
                 console.log(res);
                 return {
@@ -70,8 +65,6 @@ export const tarventCommon = {
         }),
     campaignLinkId: (required = false) =>
         Property.Dropdown({
-      auth: tarventAuth,
-
             displayName: 'Campaign link',
             description: 'Only used if campaign type is set to "Specific". If specified, the trigger will only fire if a contact clicks the selected link.',
             required,
@@ -84,7 +77,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listCampaignLinks(campaignId as string);
 
                 return {
@@ -100,8 +93,6 @@ export const tarventCommon = {
         }),
     journeyId: (required = false, description = '') =>
         Property.Dropdown({
-      auth: tarventAuth,
-
             displayName: 'Journey',
             description,
             required,
@@ -114,7 +105,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listJourneys();
 
                 return {
@@ -129,7 +120,6 @@ export const tarventCommon = {
             },
         }),
     campaignScope: Property.DynamicProperties({
-      auth: tarventAuth,
         displayName: 'Campaign scope',
         refreshers: ['campaignType'],
         required: false,
@@ -175,8 +165,6 @@ export const tarventCommon = {
     }),
     audienceId: (required = false, description = '') =>
         Property.Dropdown({
-      auth: tarventAuth,
-
             displayName: 'Audience',
             description,
             required,
@@ -189,7 +177,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listAudiences();
 
                 return {
@@ -205,8 +193,6 @@ export const tarventCommon = {
         }),
     audienceGroupId: (required = false, description = '') =>
         Property.Dropdown({
-      auth: tarventAuth,
-
             displayName: 'Audience group',
             description,
             required,
@@ -226,7 +212,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listAudienceGroups(audienceId as string);
 
                 return {
@@ -242,8 +228,6 @@ export const tarventCommon = {
         }),
     audienceFormId: (required = false, description = '') =>
         Property.Dropdown({
-      auth: tarventAuth,
-
             displayName: 'Audience form',
             description,
             required,
@@ -263,7 +247,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listAudienceForms(audienceId as string);
 
                 return {
@@ -279,7 +263,6 @@ export const tarventCommon = {
         }),
     audienceGroupIds: (required = false, description = '') =>
         Property.MultiSelectDropdown({
-            auth: tarventAuth,
             displayName: 'Audience group',
             description,
             required,
@@ -299,7 +282,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listAudienceGroups(audienceId as string);
 
                 return {
@@ -315,13 +298,12 @@ export const tarventCommon = {
         }),
     audienceDataFields: Property.DynamicProperties({
         displayName: 'Data fields',
-        auth: tarventAuth,
         refreshers: ['audienceId'],
         required: false,
         props: async ({ auth, audienceId }) => {
             if (!auth) return {};
 
-            const client = makeClient(auth);
+            const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
             const res = await client.listAudienceDataFields(audienceId as unknown);
 
             const fields: DynamicPropsValue = {};
@@ -453,8 +435,6 @@ export const tarventCommon = {
     }),
     tagId: (required = false, description = '') =>
         Property.Dropdown({
-      auth: tarventAuth,
-
             displayName: 'Tags',
             description,
             required,
@@ -467,7 +447,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listTags();
 
                 console.log(res, searchField)
@@ -485,7 +465,6 @@ export const tarventCommon = {
         }),
     tagIds: (required = false, description = '') =>
         Property.MultiSelectDropdown({
-            auth: tarventAuth,
             displayName: 'Tags',
             description,
             required,
@@ -498,7 +477,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listTags();
 
                 return {
@@ -514,8 +493,6 @@ export const tarventCommon = {
         }),
     txGroupName: (required = false, description = '') =>
         Property.Dropdown({
-      auth: tarventAuth,
-
             displayName: 'Transaction group name',
             description,
             required,
@@ -528,7 +505,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listTxGroupNames();
                 console.log(res);
                 return {
@@ -544,8 +521,6 @@ export const tarventCommon = {
         }),
     templateId: (required = false, description = '') =>
         Property.Dropdown({
-      auth: tarventAuth,
-
             displayName: 'Template',
             description,
             required,
@@ -558,7 +533,7 @@ export const tarventCommon = {
                         options: [],
                     };
                 }
-                const client = makeClient(auth);
+                const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
                 const res = await client.listTemplates();
 
                 return {
@@ -573,8 +548,6 @@ export const tarventCommon = {
             },
         }),
     landingPageId: Property.Dropdown({
-      auth: tarventAuth,
-
         displayName: 'Landing page',
         description: 'If specified, the trigger will only fire if CTA (call-to-action) is performed on the selected landing page.',
         required: false,
@@ -587,7 +560,7 @@ export const tarventCommon = {
                     options: [],
                 };
             }
-            const client = makeClient(auth);
+            const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
             const res = await client.listLandingPages();
 
             return {
@@ -602,8 +575,6 @@ export const tarventCommon = {
         },
     }),
     surveyId: Property.Dropdown({
-      auth: tarventAuth,
-
         displayName: 'Survey',
         description: 'If specified, the trigger will only fire if the selected survey is submitted.',
         required: false,
@@ -616,7 +587,7 @@ export const tarventCommon = {
                     options: [],
                 };
             }
-            const client = makeClient(auth);
+            const client = makeClient(auth as PiecePropValueSchema<typeof tarventAuth>);
             const res = await client.listSurveys();
 
             return {

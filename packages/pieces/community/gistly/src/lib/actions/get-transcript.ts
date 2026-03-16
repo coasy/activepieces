@@ -26,7 +26,7 @@ export const getTranscriptAction = createAction({
       method: HttpMethod.GET,
       url: `${gistlyConfig.baseUrl}/youtube/transcript`,
       headers: {
-        [gistlyConfig.accessTokenHeaderKey]: context.auth.secret_text,
+        [gistlyConfig.accessTokenHeaderKey]: context.auth,
       },
       queryParams: {
         url,

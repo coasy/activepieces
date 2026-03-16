@@ -5,7 +5,6 @@ import { socialkitAuth } from '../../index';
 const socialkitApiUrl = 'https://api.socialkit.dev';
 
 export const getYoutubeDetails = createAction({
-  auth: socialkitAuth,
   name: 'get_youtube_details',
   displayName: 'Get YouTube Details',
   description:
@@ -29,7 +28,7 @@ export const getYoutubeDetails = createAction({
       method: HttpMethod.GET,
       url: `${socialkitApiUrl}/youtube/stats`,
       queryParams: {
-        access_key: accessKey.secret_text,
+        access_key: accessKey as string,
         url: url,
       },
     });

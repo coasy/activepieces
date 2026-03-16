@@ -10,7 +10,6 @@ export const updateFeature = createAction({
     auth: productboardAuth,
     props: {
         feature_id: Property.Dropdown({
-            auth: productboardAuth,
             displayName: 'Feature',
             description: 'The feature to update.',
             required: true,
@@ -24,7 +23,7 @@ export const updateFeature = createAction({
                     };
                 }
                 const response = await productboardCommon.apiCall({
-                    auth: auth,
+                    auth: auth as string,
                     method: HttpMethod.GET,
                     resourceUri: '/features'
                 });
@@ -49,7 +48,6 @@ export const updateFeature = createAction({
             required: false,
         }),
         status: Property.Dropdown({
-            auth: productboardAuth,
             displayName: 'Status',
             description: 'New status for the feature.',
             required: false,
@@ -63,7 +61,7 @@ export const updateFeature = createAction({
                     };
                 }
                 const response = await productboardCommon.apiCall({
-                    auth: auth,
+                    auth: auth as string,
                     method: HttpMethod.GET,
                     resourceUri: '/feature-statuses'
                 });

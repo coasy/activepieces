@@ -48,7 +48,7 @@ export const createMemory = createAction({
       url: `${BASE_URL}/v1/memory`,
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': auth.secret_text,
+        'x-api-key': auth as string,
       },
       body: {
         Text: text,

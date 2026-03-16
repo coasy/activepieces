@@ -1,17 +1,15 @@
 import {
-    AppConnectionType,
     DefaultProjectRole,
     PackageType,
     PlatformRole,
     PrincipalType,
     ProjectRole,
-    UpsertAppConnectionRequestBody,
 } from '@activepieces/shared'
 import { FastifyBaseLogger, FastifyInstance } from 'fastify'
 import { StatusCodes } from 'http-status-codes'
 import { initializeDatabase } from '../../../../src/app/database'
 import { databaseConnection } from '../../../../src/app/database/database-connection'
-import { pieceMetadataService } from '../../../../src/app/pieces/metadata/piece-metadata-service'
+import { pieceMetadataService } from '../../../../src/app/pieces/piece-metadata-service'
 import { setupServer } from '../../../../src/app/server'
 import { generateMockToken } from '../../../helpers/auth'
 import {
@@ -48,6 +46,7 @@ describe('AppConnection API', () => {
             })
 
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
                 packageType: PackageType.REGISTRY,
             })
@@ -58,28 +57,27 @@ describe('AppConnection API', () => {
             const mockToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
-            const mockUpsertAppConnectionRequest: UpsertAppConnectionRequestBody = {
+            const mockUpsertAppConnectionRequest = {
                 externalId: 'test-app-connection-with-metadata',
                 displayName: 'Test Connection with Metadata',
                 pieceName: mockPieceMetadata.name,
                 projectId: mockProject.id,
-                type: AppConnectionType.SECRET_TEXT,
+                type: 'SECRET_TEXT',
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
                 metadata: {
                     foo: 'bar',
                 },
-                pieceVersion: mockPieceMetadata.version,
             }
-   
+
             // act
             const response = await app?.inject({
                 method: 'POST',
@@ -94,7 +92,7 @@ describe('AppConnection API', () => {
             expect(response?.statusCode).toBe(StatusCodes.CREATED)
             const responseBody = response?.json()
             expect(responseBody.metadata).toEqual(mockUpsertAppConnectionRequest.metadata)
-            expect(responseBody.pieceVersion).toEqual(mockPieceMetadata.version)
+
             // Verify connection can be updated with new metadata
             const updateResponse = await app?.inject({
                 method: 'POST',
@@ -141,6 +139,7 @@ describe('AppConnection API', () => {
             await databaseConnection().getRepository('project_member').save([mockProjectMember])
 
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
                 packageType: PackageType.REGISTRY,
             })
@@ -151,23 +150,22 @@ describe('AppConnection API', () => {
             const mockToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
-            const mockUpsertAppConnectionRequest: UpsertAppConnectionRequestBody = {
+            const mockUpsertAppConnectionRequest = {
                 externalId: 'test-app-connection',
                 displayName: 'test-app-connection',
                 pieceName: mockPieceMetadata.name,
                 projectId: mockProject.id,
-                type: AppConnectionType.SECRET_TEXT,
+                type: 'SECRET_TEXT',
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
-                pieceVersion: mockPieceMetadata.version,
             }
 
             // act
@@ -205,6 +203,7 @@ describe('AppConnection API', () => {
             await databaseConnection().getRepository('project_member').save([mockProjectMember])
 
             const mockPieceMetadata = createMockPieceMetadata({
+                projectId: mockProject.id,
                 platformId: mockPlatform.id,
             })
             await databaseConnection().getRepository('piece_metadata').save([mockPieceMetadata])
@@ -214,23 +213,22 @@ describe('AppConnection API', () => {
             const mockToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
             })
 
-            const mockUpsertAppConnectionRequest: UpsertAppConnectionRequestBody = {
+            const mockUpsertAppConnectionRequest = {
                 externalId: 'test-app-connection',
                 displayName: 'test-app-connection',
                 pieceName: mockPieceMetadata.name,
                 projectId: mockProject.id,
-                type: AppConnectionType.SECRET_TEXT,
+                type: 'SECRET_TEXT',
                 value: {
-                    type: AppConnectionType.SECRET_TEXT,
+                    type: 'SECRET_TEXT',
                     secret_text: 'test-secret-text',
                 },
-                pieceVersion: mockPieceMetadata.version,
             }
 
             // act
@@ -281,7 +279,7 @@ describe('AppConnection API', () => {
             const mockToken = await generateMockToken({
                 id: mockUser.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },

@@ -21,19 +21,11 @@ export const wordpressCommon = {
     description: 'URL of featured media',
   }),
   authors: Property.Dropdown({
-    auth: wordpressAuth,
     displayName: 'Authors',
     required: false,
     refreshers: [],
     options: async ({ auth }) => {
-      if (!auth) {
-        return {
-          disabled: true,
-          options: [],
-          placeholder: 'Please connect your account first',
-        };
-      }
-      const connection = auth.props;
+      const connection = auth as PiecePropValueSchema<typeof wordpressAuth>;
       const websiteUrl = connection.website_url;
       if (!connection?.username || !connection?.password || !websiteUrl) {
         return {
@@ -61,22 +53,20 @@ export const wordpressCommon = {
       };
     },
   }),
-  tags: Property.MultiSelectDropdown<string, false,typeof wordpressAuth>({
-    auth: wordpressAuth,
+  tags: Property.MultiSelectDropdown<string, false>({
     description: 'Post tags',
     displayName: 'Tags',
     required: false,
     refreshers: [],
     options: async ({ auth }) => {
-      if (!auth) {
+      const connection = auth as PiecePropValueSchema<typeof wordpressAuth>;
+      if (!connection) {
         return {
           disabled: true,
           options: [],
           placeholder: 'Please connect your account first',
         };
       }
-      const connection = auth.props;
-
       if (!(await wordpressCommon.urlExists(connection.website_url.trim()))) {
         return {
           disabled: true,
@@ -125,21 +115,20 @@ export const wordpressCommon = {
       };
     },
   }),
-  categories: Property.MultiSelectDropdown<string, false,typeof wordpressAuth>({
-    auth: wordpressAuth,
+  categories: Property.MultiSelectDropdown<string, false>({
     description: 'Post categories',
     displayName: 'Categories',
     required: false,
     refreshers: [],
     options: async ({ auth }) => {
-      if (!auth) {
+      const connection = auth as PiecePropValueSchema<typeof wordpressAuth>;
+      if (!connection) {
         return {
           disabled: true,
           options: [],
           placeholder: 'Please connect your account first',
         };
       }
-      const connection = auth.props;
       if (!(await wordpressCommon.urlExists(connection.website_url.trim()))) {
         return {
           disabled: true,
@@ -190,20 +179,19 @@ export const wordpressCommon = {
     },
   }),
   featured_media: Property.Dropdown({
-    auth: wordpressAuth,
     description: 'Choose from one of your uploaded media files',
     displayName: 'Featured Media (image)',
     required: false,
     refreshers: [],
     options: async ({ auth }) => {
-      if (!auth) {
+      const connection = auth as PiecePropValueSchema<typeof wordpressAuth>;
+      if (!connection) {
         return {
           disabled: true,
           options: [],
           placeholder: 'Please connect your account first',
         };
       }
-      const connection = auth.props;
       if (!(await wordpressCommon.urlExists(connection.website_url.trim()))) {
         return {
           disabled: true,
@@ -266,19 +254,11 @@ export const wordpressCommon = {
     },
   }),
   post: Property.Dropdown({
-    auth: wordpressAuth,
     displayName: 'Post',
     required: true,
     refreshers: [],
     options: async ({ auth }) => {
-      if (!auth) {
-        return {
-          disabled: true,
-          options: [],
-          placeholder: 'Please connect your account first',
-        };
-      }
-          const connection = auth.props;
+      const connection = auth as PiecePropValueSchema<typeof wordpressAuth>;
       const websiteUrl = connection.website_url;
       if (!connection?.username || !connection?.password || !websiteUrl) {
         return {

@@ -53,7 +53,7 @@ export const generateCreatorDescription = createAction({
       languaege: propsValue.language || 'en',
     };
     const response = await makeRequest(
-      auth.secret_text,
+      auth as string,
       HttpMethod.POST,
       '/creator/description',
       body

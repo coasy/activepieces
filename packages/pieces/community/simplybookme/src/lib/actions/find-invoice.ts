@@ -21,7 +21,6 @@ export const findInvoice = createAction({
       defaultValue: 25
     }),
     clientId: Property.Dropdown({
-      auth: simplybookAuth,
       displayName: 'Client',
       description: 'Filter by client (optional)',
       required: false,
@@ -50,7 +49,7 @@ export const findInvoice = createAction({
     })
   },
   async run(context) {
-    const auth = context.auth.props;
+    const auth = context.auth as SimplybookAuth;
     const accessToken = await getAccessToken(auth);
 
     // Build query parameters

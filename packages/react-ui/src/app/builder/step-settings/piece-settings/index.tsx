@@ -11,7 +11,7 @@ import {
   PieceTriggerSettings,
 } from '@activepieces/shared';
 
-import { GenericPropertiesForm } from '../../piece-properties/generic-properties-form';
+import { AutoPropertiesFormComponent } from '../../piece-properties/auto-properties-form';
 import { useStepSettingsContext } from '../step-settings-context';
 
 import { ConnectionSelect } from './connection-select';
@@ -30,12 +30,7 @@ const removeAuthFromProps = (
 };
 
 const PieceSettings = React.memo((props: PieceSettingsProps) => {
-  const {
-    pieceModel,
-    selectedStep,
-    updateFormSchema,
-    updatePropertySettingsSchema,
-  } = useStepSettingsContext();
+  const { pieceModel } = useStepSettingsContext();
 
   const actionName = (props.step.settings as PieceActionSettings).actionName;
   const selectedAction = actionName
@@ -81,15 +76,9 @@ const PieceSettings = React.memo((props: PieceSettingsProps) => {
   return (
     <div className="flex flex-col gap-4 w-full">
       {!pieceModel && (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, index) => (
-            <div className="space-y-2" key={index}>
-              <div className="flex justify-between items-center">
-                <Skeleton className="w-40 h-4" />
-                <Skeleton className="size-8" />
-              </div>
-              <Skeleton className="w-full h-12" />
-            </div>
+            <Skeleton key={index} className="w-full h-8" />
           ))}
         </div>
       )}
@@ -104,42 +93,26 @@ const PieceSettings = React.memo((props: PieceSettingsProps) => {
             ></ConnectionSelect>
           )}
           {selectedAction && (
-            <GenericPropertiesForm
+            <AutoPropertiesFormComponent
               key={selectedAction.name}
               prefixValue={'settings.input'}
               props={actionPropsWithoutAuth}
-              propertySettings={selectedStep.settings.propertySettings}
+              allowDynamicValues={true}
               disabled={props.readonly}
               useMentionTextInput={true}
               markdownVariables={markdownVariables}
-              dynamicPropsInfo={{
-                pieceName: pieceModel.name,
-                pieceVersion: pieceModel.version,
-                actionOrTriggerName: selectedAction.name,
-                placedInside: 'stepSettings',
-                updateFormSchema,
-                updatePropertySettingsSchema,
-              }}
-            ></GenericPropertiesForm>
+            ></AutoPropertiesFormComponent>
           )}
           {selectedTrigger && (
-            <GenericPropertiesForm
-              dynamicPropsInfo={{
-                pieceName: pieceModel.name,
-                pieceVersion: pieceModel.version,
-                actionOrTriggerName: selectedTrigger.name,
-                placedInside: 'stepSettings',
-                updateFormSchema,
-                updatePropertySettingsSchema,
-              }}
+            <AutoPropertiesFormComponent
               key={selectedTrigger.name}
               prefixValue={'settings.input'}
               props={triggerPropsWithoutAuth}
               useMentionTextInput={false}
-              propertySettings={selectedStep.settings.propertySettings}
+              allowDynamicValues={true}
               disabled={props.readonly}
               markdownVariables={markdownVariables}
-            ></GenericPropertiesForm>
+            ></AutoPropertiesFormComponent>
           )}
         </>
       )}

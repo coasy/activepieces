@@ -10,7 +10,6 @@ export const mollieCreatePaymentRefund = createAction({
   description: 'Creates refund for payment',
   props: {
     paymentId: Property.Dropdown({
-  auth: mollieAuth,
       displayName: 'Payment',
       description: 'Select the payment to refund',
       required: true,
@@ -25,7 +24,7 @@ export const mollieCreatePaymentRefund = createAction({
         }
 
         try {
-          const apiKey = auth;
+          const apiKey = auth as string;
           const payments = await mollieCommon.makeRequest(
             apiKey,
             HttpMethod.GET,
@@ -160,7 +159,7 @@ export const mollieCreatePaymentRefund = createAction({
   },
 
   async run({ auth, propsValue }) {
-    const apiKey = auth;
+    const apiKey = auth as string;
 
     const refundData: Record<string, unknown> = {
       amount: {

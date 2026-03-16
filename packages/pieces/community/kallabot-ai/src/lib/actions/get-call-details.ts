@@ -19,7 +19,7 @@ export const getCallDetailsAction = createAction({
             method: HttpMethod.GET,
             url: `https://api.kallabot.com/call-details/${context.propsValue.call_sid}`,
             headers: {
-                'Authorization': `Bearer ${context.auth.secret_text}`,
+                'Authorization': `Bearer ${context.auth}`,
                 'Content-Type': 'application/json'
             }
         });

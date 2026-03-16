@@ -57,7 +57,7 @@ export const biginAuth = PieceAuth.OAuth2({
       ),
     }),
   },
-  validate: async ({ auth }) => {
+  validate: async ({ auth, server }) => {
     const { domain } = auth.props as any;
     if (!domain) {
       return {

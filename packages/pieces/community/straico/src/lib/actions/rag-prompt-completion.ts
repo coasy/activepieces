@@ -24,8 +24,6 @@ export const ragPromptCompletion = createAction({
       description: 'A text prompt for the RAG model',
     }),
     model: Property.Dropdown({
-  auth: straicoAuth,
-
       displayName: 'Model',
       required: true,
       description: 'The specific LLM to be used',
@@ -52,7 +50,7 @@ export const ragPromptCompletion = createAction({
             method: HttpMethod.GET,
             authentication: {
               type: AuthenticationType.BEARER_TOKEN,
-              token: auth.secret_text,
+              token: auth as string,
             },
           });
           
@@ -156,7 +154,7 @@ export const ragPromptCompletion = createAction({
       method: HttpMethod.POST,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: auth.secret_text,
+        token: auth as string,
       },
       body: requestBody,
     });

@@ -4,11 +4,12 @@ import {
 } from '@activepieces/pieces-common';
 import {
   createTrigger,
+  PiecePropValueSchema,
   Property,
   TriggerStrategy,
 } from '@activepieces/pieces-framework';
 import { drupalAuth } from '../../';
-import { DrupalAuthType } from '../common/jsonapi';
+type DrupalAuthType = PiecePropValueSchema<typeof drupalAuth>;
 
 export const drupalWebhook = createTrigger({
   auth: drupalAuth,
@@ -25,7 +26,7 @@ export const drupalWebhook = createTrigger({
   sampleData: {},
   type: TriggerStrategy.WEBHOOK,
   async onEnable(context) {
-    const { website_url, username, password } = context.auth.props;
+    const { website_url, username, password } = (context.auth as DrupalAuthType);
     const body: any = {
       id: context.propsValue.id,
       webHookUrl: context.webhookUrl,
@@ -43,7 +44,7 @@ export const drupalWebhook = createTrigger({
     await context.store.put(`_drupal_webhook_trigger_` + context.propsValue.id, response.body);
   },
   async onDisable(context) {
-    const { website_url, username, password } = context.auth.props;
+    const { website_url, username, password } = (context.auth as DrupalAuthType);
     const webhook = await context.store.get(`_drupal_webhook_trigger` + context.propsValue.id);
     if (webhook) {
       const response = await httpClient.sendRequest({

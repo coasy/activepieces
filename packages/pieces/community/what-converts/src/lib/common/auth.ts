@@ -1,5 +1,4 @@
 import {
-  AppConnectionValueForAuthProperty,
   PieceAuth,
   Property,
   StaticPropsValue,
@@ -63,4 +62,4 @@ export const whatConvertsAuth = PieceAuth.CustomAuth({
   },
 });
 
-export type WhatConvertsAuth = AppConnectionValueForAuthProperty<typeof whatConvertsAuth>;
+export type WhatConvertsAuth = StaticPropsValue<typeof whatConvertsAuthProps>;

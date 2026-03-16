@@ -32,7 +32,7 @@ export const replyToConversation = createAction({
     timeout: timeoutProp,
   },
   async run({ auth, propsValue }) {
-    const dustAuth = auth.props;
+    const dustAuth = auth as DustAuthType;
     const request: HttpRequest = {
       method: HttpMethod.POST,
       url: `${DUST_BASE_URL[dustAuth.region || 'us']}/${
@@ -40,7 +40,7 @@ export const replyToConversation = createAction({
       }/assistant/conversations/${propsValue.conversationId}/messages`,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${auth.props.apiKey}`,
+        Authorization: `Bearer ${auth.apiKey}`,
       },
       body: JSON.stringify(
         {

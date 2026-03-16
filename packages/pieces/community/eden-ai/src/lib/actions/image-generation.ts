@@ -3,7 +3,6 @@ import { HttpMethod, propsValidation } from '@activepieces/pieces-common';
 import { edenAiApiCall } from '../common/client';
 import { createStaticDropdown } from '../common/providers';
 import { z } from 'zod';
-import { edenAiAuth } from '../..';
 
 const IMAGE_GENERATION_PROVIDERS = [
   { label: 'OpenAI', value: 'openai' },
@@ -67,13 +66,11 @@ function normalizeImageGenerationResponse(provider: string, response: any) {
 }
 
 export const imageGenerationAction = createAction({
-  auth: edenAiAuth,
   name: 'image_generation',
   displayName: 'Image Generation',
   description: 'Create images from text prompts using Eden AI. Supports multiple providers, models, and resolutions.',
   props: {
     provider: Property.Dropdown({
-      auth: edenAiAuth,
       displayName: 'Provider',
       description: 'The AI provider to use for image generation.',
       required: true,
@@ -86,7 +83,6 @@ export const imageGenerationAction = createAction({
       required: true,
     }),
     resolution: Property.Dropdown({
-      auth: edenAiAuth,
       displayName: 'Resolution',
       description: 'The image resolution (e.g., 512x512, 1024x1024).',
       required: true,
@@ -101,7 +97,6 @@ export const imageGenerationAction = createAction({
       defaultValue: 1,
     }),
     model: Property.Dropdown({
-      auth: edenAiAuth,
       displayName: 'Specific Model',
       description: 'Specific model to use for image generation. Leave empty for provider default.',
       required: false,
@@ -109,7 +104,6 @@ export const imageGenerationAction = createAction({
       options: createStaticDropdown(IMAGE_GENERATION_MODELS),
     }),
     fallback_providers: Property.MultiSelectDropdown({
-      auth: edenAiAuth,
       displayName: 'Fallback Providers',
       description: 'Alternative providers to try if the main provider fails (up to 5).',
       required: false,
@@ -163,7 +157,7 @@ export const imageGenerationAction = createAction({
 
     try {
       const response = await edenAiApiCall({
-        apiKey: auth.secret_text,
+        apiKey: auth as string,
         method: HttpMethod.POST,
         resourceUri: '/image/generation/',
         body,

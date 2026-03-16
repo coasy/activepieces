@@ -66,7 +66,7 @@ export const generateCreatorHashtags = createAction({
     };
 
     const response = await makeRequest(
-      auth.secret_text,
+      auth as string,
       HttpMethod.POST,
       '/creator/hashtags',
       body

@@ -27,7 +27,7 @@ export const bitly = createPiece({
       auth: bitlyAuth,
       baseUrl: () => 'https://api-ssl.bitly.com/v4',
       authMapping: async (auth) => {
-        const { accessToken } = auth.props;
+        const { accessToken } = auth as { accessToken: string };
         return {
           Authorization: `Bearer ${accessToken}`,
         };

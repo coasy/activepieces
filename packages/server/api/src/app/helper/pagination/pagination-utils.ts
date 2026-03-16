@@ -1,4 +1,4 @@
-import { isNil, SeekPage } from '@activepieces/shared'
+import { SeekPage } from '@activepieces/shared'
 import dayjs from 'dayjs'
 import { CursorResult } from './paginator'
 
@@ -87,14 +87,14 @@ const encode = (str: string): string =>
     Buffer.from(str, 'binary').toString('base64')
 
 function encodeNextCursor(cursor: string | null | undefined) {
-    if (isNil(cursor)) {
+    if (cursor === null) {
         return null
     }
     return encode('next_' + cursor)
 }
 
 function encodePreviousCursor(cursor: string | null | undefined) {
-    if (isNil(cursor)) {
+    if (cursor === null) {
         return null
     }
     return encode('prev_' + cursor)
@@ -108,11 +108,11 @@ export const paginationHelper = {
             data,
         }
     },
-    decodeCursor(encodedCursor: string | null | undefined): {
+    decodeCursor(encodedCursor: string | null): {
         nextCursor: string | undefined
         previousCursor: string | undefined
     } {
-        if (isNil(encodedCursor)) {
+        if (encodedCursor === null || encodedCursor === undefined) {
             return {
                 nextCursor: undefined,
                 previousCursor: undefined,

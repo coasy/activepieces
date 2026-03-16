@@ -4,7 +4,6 @@ import { useMutation } from '@tanstack/react-query';
 import { t } from 'i18next';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -26,6 +25,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { toast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 
 const formSchema = Type.Object({
@@ -66,7 +66,9 @@ const AddNpmDialog = ({ children, onAdd }: AddNpmDialogProps) => {
     onSuccess: (response) => {
       onAdd(response);
       setOpen(false);
-      toast.success(t('Package added successfully'), {
+      toast({
+        title: t('Success'),
+        description: t('Package added successfully'),
         duration: 3000,
       });
     },

@@ -6,7 +6,6 @@ export const slackSendMessage = async ({
   conversationId,
   username,
   profilePicture,
-  iconEmoji,
   blocks,
   threadTs,
   token,
@@ -34,7 +33,6 @@ export const slackSendMessage = async ({
       channel: conversationId,
       username,
       icon_url: profilePicture,
-      icon_emoji: iconEmoji,
       blocks: blocks as Block[],
       thread_ts: threadTs,
     };
@@ -56,9 +54,8 @@ type SlackSendMessageParams = {
   conversationId: string;
   username?: string;
   profilePicture?: string;
-  iconEmoji?: string;
   blocks?: unknown[] | Record<string, any>;
-  text?: string;
+  text: string;
   file?: ApFile;
   threadTs?: string;
   replyBroadcast?: boolean;

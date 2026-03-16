@@ -20,7 +20,7 @@ export const deleteServiceAccountAction = createAction({
       method: HttpMethod.DELETE,
       url: `https://api.zoo.dev/org/service-accounts/${propsValue.token}`,
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
     });
     return response.body;

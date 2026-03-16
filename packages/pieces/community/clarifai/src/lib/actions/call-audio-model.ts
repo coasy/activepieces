@@ -28,7 +28,7 @@ export const audioToTextModelPredictAction = createAction({
     const input = fileToInput(file);
 
     const outputs = await callClarifaiModel({
-      auth: auth.secret_text,
+      auth,
       modelUrl,
       input,
     });

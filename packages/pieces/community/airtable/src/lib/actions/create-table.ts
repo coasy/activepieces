@@ -43,7 +43,7 @@ export const airtableCreateTableAction = createAction({
     const { base: baseId, name, description, fields } = propsValue;
 
     return await airtableCommon.createTable({
-      personalToken: personalToken.secret_text,
+      personalToken,
       baseId: baseId as string,
       name: name as string,
       description: description as string | undefined,

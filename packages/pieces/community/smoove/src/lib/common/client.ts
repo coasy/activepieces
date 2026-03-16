@@ -8,6 +8,7 @@ export async function makeRequest(
     method: HttpMethod,
     path: string,
     body?: unknown,
+
 ) {
     try {
         const response = await httpClient.sendRequest({

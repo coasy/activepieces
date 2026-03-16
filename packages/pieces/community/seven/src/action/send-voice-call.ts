@@ -35,7 +35,7 @@ export const sendVoiceCallAction = createAction({
         to
       },
       method: HttpMethod.POST
-    }, 'voice', context.auth.secret_text);
+    }, 'voice', context.auth as string);
 
     return response.body;
 

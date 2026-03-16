@@ -1,20 +1,18 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { ChatDataClient } from '../common/client';
-import { chatDataAuth, SendMessageDto } from '../common/types';
+import { SendMessageDto } from '../common/types';
 
 export const sendMessage = createAction({
   name: 'send_message',
   displayName: 'Send Message to Chatbot',
   description:
     'Send messages to a chatbot and receive a response with support for streaming and OpenAI-compatible formats',
-  auth: chatDataAuth,
   props: {
     chatbotId: Property.Dropdown({
       displayName: 'Chatbot',
       description: 'Select the chatbot to send message to',
       required: true,
       refreshers: [],
-      auth: chatDataAuth,
       options: async ({ auth }) => {
         if (!auth) {
           return {
@@ -24,7 +22,7 @@ export const sendMessage = createAction({
           };
         }
         try {
-          const client = new ChatDataClient(auth.secret_text);
+          const client = new ChatDataClient(auth as string);
           const chatbots = await client.listChatbots();
           return {
             options: chatbots.map((chatbot) => ({
@@ -59,7 +57,6 @@ export const sendMessage = createAction({
       },
     }),
     conversationId: Property.Dropdown({
-      auth: chatDataAuth,
       displayName: 'Conversation',
       description:
         'Select an existing conversation or leave empty to start a new one',
@@ -74,7 +71,7 @@ export const sendMessage = createAction({
           };
         }
         try {
-          const client = new ChatDataClient(auth.secret_text);
+          const client = new ChatDataClient(auth as string);
           const conversations = await client.listConversations(
             chatbotId as string
           );
@@ -196,7 +193,7 @@ export const sendMessage = createAction({
     }),
   },
   async run(context) {
-    const client = new ChatDataClient(context.auth.secret_text);
+    const client = new ChatDataClient(context.auth as string);
 
     const messages = [
       {

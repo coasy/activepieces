@@ -1,7 +1,8 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
-import { getBaseUrl, instasentAuth } from '../../index';
+import { getBaseUrl } from '../../index';
 import { BOOLEAN_OPTIONS, IGNORED_ATTRIBUTES, LONG_TEXT_TYPES } from '../common/constants';
+import { InstasentAuthType } from '../common/types';
 
 const PROPERTY_ITERATIONS = [
     { check: (spec: any) => spec.requiredInWebhook },
@@ -15,22 +16,18 @@ export const addOrUpdateContact = createAction({
     name: 'add_or_update_contact',
     displayName: 'Add/Update contact',
     description: 'Add or update a single contact',
-    auth: instasentAuth,
+
     props: {
         contact: Property.DynamicProperties({
-            auth: instasentAuth,
             displayName: 'Contact Properties',
             description: 'Enter the contact properties, the User ID is mandatory',
             required: true,
             refreshers: ['authentication'],
             props: async ({ auth }) => {
-                if (!auth) {
-                    return {};
-                }
-                const authData = auth;
+                const authData = auth as InstasentAuthType;
                 const baseUrl = getBaseUrl({
-                    projectId: authData.props.projectId,
-                    datasourceId: authData.props.datasourceId
+                    projectId: authData.projectId,
+                    datasourceId: authData.datasourceId
                 });
 
                 try {
@@ -38,7 +35,7 @@ export const addOrUpdateContact = createAction({
                         method: HttpMethod.GET,
                         url: `${baseUrl}/stream/specs/attributes`,
                         headers: {
-                            'Authorization': `Bearer ${authData.props.apiKey}`
+                            'Authorization': `Bearer ${authData.apiKey}`
                         }
                     });
 
@@ -105,14 +102,14 @@ export const addOrUpdateContact = createAction({
     async run(context) {
         const contact = context.propsValue.contact;
         const instant = context.propsValue.instant;
-        const auth = context.auth;
-        const baseUrl = getBaseUrl({ projectId: auth.props.projectId, datasourceId: auth.props.datasourceId });
+        const auth = context.auth as InstasentAuthType;
+        const baseUrl = getBaseUrl({ projectId: auth.projectId, datasourceId: auth.datasourceId });
 
         const response = await httpClient.sendRequest({
             method: HttpMethod.POST,
             url: `${baseUrl}/stream/contacts${instant ? '?_sync' : ''}`,
             headers: {
-                'Authorization': `Bearer ${auth.props.apiKey}`,
+                'Authorization': `Bearer ${auth.apiKey}`,
                 'Content-Type': 'application/json'
             },
             body: [contact]

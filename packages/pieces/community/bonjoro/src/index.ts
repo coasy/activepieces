@@ -18,7 +18,7 @@ export const bonjoro = createPiece({
       baseUrl: () => 'https://www.bonjoro.com/api/v2', // replace with the actual base URL
       auth: bonjoroAuth,
       authMapping: async (auth) => ({
-        Authorization: `Bearer ${auth.props.apiKey}`,
+        Authorization: `Bearer ${(auth as { apiKey: string }).apiKey}`,
       }),
     }),
   ],

@@ -37,10 +37,10 @@ export const listFiles = createAction({
 
   },
   async run(context) {
-    const s3 = createS3(context.auth.props);
+    const s3 = createS3(context.auth);
 
     const params: ListObjectsV2CommandInput = {
-      Bucket: context.auth.props.bucket,
+      Bucket: context.auth.bucket,
       MaxKeys: Math.min(Math.max(context.propsValue.maxKeys || 1000, 1), 1000),
     };
 

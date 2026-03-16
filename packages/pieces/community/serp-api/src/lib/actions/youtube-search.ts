@@ -91,7 +91,7 @@ export const youtubeSearch = createAction({
       });
 
       const searchConfig: YouTubeSearchConfig = {
-        api_key: auth.secret_text,
+        api_key: auth,
         engine: SerpApiEngine.YOUTUBE,
         search_query: propsValue.query,
         hl: propsValue.hl,

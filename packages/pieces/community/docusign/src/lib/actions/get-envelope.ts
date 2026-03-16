@@ -20,7 +20,7 @@ export const getEnvelope = createAction({
     }),
   },
   async run({ auth, propsValue }) {
-    const apiClient = await createApiClient(auth);
+    const apiClient = await createApiClient(auth as DocusignAuthType);
     const envelopeApiClient = new EnvelopesApi(apiClient);
     return await envelopeApiClient.getEnvelope(
       propsValue.accountId,

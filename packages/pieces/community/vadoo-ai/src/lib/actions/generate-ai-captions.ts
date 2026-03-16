@@ -20,7 +20,6 @@ export const generateAiCaptions = createAction({
       required: true,
     }),
     theme: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Theme',
       description: 'To display captions with style',
       required: false,
@@ -39,7 +38,7 @@ export const generateAiCaptions = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_themes',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
           });
 
@@ -61,7 +60,6 @@ export const generateAiCaptions = createAction({
       },
     }),
     language: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Language',
       description: 'To generate captions in language you want',
       required: false,
@@ -80,7 +78,7 @@ export const generateAiCaptions = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_languages',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
           });
 
@@ -123,7 +121,7 @@ export const generateAiCaptions = createAction({
       method: HttpMethod.POST,
       url: 'https://viralapi.vadoo.tv/api/add_captions',
       headers: {
-        'X-API-KEY': context.auth.secret_text,
+        'X-API-KEY': context.auth,
         'Content-Type': 'application/json',
       },
       body: requestBody,
@@ -146,7 +144,7 @@ export const generateAiCaptions = createAction({
         method: HttpMethod.GET,
         url: 'https://viralapi.vadoo.tv/api/get_video_url',
         headers: {
-          'X-API-KEY': context.auth.secret_text,
+          'X-API-KEY': context.auth,
           'Content-Type': 'application/json',
         },
         queryParams: {

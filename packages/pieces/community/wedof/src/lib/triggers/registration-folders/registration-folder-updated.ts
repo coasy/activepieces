@@ -219,7 +219,7 @@ export const registrationFolderUpdated = createTrigger({
     if (id !== null && id !== undefined) {
       await wedofCommon.unsubscribeWebhook(
         id as string,
-        context.auth.secret_text
+        context.auth as string
       );
       await context.store.delete('_webhookId');
     }

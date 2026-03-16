@@ -4,7 +4,6 @@ import {
   pollingHelper,
 } from '@activepieces/pieces-common';
 import {
-  AppConnectionValueForAuthProperty,
   FilesService,
   PiecePropValueSchema,
   Property,
@@ -39,7 +38,7 @@ const props = {
 };
 
 const polling: Polling<
- AppConnectionValueForAuthProperty<typeof imapAuth>,
+  PiecePropValueSchema<typeof imapAuth>,
   StaticPropsValue<typeof props>
 > = {
   strategy: DedupeStrategy.TIMEBASED,

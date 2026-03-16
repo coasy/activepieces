@@ -3,7 +3,6 @@ import {
   createTrigger,
   Property,
   PiecePropValueSchema,
-  AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import {
   DedupeStrategy,
@@ -14,7 +13,7 @@ import { TotalCMSAuthType, cmsAuth } from '../auth';
 import { getContent } from '../api';
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof cmsAuth>,
+  PiecePropValueSchema<typeof cmsAuth>,
   { slug: string }
 > = {
   strategy: DedupeStrategy.LAST_ITEM,

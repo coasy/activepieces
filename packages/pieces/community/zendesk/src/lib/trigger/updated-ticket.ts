@@ -43,14 +43,16 @@ export const updatedTicket = createTrigger({
   auth: zendeskAuth,
   props: {
     organization_id: Property.Dropdown({
-      auth: zendeskAuth,
       displayName: 'Organization (Optional)',
       description: 'Filter tickets by organization. Leave empty to trigger for all organizations.',
       refreshers: [],
       required: false,
       options: async ({ auth }) => {
-        const authentication = auth;
-        if (!authentication
+        const authentication = auth as AuthProps;
+        if (
+          !authentication?.['email'] ||
+          !authentication?.['subdomain'] ||
+          !authentication?.['token']
         ) {
           return {
             placeholder: 'Fill your authentication first',
@@ -60,12 +62,12 @@ export const updatedTicket = createTrigger({
         }
         try {
           const response = await httpClient.sendRequest<{ organizations: ZendeskOrganization[] }>({
-            url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/organizations.json`,
+            url: `https://${authentication.subdomain}.zendesk.com/api/v2/organizations.json`,
             method: HttpMethod.GET,
             authentication: {
               type: AuthenticationType.BASIC,
-              username: authentication.props.email + '/token',
-              password: authentication.props.token,
+              username: authentication.email + '/token',
+              password: authentication.token,
             },
           });
           return {
@@ -152,21 +154,21 @@ export const updatedTicket = createTrigger({
     },
   },
   async onEnable(context) {
-    const authentication = context.auth;
+    const authentication = context.auth as AuthProps;
     
     try {
       const response = await httpClient.sendRequest<{
         webhook: { id: string };
       }>({
-        url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/webhooks`,
+        url: `https://${authentication.subdomain}.zendesk.com/api/v2/webhooks`,
         method: HttpMethod.POST,
         headers: {
           'Content-Type': 'application/json',
         },
         authentication: {
           type: AuthenticationType.BASIC,
-          username: authentication.props.email + '/token',
-          password: authentication.props.token,
+          username: authentication.email + '/token',
+          password: authentication.token,
         },
         body: {
           webhook: {
@@ -187,18 +189,18 @@ export const updatedTicket = createTrigger({
   },
 
   async onDisable(context) {
-    const authentication = context.auth;
+    const authentication = context.auth as AuthProps;
     const webhookId = await context.store.get<string>(WEBHOOK_TRIGGER_KEY);
 
     if (webhookId) {
       try {
         await httpClient.sendRequest({
-          url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/webhooks/${webhookId}`,
+          url: `https://${authentication.subdomain}.zendesk.com/api/v2/webhooks/${webhookId}`,
           method: HttpMethod.DELETE,
           authentication: {
             type: AuthenticationType.BASIC,
-            username: authentication.props.email + '/token',
-            password: authentication.props.token,
+            username: authentication.email + '/token',
+            password: authentication.token,
           },
         });
       } catch (error) {

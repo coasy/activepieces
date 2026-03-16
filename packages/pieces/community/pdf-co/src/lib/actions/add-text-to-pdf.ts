@@ -175,7 +175,7 @@ export const addTextToPdf = createAction({
 				method: HttpMethod.POST,
 				url: `${BASE_URL}/pdf/edit/add`,
 				headers: {
-					'x-api-key': auth.secret_text,
+					'x-api-key': auth,
 					'Content-Type': 'application/json',
 				},
 				body: requestBody,

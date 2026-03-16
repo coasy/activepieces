@@ -1,10 +1,8 @@
 import { Property } from "@activepieces/pieces-framework";
 import { makeRequest } from "./client";
 import { HttpMethod } from "@activepieces/pieces-common";
-import { smooveAuth } from "./auth";
 
 export const contactIdDropdown = Property.Dropdown({
-    auth: smooveAuth,
     displayName: 'Contact',
     description: 'Select the contact to unsubscribe',
     required: true,
@@ -19,7 +17,7 @@ export const contactIdDropdown = Property.Dropdown({
         }
 
         try {
-            const Contacts = await makeRequest(auth.secret_text, HttpMethod.GET, '/Contacts?fields=id,firstName,lastName,email,cellphone');
+            const Contacts = await makeRequest(auth as string, HttpMethod.GET, '/Contacts?fields=id,firstName,lastName,email,cellphone');
             return {
                 disabled: false,
                 options: Contacts.map((Contact: any) => {
@@ -53,7 +51,6 @@ export const contactIdDropdown = Property.Dropdown({
 });
 
 export const emailDropdown = Property.Dropdown({
-    auth: smooveAuth,
     displayName: 'Email Address',
     description: 'Select an existing contact email or type a new one',
     required: true,
@@ -68,7 +65,7 @@ export const emailDropdown = Property.Dropdown({
         }
 
         try {
-            const Contacts = await makeRequest(auth.secret_text, HttpMethod.GET, '/Contacts?fields=id,firstName,lastName,email');
+            const Contacts = await makeRequest(auth as string, HttpMethod.GET, '/Contacts?fields=id,firstName,lastName,email');
             const emailOptions = Contacts
                 .filter((Contact: any) => Contact.email) // Only contacts with emails
                 .map((Contact: any) => {
@@ -97,7 +94,6 @@ export const emailDropdown = Property.Dropdown({
 });
 
 export const listsDropdown = Property.MultiSelectDropdown({
-    auth: smooveAuth,
     displayName: 'Lists',
     description: 'Select lists to subscribe the contact to',
     required: false,
@@ -112,7 +108,7 @@ export const listsDropdown = Property.MultiSelectDropdown({
         }
 
         try {
-            const Lists = await makeRequest(auth.secret_text, HttpMethod.GET, '/Lists');
+            const Lists = await makeRequest(auth as string, HttpMethod.GET, '/Lists');
             return {
                 disabled: false,
                 options: Lists.map((List: any) => ({
@@ -132,7 +128,6 @@ export const listsDropdown = Property.MultiSelectDropdown({
 });
 
 export const LandingPageIdDropdown = Property.Dropdown({
-    auth: smooveAuth,
     displayName: 'LandingPage/Form ID',
     description: 'Select the andingPage/Form  ',
     required: true,
@@ -147,7 +142,7 @@ export const LandingPageIdDropdown = Property.Dropdown({
         }
 
         try {
-            const LandingPages = await makeRequest(auth.secret_text, HttpMethod.GET, '/LandingPages');
+            const LandingPages = await makeRequest(auth as string, HttpMethod.GET, '/LandingPages');
             return {
                 disabled: false,
                 options: LandingPages.map((LandingPage: any) => ({

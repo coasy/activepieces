@@ -1,5 +1,5 @@
-import { FlowAction, FlowRunStatus } from '@activepieces/shared'
-import { FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
+import { FlowAction } from '@activepieces/shared'
+import { ExecutionVerdict, FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
 import { flowExecutor } from '../../src/lib/handler/flow-executor'
 import { pieceExecutor } from '../../src/lib/handler/piece-executor'
 import { buildPieceAction, generateMockEngineConstants } from './test-helper'
@@ -19,9 +19,7 @@ describe('pieceExecutor', () => {
                 },
             }), executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.data_mapper.output).toEqual({ 'key': 3 })
     })
 
@@ -54,14 +52,7 @@ describe('pieceExecutor', () => {
             request: {},
         }
 
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.FAILED,
-            failedStep: {
-                name: 'send_http',
-                displayName: 'Your Action Name',
-                message: JSON.stringify(expectedError, null, 2),
-            },
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.FAILED)
         expect(result.steps.send_http.status).toBe('FAILED')
         expect(result.steps.send_http.errorMessage).toEqual(JSON.stringify(expectedError, null, 2))
     }, 10000)
@@ -75,9 +66,7 @@ describe('pieceExecutor', () => {
                 actionName: 'advanced_mapping',
             }), executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.data_mapper).toBeUndefined()
     })
     it('should skip piece action in flow', async () => {
@@ -107,9 +96,7 @@ describe('pieceExecutor', () => {
         const result = await flowExecutor.execute({
             action: flow, executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.data_mapper.output).toEqual({ 'key': 3 })
         expect(result.steps.send_http).toBeUndefined()
     })

@@ -3,7 +3,6 @@ import {
     GitRepoWithoutSensitiveData,
     PushGitRepoRequest,
 } from '@activepieces/ee-shared'
-import { ProjectResourceType, securityAccess } from '@activepieces/server-shared'
 import { Permission, PrincipalType, SeekPage } from '@activepieces/shared'
 import {
     FastifyPluginCallbackTypebox,
@@ -13,7 +12,6 @@ import { FastifyPluginAsync } from 'fastify'
 import { StatusCodes } from 'http-status-codes'
 import { entitiesMustBeOwnedByCurrentProject } from '../../../../authentication/authorization'
 import { platformMustHaveFeatureEnabled } from '../../../authentication/ee-authorization'
-import { GitRepoEntity } from './git-sync.entity'
 import { gitRepoService } from './git-sync.service'
 
 export const gitRepoModule: FastifyPluginAsync = async (app) => {
@@ -53,7 +51,7 @@ export const gitRepoController: FastifyPluginCallbackTypebox = (
     app.delete('/:id', DeleteRepoRequestSchema, async (request, reply) => {
         await gitRepoService(request.log).delete({
             id: request.params.id,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
         })
         await reply.status(StatusCodes.NO_CONTENT).send()
     })
@@ -64,10 +62,8 @@ export const gitRepoController: FastifyPluginCallbackTypebox = (
 
 const DeleteRepoRequestSchema = {
     config: {
-        security: securityAccess.project([PrincipalType.USER], Permission.WRITE_PROJECT_RELEASE, {
-            type: ProjectResourceType.TABLE,
-            tableName: GitRepoEntity,
-        }),
+        allowedPrincipals: [PrincipalType.USER] as const,
+        permission: Permission.WRITE_PROJECT_RELEASE,
     },
     schema: {
         description: 'Delete a git repository information for a project.',
@@ -83,10 +79,8 @@ const DeleteRepoRequestSchema = {
 
 const PushRepoRequestSchema = {
     config: {
-        security: securityAccess.project([PrincipalType.USER], Permission.WRITE_PROJECT_RELEASE, {
-            type: ProjectResourceType.TABLE,
-            tableName: GitRepoEntity,
-        }),
+        allowedPrincipals: [PrincipalType.USER] as const,
+        permission: Permission.WRITE_PROJECT_RELEASE,
     },
     schema: {
         description:
@@ -103,9 +97,8 @@ const PushRepoRequestSchema = {
 
 const ConfigureRepoRequestSchema = {
     config: {
-        security: securityAccess.project([PrincipalType.USER, PrincipalType.SERVICE], Permission.WRITE_PROJECT_RELEASE, {
-            type: ProjectResourceType.BODY,
-        }),
+        allowedPrincipals: [PrincipalType.USER, PrincipalType.SERVICE],
+        permission: Permission.WRITE_PROJECT_RELEASE,
     },
     schema: {
         tags: ['git-repos'],
@@ -119,9 +112,8 @@ const ConfigureRepoRequestSchema = {
 
 const ListRepoRequestSchema = {
     config: {
-        security: securityAccess.project([PrincipalType.USER, PrincipalType.SERVICE], Permission.READ_PROJECT_RELEASE, {
-            type: ProjectResourceType.QUERY,
-        }),
+        allowedPrincipals: [PrincipalType.USER, PrincipalType.SERVICE],
+        permission: Permission.READ_PROJECT_RELEASE,
     },
     schema: {
         querystring: Type.Object({

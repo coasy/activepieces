@@ -1,7 +1,6 @@
 import { PieceAuth } from '@activepieces/pieces-framework';
 import { shortIoApiCall } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { AppConnectionType } from '@activepieces/shared';
 
 export const shortIoAuth = PieceAuth.CustomAuth({
   description: 'Enter your Short.io API Key',
@@ -15,10 +14,7 @@ export const shortIoAuth = PieceAuth.CustomAuth({
     try {
       await shortIoApiCall({
         method: HttpMethod.GET,
-        auth: {
-          type: AppConnectionType.CUSTOM_AUTH,
-          props: auth,
-        },
+        auth,
         resourceUri: '/api/domains',
       });
       return { valid: true };

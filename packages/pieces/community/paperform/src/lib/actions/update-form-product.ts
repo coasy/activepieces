@@ -141,7 +141,7 @@ export const updateFormProduct = createAction({
         method: HttpMethod.PUT,
         url: `/forms/${formId}/products/${productSku}`,
         body: requestBody,
-        auth: auth.secret_text,
+        auth: auth as string,
       });
       
       return response.results.product;

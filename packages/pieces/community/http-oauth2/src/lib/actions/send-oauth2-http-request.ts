@@ -80,7 +80,6 @@ export const httpOauth2RequestAction = createAction({
     }),
     body: Property.DynamicProperties({
       displayName: 'Body',
-      auth: httpOauth2Auth,
       refreshers: ['body_type'],
       required: false,
       props: async ({ body_type }) => {
@@ -123,7 +122,6 @@ export const httpOauth2RequestAction = createAction({
     }),
     proxy_settings: Property.DynamicProperties({
       displayName: 'Proxy Settings',
-      auth: httpOauth2Auth,
       refreshers: ['use_proxy'],
       required: false,
       props: async ({ use_proxy }) => {

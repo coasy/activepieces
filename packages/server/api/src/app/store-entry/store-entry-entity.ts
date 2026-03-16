@@ -3,6 +3,7 @@ import { EntitySchema } from 'typeorm'
 import {
     ApIdSchema,
     BaseColumnSchemaPart,
+    JSONB_COLUMN_TYPE,
 } from '../database/database-common'
 
 type StoreEntrySchema = StoreEntry
@@ -17,7 +18,7 @@ export const StoreEntryEntity = new EntitySchema<StoreEntrySchema>({
         },
         projectId: ApIdSchema,
         value: {
-            type: 'jsonb',
+            type: JSONB_COLUMN_TYPE,
             nullable: true,
         },
     },    

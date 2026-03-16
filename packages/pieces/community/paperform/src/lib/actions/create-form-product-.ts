@@ -143,7 +143,7 @@ export const createFormProduct = createAction({
         method: HttpMethod.POST,
         url: `/forms/${formId}/products`,
         body: requestBody,
-        auth: auth.secret_text,
+        auth: auth as string,
       });
       
       return response.results.product;

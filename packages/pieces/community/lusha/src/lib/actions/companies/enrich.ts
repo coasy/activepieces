@@ -1,9 +1,7 @@
 import { createAction, Property } from "@activepieces/pieces-framework";
-import { lushaAuth } from "../../..";
 
 export const enrichCompanies = createAction({
   name: 'enrich_companies',
-  auth: lushaAuth,
   displayName: 'Enrich Companies',
   description: 'Enrich companies details using requestId and company IDs from search results',
   props: {
@@ -31,7 +29,7 @@ export const enrichCompanies = createAction({
       method: 'POST',
       headers: {
         'x-app': 'activepieces',
-        'x-api-key': context.auth.secret_text,
+        'x-api-key': context.auth as string,
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },

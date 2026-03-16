@@ -1,8 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { t } from 'i18next';
 import { MailCheck } from 'lucide-react';
-import { toast } from 'sonner';
 
+import { toast } from '@/components/ui/use-toast';
 import { authenticationApi } from '@/lib/authentication-api';
 import { CreateOtpRequestBody, OtpType } from '@activepieces/ee-shared';
 
@@ -10,14 +10,13 @@ const CheckEmailNote = ({ email, type }: CreateOtpRequestBody) => {
   const { mutate: resendVerification } = useMutation({
     mutationFn: authenticationApi.sendOtpEmail,
     onSuccess: () => {
-      toast.success(
-        type === OtpType.EMAIL_VERIFICATION
-          ? t('Verification email resent, if previous one expired.')
-          : t('Password reset link resent, if previous one expired.'),
-        {
-          duration: 3000,
-        },
-      );
+      toast({
+        title: t('Success'),
+        description:
+          type === OtpType.EMAIL_VERIFICATION
+            ? t('Verification email resent, if previous one expired.')
+            : t('Password reset link resent, if previous one expired.'),
+      });
     },
   });
   return (

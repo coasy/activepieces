@@ -4,8 +4,6 @@ import {
   httpClient,
 } from '@activepieces/pieces-common';
 import { API_ENDPOINTS, BASE_URL } from './constants';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-import { lemlistAuth } from './constants';
 
 async function fireHttpRequest({
   method,
@@ -37,18 +35,18 @@ async function fireHttpRequest({
 }
 
 export const lemlistApiService = {
-  async fetchTeams(auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>) {
+  async fetchTeams(auth: string) {
     return await fireHttpRequest({
       path: `${API_ENDPOINTS.TEAM}`,
       method: HttpMethod.GET,
-      auth: auth.secret_text,
+      auth,
     });
   },
-  async getLeadByEmail(auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>, email: string) {
+  async getLeadByEmail(auth: string, email: string) {
     return await fireHttpRequest({
       path: `${API_ENDPOINTS.LEADS}/${email}?version=v2`,
       method: HttpMethod.GET,
-      auth: auth.secret_text,
+      auth,
     });
   },
   async fetchCampaigns(auth: string) {
@@ -60,18 +58,18 @@ export const lemlistApiService = {
     return response.campaigns;
   },
   async removeLeadFromACampaign(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     { campaignId, leadEmail }: { campaignId: string; leadEmail: string }
   ) {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.CAMPAIGNS}/${campaignId}${API_ENDPOINTS.LEADS}/${leadEmail}?action=remove`,
       method: HttpMethod.DELETE,
-      auth: auth.secret_text,
+      auth,
     });
     return response;
   },
   async addLeadToACampaign(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     {
       campaignId,
       leadEmail,
@@ -104,14 +102,14 @@ export const lemlistApiService = {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.CAMPAIGNS}/${campaignId}${API_ENDPOINTS.LEADS}/${leadEmail}${query}`,
       method: HttpMethod.POST,
-      auth: auth.secret_text,
+      auth,
       body: leadData,
     });
 
     return response;
   },
   async updateLeadFromCampaign(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     {
       campaignId,
       leadEmail,
@@ -125,69 +123,69 @@ export const lemlistApiService = {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.CAMPAIGNS}/${campaignId}${API_ENDPOINTS.LEADS}/${leadEmail}`,
       method: HttpMethod.PATCH,
-      auth: auth.secret_text,
+      auth,
       body: leadData,
     });
 
     return response;
   },
   async unsubscribeLeadFromACampaign(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     { campaignId, leadEmail }: { campaignId: string; leadEmail: string }
   ) {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.CAMPAIGNS}/${campaignId}${API_ENDPOINTS.LEADS}/${leadEmail}`,
       method: HttpMethod.DELETE,
-      auth: auth.secret_text,
+      auth,
     });
     return response;
   },
   async markLeadAsInterestedInCampaign(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     { campaignId, leadEmail }: { campaignId: string; leadEmail: string }
   ) {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.CAMPAIGNS}/${campaignId}${API_ENDPOINTS.LEADS}/${leadEmail}/interested`,
       method: HttpMethod.POST,
-      auth: auth.secret_text,
+      auth,
     });
     return response;
   },
   async markLeadAsInterestedInAllCampaigns(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     { leadEmail }: { leadEmail: string }
   ) {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.LEADS}/interested/${leadEmail}`,
       method: HttpMethod.POST,
-      auth: auth.secret_text,
+      auth,
     });
     return response;
   },
   async markLeadAsNotInterestedInAllCampaigns(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     { leadEmail }: { leadEmail: string }
   ) {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.LEADS}/notinterested/${leadEmail}`,
       method: HttpMethod.POST,
-      auth: auth.secret_text,
+      auth,
     });
     return response;
   },
   async markLeadAsNotInterestedInCampaign(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     { campaignId, leadEmail }: { campaignId: string; leadEmail: string }
   ) {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.CAMPAIGNS}/${campaignId}${API_ENDPOINTS.LEADS}/${leadEmail}/notinterested`,
       method: HttpMethod.POST,
-      auth: auth.secret_text,
+      auth,
     });
     return response;
   },
   async pauseLeadInSpecificOrAllCampaigns(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     { campaignId, leadEmail }: { campaignId?: string; leadEmail: string }
   ) {
     const query = campaignId ? `?campaignId=${campaignId}` : '';
@@ -195,13 +193,13 @@ export const lemlistApiService = {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.LEADS}/pause/${leadEmail}${query}`,
       method: HttpMethod.POST,
-      auth: auth.secret_text,
+      auth,
     });
 
     return response;
   },
   async resumeLeadInSpecificOrAllCampaigns(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     { campaignId, leadEmail }: { campaignId?: string; leadEmail: string }
   ) {
     const query = campaignId ? `?campaignId=${campaignId}` : '';
@@ -209,36 +207,36 @@ export const lemlistApiService = {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.LEADS}/start/${leadEmail}${query}`,
       method: HttpMethod.POST,
-      auth: auth.secret_text,
+      auth,
     });
 
     return response;
   },
   async removeLeadFromUnsubscribeList(
-    auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>,
+    auth: string,
     { leadEmail }: { leadEmail: string }
   ) {
     const response = await fireHttpRequest({
       path: `${API_ENDPOINTS.UNSUBSCRIBES}/${leadEmail}`,
       method: HttpMethod.DELETE,
-      auth: auth.secret_text,
+      auth,
     });
 
     return response;
   },
-  async createWebhook(auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>, payload: any) {
+  async createWebhook(auth: string, payload: any) {
     return await fireHttpRequest({
       path: `${API_ENDPOINTS.HOOKS}`,
       method: HttpMethod.POST,
-      auth: auth.secret_text,
+      auth,
       body: payload,
     });
   },
-  async deleteWebhook(auth: AppConnectionValueForAuthProperty<typeof lemlistAuth>, webhookId: string) {
+  async deleteWebhook(auth: string, webhookId: string) {
     return await fireHttpRequest({
       path: `${API_ENDPOINTS.HOOKS}/${webhookId}`,
       method: HttpMethod.DELETE,
-      auth: auth.secret_text,
+      auth,
     });
   },
 };

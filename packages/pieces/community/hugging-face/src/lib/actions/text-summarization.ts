@@ -50,7 +50,6 @@ export const textSummarization = createAction({
       defaultValue: 'news',
     }),
     model: Property.Dropdown({
-      auth: huggingFaceAuth,
       displayName: 'Summarization Model',
       description: 'Select the best model for your content type',
       required: true,
@@ -352,7 +351,7 @@ export const textSummarization = createAction({
         maxLength = 150;
     }
 
-    const hf = new InferenceClient(context.auth.secret_text);
+    const hf = new InferenceClient(context.auth as string);
 
     const args: SummarizationArgs = {
       model: model,

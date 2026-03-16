@@ -26,7 +26,6 @@ export const createConversationAction = createAction({
 			},
 		}),
 		contactId: Property.Dropdown({
-			auth: intercomAuth,
 			displayName: 'Contact ID',
 			required: true,
 			refreshers: ['contactType'],

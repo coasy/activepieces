@@ -1,20 +1,21 @@
 import fs from 'fs/promises'
 import path from 'path'
 import { Action, Piece, PiecePropertyMap, Trigger } from '@activepieces/pieces-framework'
-import { ActivepiecesError, EngineGenericError, ErrorCode, extractPieceFromModule, getPackageAliasForPiece, getPieceNameFromAlias, isNil, trimVersionFromAlias } from '@activepieces/shared'
+import { ActivepiecesError, ErrorCode, ExecutePropsOptions, extractPieceFromModule, getPackageAliasForPiece, isNil } from '@activepieces/shared'
 import { utils } from '../utils'
+import { EngineGenericError } from './execution-errors'
 
 export const pieceLoader = {
     loadPieceOrThrow: async (
-        { pieceName, pieceVersion, devPieces }: LoadPieceParams,
+        { pieceName, pieceVersion, pieceSource }: LoadPieceParams,
     ): Promise<Piece> => {
         const { data: piece, error: pieceError } = await utils.tryCatchAndThrowOnEngineError(async () => {
             const packageName = pieceLoader.getPackageAlias({
                 pieceName,
                 pieceVersion,
-                devPieces,
+                pieceSource,
             })
-            const piecePath = await pieceLoader.getPiecePath({ packageName, devPieces })
+            const piecePath = await pieceLoader.getPiecePath({ packageName, pieceSource })
             const module = await import(piecePath)
 
             const piece = extractPieceFromModule<Piece>({
@@ -24,7 +25,7 @@ export const pieceLoader = {
             })
 
             if (isNil(piece)) {
-                throw new EngineGenericError('PieceNotFoundError', `Piece not found for piece: ${pieceName}, pieceVersion: ${pieceVersion}`)
+                throw new EngineGenericError('PieceNotFoundError', `Piece not found for package: ${packageName}, pieceVersion: ${pieceVersion}`)
             }
             return piece
         })
@@ -35,8 +36,8 @@ export const pieceLoader = {
     },
 
     getPieceAndTriggerOrThrow: async (params: GetPieceAndTriggerParams): Promise<{ piece: Piece, pieceTrigger: Trigger }> => {
-        const { pieceName, pieceVersion, triggerName, devPieces } = params
-        const piece = await pieceLoader.loadPieceOrThrow({ pieceName, pieceVersion, devPieces })
+        const { pieceName, pieceVersion, triggerName, pieceSource } = params
+        const piece = await pieceLoader.loadPieceOrThrow({ pieceName, pieceVersion, pieceSource })
         const trigger = piece.getTrigger(triggerName)
 
         if (trigger === undefined) {
@@ -50,9 +51,9 @@ export const pieceLoader = {
     },
 
     getPieceAndActionOrThrow: async (params: GetPieceAndActionParams): Promise<{ piece: Piece, pieceAction: Action }> => {
-        const { pieceName, pieceVersion, actionName, devPieces } = params
+        const { pieceName, pieceVersion, actionName, pieceSource } = params
 
-        const piece = await pieceLoader.loadPieceOrThrow({ pieceName, pieceVersion, devPieces })
+        const piece = await pieceLoader.loadPieceOrThrow({ pieceName, pieceVersion, pieceSource })
         const pieceAction = piece.getAction(actionName)
 
         if (isNil(pieceAction)) {
@@ -72,8 +73,10 @@ export const pieceLoader = {
         }
     },
 
-    getPropOrThrow: async ({ pieceName, pieceVersion, actionOrTriggerName, propertyName, devPieces }: GetPropParams) => {
-        const piece = await pieceLoader.loadPieceOrThrow({ pieceName, pieceVersion, devPieces })
+    getPropOrThrow: async ({ params, pieceSource }: GetPropParams) => {
+        const { piece: piecePackage, actionOrTriggerName, propertyName } = params
+
+        const piece = await pieceLoader.loadPieceOrThrow({ pieceName: piecePackage.pieceName, pieceVersion: piecePackage.pieceVersion, pieceSource })
 
         const actionOrTrigger = piece.getAction(actionOrTriggerName) ?? piece.getTrigger(actionOrTriggerName)
 
@@ -81,32 +84,32 @@ export const pieceLoader = {
             throw new ActivepiecesError({
                 code: ErrorCode.STEP_NOT_FOUND,
                 params: {
-                    pieceName,
-                    pieceVersion,
+                    pieceName: piecePackage.pieceName,
+                    pieceVersion: piecePackage.pieceVersion,
                     stepName: actionOrTriggerName,
                 },
             })
         }
 
-        const property = (actionOrTrigger.props as PiecePropertyMap)[propertyName]
+        const prop = (actionOrTrigger.props as PiecePropertyMap)[propertyName]
 
-        if (isNil(property)) {
+        if (isNil(prop)) {
             throw new ActivepiecesError({
                 code: ErrorCode.CONFIG_NOT_FOUND,
                 params: {
-                    pieceName,
-                    pieceVersion,
+                    pieceName: piecePackage.pieceName,
+                    pieceVersion: piecePackage.pieceVersion,
                     stepName: actionOrTriggerName,
                     configName: propertyName,
                 },
             })
         }
 
-        return { property, piece }
+        return prop
     },
 
-    getPackageAlias: ({ pieceName, pieceVersion, devPieces }: GetPackageAliasParams) => {
-        if (devPieces.includes(getPieceNameFromAlias(pieceName))) {
+    getPackageAlias: ({ pieceName, pieceVersion, pieceSource }: GetPackageAliasParams) => {
+        if (pieceSource.trim() === 'FILE') {
             return pieceName
         }
 
@@ -116,10 +119,17 @@ export const pieceLoader = {
         })
     },
 
-    getPiecePath: async ({ packageName, devPieces }: GetPiecePathParams): Promise<string> => {
-        const piecePath = devPieces.includes(getPieceNameFromAlias(packageName)) 
-            ? await loadPieceFromDistFolder(packageName) 
-            : await traverseAllParentFoldersToFindPiece(packageName)
+    getPiecePath: async ({ packageName, pieceSource }: GetPiecePathParams): Promise<string> => {
+        let piecePath = null
+        switch (pieceSource) {
+            case 'FILE':
+                piecePath = await loadPieceFromDistFolder(packageName)
+                break
+            case 'DB':
+            default:
+                piecePath = await traverseAllParentFoldersToFindPiece(packageName)
+                break
+        }
         if (isNil(piecePath)) {
             throw new EngineGenericError('PieceNotFoundError', `Piece not found for package: ${packageName}`)
         }
@@ -152,12 +162,10 @@ async function traverseAllParentFoldersToFindPiece(packageName: string): Promise
     let currentDir = __dirname
     const maxIterations = currentDir.split(path.sep).length
     for (let i = 0; i < maxIterations; i++) {
-        const piecePath = path.resolve(currentDir, 'pieces', packageName, 'node_modules', trimVersionFromAlias(packageName))
-
+        const piecePath = path.resolve(currentDir, 'pieces', packageName, 'node_modules', packageName)
         if (await utils.folderExists(piecePath)) {
             return piecePath
         }
-
         const parentDir = path.dirname(currentDir)
         if (parentDir === currentDir || currentDir === rootDir) {
             break
@@ -169,40 +177,37 @@ async function traverseAllParentFoldersToFindPiece(packageName: string): Promise
 
 type GetPiecePathParams = {
     packageName: string
-    devPieces: string[]
+    pieceSource: string
 }
 
 type LoadPieceParams = {
     pieceName: string
     pieceVersion: string
-    devPieces: string[]
+    pieceSource: string
 }
 
 type GetPieceAndTriggerParams = {
     pieceName: string
     pieceVersion: string
     triggerName: string
-    devPieces: string[]
+    pieceSource: string
 }
 
 type GetPieceAndActionParams = {
     pieceName: string
     pieceVersion: string
     actionName: string
-    devPieces: string[]
+    pieceSource: string
 }
 
 type GetPropParams = {
-    pieceName: string
-    pieceVersion: string
-    actionOrTriggerName: string
-    propertyName: string
-    devPieces: string[]
+    params: ExecutePropsOptions
+    pieceSource: string
 }
 
 type GetPackageAliasParams = {
     pieceName: string
-    devPieces: string[]
+    pieceSource: string
     pieceVersion: string
 }
 

@@ -65,7 +65,7 @@ export const discordSendApprovalMessage = createAction({
           ],
         },
         headers: {
-          authorization: `Bot ${ctx.auth.secret_text}`,
+          authorization: `Bot ${ctx.auth}`,
           'Content-Type': 'application/json',
         },
       };

@@ -1,6 +1,6 @@
 import { createAction } from '@activepieces/pieces-framework';
 import { ApitemplateAuth } from '../common/auth';
-import { ApitemplateRegion, makeRequest } from '../common/client';
+import { ApitemplateAuthConfig, makeRequest } from '../common/client';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { transactionRefDropdown } from '../common/props';
 
@@ -13,7 +13,7 @@ export const deleteObject = createAction({
     transactionRef: transactionRefDropdown,
   },
   async run({ auth, propsValue }) {
-    const authConfig = auth.props;
+    const authConfig = auth as ApitemplateAuthConfig;
     const { transactionRef } = propsValue;
 
     // Build query parameters according to API docs
@@ -29,7 +29,7 @@ export const deleteObject = createAction({
         endpoint,
         undefined,
         undefined,
-        authConfig.region as ApitemplateRegion
+        authConfig.region
       );
 
       return response;

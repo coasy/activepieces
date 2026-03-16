@@ -13,7 +13,7 @@ export const disableUser = createAction({
     userId: userIdDropdown
   },
   async run(context) {
-    const authData = await getAuthToken(context.auth);
+    const authData = await getAuthToken(context.auth as CyberArkAuth);
 
     try {
       const response = await httpClient.sendRequest({

@@ -26,7 +26,7 @@ export const abandonedCart = createTrigger({
   type: TriggerStrategy.WEBHOOK,
   async onEnable(context) {
     const webhook = await bigCommerceApiService.createWebhook({
-      auth: context.auth.props,
+      auth: context.auth,
       payload: {
         scope: TRIGGER_SCOPE,
         destination: context.webhookUrl,
@@ -41,8 +41,8 @@ export const abandonedCart = createTrigger({
 
     if (webhookId) {
       await bigCommerceApiService.deleteWebhook({
-        auth: context.auth.props,
-        webhookId,  
+        auth: context.auth,
+        webhookId,
       }).then(async () => {
         await context.store.delete(CACHE_KEY)
       })

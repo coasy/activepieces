@@ -31,7 +31,6 @@ export async function makeSenderRequest(
   });
 }
 export const groupIdDropdown = Property.Dropdown({
-  auth: senderAuth,
   displayName: 'Groups',
   description: 'Select one or more groups',
   required: false,
@@ -47,7 +46,7 @@ export const groupIdDropdown = Property.Dropdown({
 
     try {
       const response: any = await makeSenderRequest(
-        auth.secret_text,
+        auth as string,
         '/groups',
         HttpMethod.GET
       );
@@ -71,7 +70,6 @@ export const groupIdDropdown = Property.Dropdown({
 });
 
 export const groupIdsDropdown = Property.MultiSelectDropdown({
-  auth: senderAuth,
   displayName: 'Groups',
   description: 'Select one or more groups',
   required: false,
@@ -87,7 +85,7 @@ export const groupIdsDropdown = Property.MultiSelectDropdown({
 
     try {
       const response: any = await makeSenderRequest(
-        auth.secret_text,
+        auth as string,
         '/groups',
         HttpMethod.GET
       );
@@ -110,8 +108,7 @@ export const groupIdsDropdown = Property.MultiSelectDropdown({
   },
 });
 
-export const subscribersDropdown = Property.MultiSelectDropdown<string, true, typeof senderAuth>({
-  auth: senderAuth,
+export const subscribersDropdown = Property.MultiSelectDropdown<string>({
   displayName: 'Subscribers',
   description: 'Select one or more subscribers to delete',
   required: true,
@@ -127,7 +124,7 @@ export const subscribersDropdown = Property.MultiSelectDropdown<string, true, ty
 
     try {
       const response: any = await makeSenderRequest(
-        auth.secret_text,
+        auth as string,
         '/subscribers?limit=50',
         HttpMethod.GET
       );
@@ -150,8 +147,7 @@ export const subscribersDropdown = Property.MultiSelectDropdown<string, true, ty
   },
 });
 
-export const subscriberDropdownSingle = Property.Dropdown<string, true, typeof senderAuth>({
-  auth: senderAuth,
+export const subscriberDropdownSingle = Property.Dropdown<string>({
   displayName: 'Subscriber',
   description: 'Select a subscriber',
   required: true,
@@ -167,7 +163,7 @@ export const subscriberDropdownSingle = Property.Dropdown<string, true, typeof s
 
     try {
       const response: any = await makeSenderRequest(
-        auth.secret_text,
+        auth as string,
         '/subscribers?limit=50',
         HttpMethod.GET
       );
@@ -191,8 +187,7 @@ export const subscriberDropdownSingle = Property.Dropdown<string, true, typeof s
 });
 
 export const campaignDropdown = Property.Dropdown({
-  auth: senderAuth,
-    displayName: 'Campaign',
+  displayName: 'Campaign',
   description: 'Select a campaign',
   required: true,
   refreshers: [],
@@ -207,7 +202,7 @@ export const campaignDropdown = Property.Dropdown({
 
     try {
       const response: any = await makeSenderRequest(
-        auth.secret_text,
+        auth as string,
         `/campaigns?limit=50&status=DRAFT`,
         HttpMethod.GET
       );

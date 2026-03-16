@@ -89,7 +89,7 @@ export const updateProduct = createAction({
     }),
   },
   async run(context) {
-    const { hostUrl, appKey, appToken } = context.auth.props;
+    const { hostUrl, appKey, appToken } = context.auth;
     const { productId, ...restProps } = context.propsValue;
 
     const updatedProduct = {

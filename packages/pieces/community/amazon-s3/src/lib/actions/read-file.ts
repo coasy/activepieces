@@ -16,9 +16,9 @@ export const readFile = createAction({
     }),
   },
   async run(context) {
-    const { bucket } = context.auth.props;
+    const { bucket } = context.auth;
     const { key } = context.propsValue;
-    const s3 = createS3(context.auth.props);
+    const s3 = createS3(context.auth);
 
     const file = await s3.getObject({
       Bucket: bucket,

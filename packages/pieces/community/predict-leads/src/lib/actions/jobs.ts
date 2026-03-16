@@ -85,7 +85,7 @@ export const getCompanyJobOpeningsActions = createAction({
   },
   async run(context) {
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof PredictLeadsAuth>
     );
 
     const domain = context.propsValue.domain;
@@ -139,7 +139,7 @@ export const getAJobOpeningByIdAction = createAction({
   },
   async run(context) {
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof PredictLeadsAuth>
     );
 
     const jobOpeningId = context.propsValue.jobOpeningId;
@@ -169,7 +169,7 @@ export const findJobOpeningsAction = createAction({
   },
   async run(context) {
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof PredictLeadsAuth>
     );
     const page = context.propsValue.page ?? 1;
     const limit = context.propsValue.limit ?? 1000;

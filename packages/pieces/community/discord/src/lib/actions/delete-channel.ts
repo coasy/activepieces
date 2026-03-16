@@ -21,7 +21,7 @@ export const discordDeleteChannel = createAction({
       method: HttpMethod.DELETE,
       url: `https://discord.com/api/v9/channels/${configValue.propsValue.channel_id}`,
       headers: {
-        authorization: `Bot ${configValue.auth.secret_text}`,
+        authorization: `Bot ${configValue.auth}`,
         'Content-Type': 'application/json',
       },
     };

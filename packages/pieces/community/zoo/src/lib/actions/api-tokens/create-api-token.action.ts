@@ -20,7 +20,7 @@ export const createApiTokenAction = createAction({
       method: HttpMethod.POST,
       url: 'https://api.zoo.dev/user/api-tokens',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
       body: {
         name: propsValue.name,

@@ -47,7 +47,6 @@ export const createPromoCodeAction = createAction({
       },
     }),
     selectedFilterValues: Property.DynamicProperties({
-      auth: quickzuAuth,
       displayName: 'Select Option',
       refreshers: ['filter_type'],
       required: true,
@@ -58,7 +57,7 @@ export const createPromoCodeAction = createAction({
         const fields: DynamicPropsValue = {};
         const discountFilterType = filter_type as unknown as DiscountFilterType;
 
-        const client = makeClient(auth);
+        const client = makeClient(auth as unknown as string);
 
         switch (discountFilterType) {
           case DiscountFilterType.CATEGORIES: {

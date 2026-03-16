@@ -3,7 +3,6 @@ import { ensCommon } from '../common/common';
 
 export const listEnsDomains = createAction({
   name: 'listEnsDomains',
-  auth: ensCommon.auth,
   displayName: 'List ENS Domains',
   description: 'List the ENS domains for a given address.',
   props: {
@@ -50,7 +49,7 @@ export const listEnsDomains = createAction({
     `;
 
     const res = await ensCommon.apiCall(
-      `https://gateway.thegraph.com/api/${context.auth.secret_text}/subgraphs/id/5XqPmWe6gjyrJtFn9cLy237i4cWw2j9HcUJEXsP5qGtH`,
+      `https://gateway.thegraph.com/api/${context.auth}/subgraphs/id/5XqPmWe6gjyrJtFn9cLy237i4cWw2j9HcUJEXsP5qGtH`,
       'POST',
       { query }
     );

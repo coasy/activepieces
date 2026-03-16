@@ -1,7 +1,10 @@
 import { 
+    ActivepiecesError, 
+    ErrorCode, 
     FileCompression, 
     FileType, 
     FlowVersion, 
+    isNil,
     spreadIfDefined,
 } from '@activepieces/shared'
 import { fileService } from '../../file/file.service'
@@ -31,11 +34,19 @@ export const flowVersionBackupService = {
         return file.id
     },
     
-    async get(params: GetBackupVersionParams): Promise<FlowVersion | null> {
+    async get(params: GetBackupVersionParams): Promise<FlowVersion> {
         const { flowVersion, schemaVersion } = params
         const backupFileId = flowVersion.backupFiles?.[schemaVersion]
-        if (!backupFileId) {
-            return null
+        
+        if (isNil(backupFileId)) {
+            throw new ActivepiecesError({
+                code: ErrorCode.ENTITY_NOT_FOUND,
+                params: {
+                    entityId: `${flowVersion.id}:${schemaVersion}`,
+                    entityType: 'flow_version',
+                    message: `No backup found for schema version ${schemaVersion}`,
+                },
+            })
         }
         
         const fileData = await fileService(log).getDataOrThrow({

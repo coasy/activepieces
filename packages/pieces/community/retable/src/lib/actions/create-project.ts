@@ -31,7 +31,7 @@ export const retableCreateProjectAction = createAction({
         method: HttpMethod.POST,
         url: `${retableCommon.baseUrl}/workspace/${workspace_id}/project`,
         headers: {
-          ApiKey: context.auth.secret_text,
+          ApiKey: context.auth as string,
         },
         body: {
           name: name,

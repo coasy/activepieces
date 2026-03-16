@@ -12,7 +12,7 @@ export const deepgramAuth = PieceAuth.SecretText({
         method: HttpMethod.GET,
         url: BASE_URL + '/projects',
         headers: {
-          Authorization: `Token ${auth}`,
+          Authorization: `Token ${auth as string}`,
         },
       });
       return { valid: true };

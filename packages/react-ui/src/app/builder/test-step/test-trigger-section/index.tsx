@@ -5,13 +5,12 @@ import { useFormContext } from 'react-hook-form';
 
 import { triggerEventHooks } from '@/features/flows/lib/trigger-event-hooks';
 import { piecesHooks } from '@/features/pieces/lib/pieces-hooks';
-import { ChatDrawerSource } from '@/lib/types';
 import { FlowTrigger, isNil } from '@activepieces/shared';
 
-import { useBuilderStateContext } from '../../builder-hooks';
+import { ChatDrawerSource, useBuilderStateContext } from '../../builder-hooks';
 import { McpToolTestingDialog } from '../custom-test-step/mcp-tool-testing-dialog';
 import { TestSampleDataViewer } from '../test-sample-data-viewer';
-import { testStepHooks } from '../utils/test-step-hooks';
+import { testStepHooks } from '../test-step-hooks';
 
 import { FirstTimeTestingSection } from './first-time-testing-section';
 import { ManualWebhookTestButton } from './manual-webhook-test-button';

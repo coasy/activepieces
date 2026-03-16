@@ -270,7 +270,7 @@ export const scrapeUrl = createAction({
 
 
         const response = await browserlessCommon.apiCall({
-            auth: context.auth.props,
+            auth: context.auth,
             method: HttpMethod.POST,
             resourceUri: '/scrape',
             body: requestBody,

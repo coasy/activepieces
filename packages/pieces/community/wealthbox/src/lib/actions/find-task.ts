@@ -1,10 +1,8 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
-import { fetchContacts, fetchProjects, fetchOpportunities, fetchUsers, WEALTHBOX_API_BASE, handleApiError } from '../common';
-import { wealthboxAuth } from '../..';
+import { fetchTasks, fetchContacts, fetchProjects, fetchOpportunities, fetchUsers, WEALTHBOX_API_BASE, handleApiError } from '../common';
 
 export const findTask = createAction({
-  auth: wealthboxAuth,
   name: 'find_task',
   displayName: 'Find Task',
   description: 'Finds existing tasks using comprehensive search filters. Search by assignment, resource, completion status, and date ranges.',
@@ -29,7 +27,6 @@ export const findTask = createAction({
     }),
 
     resource_record: Property.DynamicProperties({
-      auth: wealthboxAuth,
       displayName: 'Linked Resource',
       description: 'Select the specific resource to filter tasks by',
       required: false,
@@ -53,15 +50,15 @@ export const findTask = createAction({
 
           switch (resourceTypeValue) {
             case 'Contact':
-              records = await fetchContacts(auth.secret_text, { active: true, order: 'recent' });
+              records = await fetchContacts(auth as unknown as string, { active: true, order: 'recent' });
               recordType = 'Contact';
               break;
             case 'Project':
-              records = await fetchProjects(auth.secret_text);
+              records = await fetchProjects(auth as unknown as string);
               recordType = 'Project';
               break;
             case 'Opportunity':
-              records = await fetchOpportunities(auth.secret_text);
+              records = await fetchOpportunities(auth as unknown as string);
               recordType = 'Opportunity';
               break;
             default:
@@ -102,7 +99,6 @@ export const findTask = createAction({
     }),
 
     assigned_to: Property.Dropdown({
-      auth: wealthboxAuth,
       displayName: 'Assigned To',
       description: 'Filter tasks by the user they are assigned to',
       required: false,
@@ -111,7 +107,7 @@ export const findTask = createAction({
         if (!auth) return { options: [] };
 
         try {
-          const users = await fetchUsers(auth.secret_text);
+          const users = await fetchUsers(auth as unknown as string);
           return {
             options: users.map((user: any) => ({
               label: `${user.name} (${user.email})`,
@@ -134,7 +130,6 @@ export const findTask = createAction({
     }),
 
     created_by: Property.Dropdown({
-      auth: wealthboxAuth,
       displayName: 'Created By',
       description: 'Filter tasks by the user who created them',
       required: false,
@@ -143,7 +138,7 @@ export const findTask = createAction({
         if (!auth) return { options: [] };
 
         try {
-          const users = await fetchUsers(auth.secret_text);
+          const users = await fetchUsers(auth as unknown as string);
           return {
             options: users.map((user: any) => ({
               label: `${user.name} (${user.email})`,
@@ -243,7 +238,7 @@ export const findTask = createAction({
           method: HttpMethod.GET,
           url: `${WEALTHBOX_API_BASE}/tasks/${propsValue.task_id}`,
           headers: {
-            'ACCESS_TOKEN': auth.secret_text,
+            'ACCESS_TOKEN': auth as unknown as string,
             'Accept': 'application/json'
           }
         });
@@ -309,7 +304,7 @@ export const findTask = createAction({
         method: HttpMethod.GET,
         url: url,
         headers: {
-          'ACCESS_TOKEN': auth.secret_text,
+          'ACCESS_TOKEN': auth as unknown as string,
           'Accept': 'application/json'
         }
       });

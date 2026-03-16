@@ -2,8 +2,8 @@ import {
   createTrigger,
   TriggerStrategy,
   Property,
+  PiecePropValueSchema,
   StaticPropsValue,
-  AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import {
   DedupeStrategy,
@@ -22,7 +22,7 @@ const props = {
   }),
 };
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof frontAuth>, StaticPropsValue<typeof props>> = {
+const polling: Polling<string, StaticPropsValue<typeof props>> = {
   strategy: DedupeStrategy.TIMEBASED,
   items: async ({ auth, propsValue, lastFetchEpochMS }) => {
     // Fetch outbound and out_reply message events
@@ -32,7 +32,7 @@ const polling: Polling<AppConnectionValueForAuthProperty<typeof frontAuth>, Stat
     }
     const limit = 15;
     const response = await makeRequest(
-      auth,
+      auth as string,
       HttpMethod.GET,
       `/events?${query}&limit=${limit}`
     );

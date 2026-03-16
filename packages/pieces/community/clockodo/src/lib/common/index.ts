@@ -44,7 +44,6 @@ export const clockodoCommon = {
     }),
   customer_id: (required = true, active: boolean | null = true) =>
     Property.Dropdown({
-      auth: clockodoAuth,
       description: 'The ID of the customer',
       displayName: 'Customer',
       required,
@@ -57,7 +56,7 @@ export const clockodoCommon = {
             options: [],
           };
         }
-        const client = makeClient(auth.props);
+        const client = makeClient(auth as ClockodoAuthValue);
         const customers = await client.listAllCustomers({
           active: active === null ? undefined : active,
         });
@@ -78,7 +77,6 @@ export const clockodoCommon = {
     active: boolean | null = true
   ) =>
     Property.Dropdown({
-      auth: clockodoAuth,
       description: 'The ID of the project',
       displayName: 'Project',
       required,
@@ -98,7 +96,7 @@ export const clockodoCommon = {
             options: [],
           };
         }
-        const client = makeClient(auth.props);
+        const client = makeClient(auth as ClockodoAuthValue);
         const projects = await client.listAllProjects({
           active: active === null ? undefined : active,
           customers_id: requiresCustomer
@@ -118,7 +116,6 @@ export const clockodoCommon = {
     }),
   user_id: (required = true, active: boolean | null = true) =>
     Property.Dropdown({
-      auth: clockodoAuth,
       description: 'The ID of the user',
       displayName: 'User',
       required,
@@ -131,7 +128,7 @@ export const clockodoCommon = {
             options: [],
           };
         }
-        const client = makeClient(auth.props);
+        const client = makeClient(auth as ClockodoAuthValue);
         const usersRes = await client.listUsers();
         return {
           disabled: false,
@@ -148,7 +145,6 @@ export const clockodoCommon = {
     }),
   team_id: (required = true) =>
     Property.Dropdown({
-      auth: clockodoAuth,
       description: 'The ID of the team',
       displayName: 'Team',
       required,
@@ -161,7 +157,7 @@ export const clockodoCommon = {
             options: [],
           };
         }
-        const client = makeClient(auth.props);
+        const client = makeClient(auth as ClockodoAuthValue);
         const teamsRes = await client.listTeams();
         return {
           disabled: false,
@@ -176,7 +172,6 @@ export const clockodoCommon = {
     }),
   service_id: (required = true, active: boolean | null = true) =>
     Property.Dropdown({
-      auth: clockodoAuth,
       description: 'The ID of the service',
       displayName: 'Service',
       required,
@@ -189,7 +184,7 @@ export const clockodoCommon = {
             options: [],
           };
         }
-        const client = makeClient(auth.props);
+        const client = makeClient(auth as ClockodoAuthValue);
         const servicesRes = await client.listServices();
         return {
           disabled: false,

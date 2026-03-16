@@ -16,7 +16,7 @@ export const cloneTask = createAction({
     }),
   },
   async run(context) {
-    const onfleetApi = new Onfleet(context.auth.secret_text);
+    const onfleetApi = new Onfleet(context.auth);
 
     return await onfleetApi.tasks.clone(context.propsValue.task);
   },

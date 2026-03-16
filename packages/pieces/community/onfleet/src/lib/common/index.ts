@@ -1,7 +1,6 @@
-import { AppConnectionValueForAuthProperty, DynamicPropsValue, Property } from '@activepieces/pieces-framework';
+import { DynamicPropsValue, Property } from '@activepieces/pieces-framework';
 
 import Onfleet from '@onfleet/node-onfleet';
-import { onfleetAuth } from '../..';
 
 export const common = {
   destination: Property.DynamicProperties({
@@ -9,7 +8,6 @@ export const common = {
     description: 'The task destination',
     required: true,
     refreshers: ['unparsedDestination'],
-    auth: onfleetAuth,
     props: async (propsValue) => {
       let fields: DynamicPropsValue = {};
       if (propsValue['unparsedDestination']) {
@@ -68,8 +66,6 @@ export const common = {
   }),
 
   teams: Property.MultiSelectDropdown({
-  auth: onfleetAuth,
-
     displayName: 'Teams',
     required: false,
     refreshers: [],
@@ -81,7 +77,7 @@ export const common = {
           placeholder: 'Enter API Key',
         };
       }
-      const teams = await common.getTeams(auth.secret_text);
+      const teams = await common.getTeams(auth as string);
       const options: any[] = teams.map((team: any) => {
         return {
           label: team.name,
@@ -96,8 +92,6 @@ export const common = {
     },
   }),
   teamsRequired: Property.MultiSelectDropdown({
-  auth: onfleetAuth,
-
     displayName: 'Teams',
     required: true,
     refreshers: [],
@@ -109,7 +103,7 @@ export const common = {
           placeholder: 'Enter API Key',
         };
       }
-      const teams = await common.getTeams(auth.secret_text);
+      const teams = await common.getTeams(auth as string);
       const options: any[] = teams.map((team: any) => {
         return {
           label: team.name,
@@ -124,8 +118,6 @@ export const common = {
     },
   }),
   team: Property.Dropdown({
-  auth: onfleetAuth,
-
     displayName: 'Team',
     required: true,
     refreshers: [],
@@ -137,7 +129,7 @@ export const common = {
           placeholder: 'Enter API Key',
         };
       }
-      const teams = await common.getTeams(auth.secret_text);
+      const teams = await common.getTeams(auth as string);
       const options: any[] = teams.map((team: any) => {
         return {
           label: team.name,
@@ -153,8 +145,6 @@ export const common = {
   }),
 
   hub: Property.Dropdown({
-  auth: onfleetAuth,
-
     displayName: 'Hub',
     required: true,
     refreshers: [],
@@ -165,7 +155,7 @@ export const common = {
           placeholder: 'Enter API Key or use an expression',
         };
       }
-      const hubs = await common.getHubs(auth.secret_text);
+      const hubs = await common.getHubs(auth as string);
       const options: any[] = hubs.map((hub: any) => {
         return {
           label: hub.name,
@@ -180,8 +170,6 @@ export const common = {
     },
   }),
   hubOptional: Property.Dropdown({
-  auth: onfleetAuth,
-
     displayName: 'Hub',
     required: false,
     refreshers: [],
@@ -192,7 +180,7 @@ export const common = {
           placeholder: 'Enter API Key or use an expression',
         };
       }
-      const hubs = await common.getHubs(auth.secret_text);
+      const hubs = await common.getHubs(auth as string);
       const options: any[] = hubs.map((hub: any) => {
         return {
           label: hub.name,
@@ -208,8 +196,6 @@ export const common = {
   }),
 
   admin: Property.Dropdown({
-  auth: onfleetAuth,
-
     displayName: 'Administrator',
     required: true,
     refreshers: [],
@@ -220,7 +206,7 @@ export const common = {
           placeholder: 'Enter API Key or use an expression',
         };
       }
-      const admins = await common.getAdmins(auth.secret_text);
+      const admins = await common.getAdmins(auth as string);
       const options: any[] = admins.map((admin: any) => {
         return {
           label: admin.name,
@@ -235,8 +221,6 @@ export const common = {
     },
   }),
   managers: Property.MultiSelectDropdown({
-  auth: onfleetAuth,
-
     displayName: 'Managers',
     required: true,
     refreshers: [],
@@ -247,7 +231,7 @@ export const common = {
           placeholder: 'Enter API Key or use an expression',
         };
       }
-      const admins = await common.getAdmins(auth.secret_text);
+      const admins = await common.getAdmins(auth as string);
       const options: any[] = admins.map((admin: any) => {
         return {
           label: admin.name,
@@ -262,8 +246,6 @@ export const common = {
     },
   }),
   managersOptional: Property.MultiSelectDropdown({
-  auth: onfleetAuth,
-
     displayName: 'Managers',
     required: false,
     refreshers: [],
@@ -274,7 +256,7 @@ export const common = {
           placeholder: 'Enter API Key or use an expression',
         };
       }
-      const admins = await common.getAdmins(auth.secret_text);
+      const admins = await common.getAdmins(auth as string);
       const options: any[] = admins.map((admin: any) => {
         return {
           label: admin.name,
@@ -290,8 +272,6 @@ export const common = {
   }),
 
   worker: Property.Dropdown({
-  auth: onfleetAuth,
-
     displayName: 'Worker',
     required: true,
     refreshers: [],
@@ -302,7 +282,7 @@ export const common = {
           placeholder: 'Enter API Key or use an expression',
         };
       }
-      const workers = await common.getWorkers(auth.secret_text);
+      const workers = await common.getWorkers(auth as string);
       const options: any[] = workers.map((worker: any) => {
         return {
           label: worker.name,
@@ -318,8 +298,6 @@ export const common = {
   }),
 
   workers: Property.MultiSelectDropdown({
-  auth: onfleetAuth,
-
     displayName: 'Workers',
     required: true,
     refreshers: [],
@@ -330,7 +308,7 @@ export const common = {
           placeholder: 'Enter API Key or use an expression',
         };
       }
-      const workers = await common.getWorkers(auth.secret_text);
+      const workers = await common.getWorkers(auth as string);
       const options: any[] = workers.map((worker: any) => {
         return {
           label: worker.name,
@@ -345,8 +323,6 @@ export const common = {
     },
   }),
   workersOptional: Property.MultiSelectDropdown({
-  auth: onfleetAuth,
-
     displayName: 'Workers',
     required: false,
     refreshers: [],
@@ -357,7 +333,7 @@ export const common = {
           placeholder: 'Enter API Key or use an expression',
         };
       }
-      const workers = await common.getWorkers(auth.secret_text);
+      const workers = await common.getWorkers(auth as string);
       const options: any[] = workers.map((worker: any) => {
         return {
           label: worker.name,
@@ -396,8 +372,8 @@ export const common = {
     return await onfleetApi.workers.get();
   },
 
-  async subscribeWebhook(auth: AppConnectionValueForAuthProperty<typeof onfleetAuth>, webhookUrl: string, triggerId: any) {
-    const onfleetApi = new Onfleet(auth.secret_text);
+  async subscribeWebhook(apiKey: string, webhookUrl: string, triggerId: any) {
+    const onfleetApi = new Onfleet(apiKey);
 
     return (
       await onfleetApi.webhooks.create({
@@ -407,8 +383,8 @@ export const common = {
     ).id;
   },
 
-  async unsubscribeWebhook(auth: AppConnectionValueForAuthProperty<typeof onfleetAuth>, webhookId: string) {
-    const onfleetApi = new Onfleet(auth.secret_text);
+  async unsubscribeWebhook(apiKey: string, webhookId: string) {
+    const onfleetApi = new Onfleet(apiKey);
 
     return await onfleetApi.webhooks.deleteOne(webhookId);
   },

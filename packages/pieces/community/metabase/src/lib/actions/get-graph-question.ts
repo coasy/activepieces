@@ -53,10 +53,7 @@ export const getGraphQuestion = createAction({
       : `metabase_question_${questionId}.png`;
 
     const iframeUrl =
-      auth.props.baseUrl +
-      '/embed/question/' +
-      token +
-      '#bordered=true&titled=true';
+      auth.baseUrl + '/embed/question/' + token + '#bordered=true&titled=true';
 
     const browser = await chromium.launch({
       headless: true,

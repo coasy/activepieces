@@ -21,7 +21,7 @@ import {
 } from '../../../../components/ui/dropdown-menu';
 import { cn } from '../../../../lib/utils';
 import { useBuilderStateContext } from '../../builder-hooks';
-import { flowCanvasConsts } from '../utils/consts';
+import { flowUtilConsts } from '../utils/consts';
 import { flowCanvasUtils } from '../utils/flow-canvas-utils';
 
 type BaseBranchLabel = {
@@ -60,7 +60,7 @@ const BranchLabel = (props: BaseBranchLabel) => {
   const isNotInsideRoute =
     props.stepLocationRelativeToParent !==
     StepLocationRelativeToParent.INSIDE_BRANCH;
-  const isOtherwiseBranch = isNotInsideRoute || isFallbackBranch;
+  const isBranchNonInteractive = isNotInsideRoute || isFallbackBranch;
   const isBranchSelected =
     selectedStep === props.sourceNodeName &&
     props.stepLocationRelativeToParent ===
@@ -83,30 +83,30 @@ const BranchLabel = (props: BaseBranchLabel) => {
       }}
     >
       <div
-        className="bg-builder-background"
+        className="bg-background"
         style={{
-          paddingTop: flowCanvasConsts.LABEL_VERTICAL_PADDING / 2 + 'px',
-          paddingBottom: flowCanvasConsts.LABEL_VERTICAL_PADDING / 2 + 'px',
+          paddingTop: flowUtilConsts.LABEL_VERTICAL_PADDING / 2 + 'px',
+          paddingBottom: flowUtilConsts.LABEL_VERTICAL_PADDING / 2 + 'px',
         }}
       >
         <div
           className={cn(
-            'flex items-center justify-center gap-0.5 select-none transition-all rounded-md  text-sm border  border-solid bg-primary-100/30 dark:bg-primary-100/15  border-primary/50   px-2 text-primary/80 dark:text-primary/90   hover:text-primary hover:border-primary',
+            'flex items-center justify-center gap-0.5 select-none transition-all rounded-full  text-sm border  border-solid bg-primary-100/30 dark:bg-primary-100/15  border-primary/50   px-2 text-primary/80 dark:text-primary/90   hover:text-primary hover:border-primary',
             {
               'border-primary text-primary': isBranchSelected,
-              'bg-border/60 text-foreground/70 dark:text-foreground/70  border-border hover:text-foreground/70 hover:bg-border/60 hover:border-border cursor-default':
-                isOtherwiseBranch,
+              'bg-accent dark:bg-accent text-foreground/70 dark:text-foreground/70  border-accent hover:text-foreground/70 hover:bg-accent hover:border-accent cursor-default':
+                isBranchNonInteractive,
             },
           )}
           style={{
-            height: flowCanvasConsts.LABEL_HEIGHT + 'px',
-            maxWidth: flowCanvasConsts.AP_NODE_SIZE.STEP.width - 10 + 'px',
+            height: flowUtilConsts.LABEL_HEIGHT + 'px',
+            maxWidth: flowUtilConsts.AP_NODE_SIZE.STEP.width - 10 + 'px',
           }}
           onClick={() => {
             if (
               props.stepLocationRelativeToParent ===
                 StepLocationRelativeToParent.INSIDE_BRANCH &&
-              !isOtherwiseBranch
+              !isBranchNonInteractive
             ) {
               selectStepByName(props.sourceNodeName);
               setSelectedBranchIndex(props.branchIndex);
@@ -122,7 +122,7 @@ const BranchLabel = (props: BaseBranchLabel) => {
             {props.label === 'Otherwise' ? t('Otherwise') : props.label}
           </div>
 
-          {!isOtherwiseBranch &&
+          {!isBranchNonInteractive &&
             !readonly &&
             step.type === FlowActionType.ROUTER && (
               <DropdownMenu

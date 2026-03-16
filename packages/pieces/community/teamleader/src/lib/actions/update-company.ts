@@ -10,7 +10,6 @@ export const updateCompany = createAction({
     auth: teamleaderAuth,
     props: {
         company_id: Property.Dropdown({
-          auth:teamleaderAuth,
             displayName: 'Company',
             description: 'Select the company to update',
             required: true,
@@ -24,7 +23,7 @@ export const updateCompany = createAction({
 
                 try {
                     const response = await teamleaderCommon.apiCall({
-                        auth,
+                        auth: auth as any,
                         method: HttpMethod.POST,
                         resourceUri: '/companies.list',
                         body: {}
@@ -57,7 +56,6 @@ export const updateCompany = createAction({
             required: false,
         }),
         business_type_id: Property.Dropdown({
-          auth:teamleaderAuth,
             displayName: 'Business Type',
             description: 'Legal structure of the company',
             required: false,
@@ -77,7 +75,7 @@ export const updateCompany = createAction({
 
                 try {
                     const response = await teamleaderCommon.apiCall({
-                        auth,
+                        auth: auth as any,
                         method: HttpMethod.POST,
                         resourceUri: '/businessTypes.list',
                         body: {

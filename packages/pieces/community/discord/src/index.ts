@@ -63,7 +63,7 @@ export const discord = createPiece({
       },
       authMapping: async (auth) => {
         return {
-          Authorization: `Bot ${auth.secret_text}`,
+          Authorization: `Bot ${auth}`,
         };
       },
     }),

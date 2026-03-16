@@ -1,10 +1,8 @@
 import { Property } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { CognosClient } from './cognos-client';
-import { ibmCognoseAuth } from '../..';
 
 export const dataSourceDropdown = Property.Dropdown({
-  auth: ibmCognoseAuth,
   displayName: 'Data Source',
   description: 'Select a data source',
   required: true,
@@ -19,7 +17,7 @@ export const dataSourceDropdown = Property.Dropdown({
     }
 
     try {
-      const client = new CognosClient(auth.props);
+      const client = new CognosClient(auth as any);
       const response = await client.makeAuthenticatedRequest('/dataSources', HttpMethod.GET);
 
       if (response.status === 200) {

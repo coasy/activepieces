@@ -10,7 +10,7 @@ export const getOrganization = createAction({
   description: 'Get your organization details',
   props: {},
   async run(context) {
-    const onfleetApi = new Onfleet(context.auth.secret_text);
+    const onfleetApi = new Onfleet(context.auth);
 
     return await onfleetApi.organization.get();
   },

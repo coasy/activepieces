@@ -1,6 +1,4 @@
 import { HttpMethod, httpClient, HttpRequest, AuthenticationType } from "@activepieces/pieces-common";
-import { AppConnectionValueForAuthProperty } from "@activepieces/pieces-framework";
-import { codyAuth } from "../..";
 
 export const CODY_BASE_URL = "https://getcody.ai/api/v1";
 
@@ -67,20 +65,20 @@ export interface CodyCreateConversationResponse {
 }
 
 export const codyClient = {
-    async listFolders({secret_text}: AppConnectionValueForAuthProperty<typeof codyAuth>): Promise<CodyFolder[]> {
+    async listFolders(apiKey: string): Promise<CodyFolder[]> {
         const response = await httpClient.sendRequest<CodyListFoldersResponse>({
             method: HttpMethod.GET,
             url: `${CODY_BASE_URL}/folders`,
             authentication: {
                 type: AuthenticationType.BEARER_TOKEN,
-                token: secret_text,
+                token: apiKey,
             },
         });
         return response.body.data;
     },
 
     async createDocument(
-        {secret_text}: AppConnectionValueForAuthProperty<typeof codyAuth>, 
+        apiKey: string, 
         name: string, 
         folderId: string, 
         content: string
@@ -90,7 +88,7 @@ export const codyClient = {
             url: `${CODY_BASE_URL}/documents`,
             authentication: {
                 type: AuthenticationType.BEARER_TOKEN,
-                token: secret_text,
+                token: apiKey,
             },
             body: {
                 name,
@@ -103,13 +101,13 @@ export const codyClient = {
     },
 
     // New function to get the signed URL
-    async getSignedUrl({secret_text}: AppConnectionValueForAuthProperty<typeof codyAuth>, fileName: string, contentType: string): Promise<CodySignedUrlResponse['data']> {
+    async getSignedUrl(apiKey: string, fileName: string, contentType: string): Promise<CodySignedUrlResponse['data']> {
         const response = await httpClient.sendRequest<CodySignedUrlResponse>({
             method: HttpMethod.POST,
             url: `${CODY_BASE_URL}/uploads/signed-url`,
             authentication: {
                 type: AuthenticationType.BEARER_TOKEN,
-                token: secret_text,
+                token: apiKey,
             },
             body: {
                 file_name: fileName,
@@ -132,14 +130,14 @@ export const codyClient = {
     },
 
     // New function to finalize the document creation
-    async createDocumentFromFile({secret_text}: AppConnectionValueForAuthProperty<typeof codyAuth>, folderId: string, key: string): Promise<void> {
+    async createDocumentFromFile(apiKey: string, folderId: string, key: string): Promise<void> {
         await httpClient.sendRequest({
             method: HttpMethod.POST,
             // This endpoint was in your first documentation dump.
             url: `${CODY_BASE_URL}/documents/file`, 
             authentication: {
                 type: AuthenticationType.BEARER_TOKEN,
-                token: secret_text,
+                token: apiKey,
             },
             body: {
                 folder_id: folderId,
@@ -149,7 +147,7 @@ export const codyClient = {
     },
     
     async listConversations(
-        {secret_text}: AppConnectionValueForAuthProperty<typeof codyAuth>, 
+        apiKey: string, 
         params?: { botId?: string; keyword?: string }
     ): Promise<CodyConversation[]> {
         const queryParams: Record<string, string> = {};
@@ -166,20 +164,20 @@ export const codyClient = {
             queryParams: queryParams,
             authentication: {
                 type: AuthenticationType.BEARER_TOKEN,
-                token: secret_text,
+                token: apiKey,
             },
         });
         return response.body.data;
     },
 
     // New function to send a message
-    async sendMessage({secret_text}: AppConnectionValueForAuthProperty<typeof codyAuth>, conversationId: string, content: string): Promise<CodyMessageResponse> {
+    async sendMessage(apiKey: string, conversationId: string, content: string): Promise<CodyMessageResponse> {
         const response = await httpClient.sendRequest<CodyMessageResponse>({
             method: HttpMethod.POST,
             url: `${CODY_BASE_URL}/messages`,
             authentication: {
                 type: AuthenticationType.BEARER_TOKEN,
-                token: secret_text,
+                token: apiKey,
             },
             body: {
                 conversation_id: conversationId,
@@ -189,7 +187,7 @@ export const codyClient = {
         return response.body;
     },
 
-    async listBots({secret_text}: AppConnectionValueForAuthProperty<typeof codyAuth>, keyword?: string): Promise<CodyBot[]> { // Add optional keyword parameter
+    async listBots(apiKey: string, keyword?: string): Promise<CodyBot[]> { // Add optional keyword parameter
         const queryParams: Record<string, string> = {};
         if (keyword) {
             queryParams['keyword'] = keyword;
@@ -201,7 +199,7 @@ export const codyClient = {
             queryParams: queryParams, // Add queryParams to the request
             authentication: {
                 type: AuthenticationType.BEARER_TOKEN,
-                token: secret_text,
+                token: apiKey,
             },
         });
         return response.body.data;
@@ -209,7 +207,7 @@ export const codyClient = {
 
     // New function to create a conversation
     async createConversation(
-        {secret_text}: AppConnectionValueForAuthProperty<typeof codyAuth>,
+        apiKey: string,
         botId: string,
         name: string,
         documentIds?: string[]
@@ -219,7 +217,7 @@ export const codyClient = {
             url: `${CODY_BASE_URL}/conversations`,
             authentication: {
                 type: AuthenticationType.BEARER_TOKEN,
-                token: secret_text,
+                token: apiKey,
             },
             body: {
                 bot_id: botId,

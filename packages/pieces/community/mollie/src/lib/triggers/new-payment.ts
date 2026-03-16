@@ -2,7 +2,6 @@ import {
   createTrigger,
   TriggerStrategy,
   PiecePropValueSchema,
-  AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import {
@@ -53,12 +52,12 @@ interface MolliePaymentResponse {
 }
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof mollieAuth>,
+  PiecePropValueSchema<typeof mollieAuth>,
   Record<string, unknown>
 > = {
   strategy: DedupeStrategy.TIMEBASED,
   items: async ({ auth, lastFetchEpochMS }) => {
-    const apiKey = auth;
+    const apiKey = auth as string;
     const isTest = lastFetchEpochMS === 0;
 
     let from: string | undefined;

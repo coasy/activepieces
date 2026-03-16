@@ -18,7 +18,6 @@ export const clarifaiGenerateIGM = createAction({
       description: `The model which will generate the response. If the model is not listed, get the model id from the clarifai website. Example : 'GPT-4' you can get the model id from here [https://clarifai.com/openai/chat-completion/models/GPT-4](https://clarifai.com/openai/chat-completion/models/GPT-4)`,
       refreshers: ['auth'],
       required: true,
-      auth: clarifaiAuth,
       options: async ({ auth }) => {
         if (!auth) {
           return {
@@ -31,7 +30,7 @@ export const clarifaiGenerateIGM = createAction({
           method: HttpMethod.GET,
           url: 'https://api.clarifai.com/v2/models?sort_by_star_count=true&model_type_id=text-to-image&filter_by_user_id=true&additional_fields=stars&per_page=24&page=1',
           headers: {
-            Authorization: ('Key ' + auth.secret_text) as string,
+            Authorization: ('Key ' + auth) as string,
           },
         };
         try {
@@ -74,7 +73,7 @@ export const clarifaiGenerateIGM = createAction({
       method: HttpMethod.GET,
       url: `https://api.clarifai.com/v2/models?name=${mId}&model_type_id=text-to-image`,
       headers: {
-        Authorization: ('Key ' + context.auth.secret_text) as string,
+        Authorization: ('Key ' + context.auth) as string,
       },
     };
     let model;
@@ -99,7 +98,7 @@ export const clarifaiGenerateIGM = createAction({
       method: HttpMethod.POST,
       url: `https://api.clarifai.com/v2/users/${model.model_version.user_id}/apps/${model.model_version.app_id}/models/${model.id}/versions/${model.model_version.id}/outputs`,
       headers: {
-        Authorization: ('Key ' + context.auth.secret_text ) as string,
+        Authorization: ('Key ' + context.auth) as string,
       },
       body: {
         inputs: [

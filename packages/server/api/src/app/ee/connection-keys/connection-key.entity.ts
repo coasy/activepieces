@@ -4,6 +4,7 @@ import { EntitySchema } from 'typeorm'
 import {
     ApIdSchema,
     BaseColumnSchemaPart,
+    JSONB_COLUMN_TYPE,
 } from '../../database/database-common'
 
 export type ConnectionKeySchema = {
@@ -16,7 +17,7 @@ export const ConnectionKeyEntity = new EntitySchema<ConnectionKeySchema>({
         ...BaseColumnSchemaPart,
         projectId: ApIdSchema,
         settings: {
-            type: 'jsonb',
+            type: JSONB_COLUMN_TYPE,
         },
     },
     indices: [

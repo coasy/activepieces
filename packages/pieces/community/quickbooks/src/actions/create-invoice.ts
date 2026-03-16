@@ -15,8 +15,6 @@ export const createInvoiceAction = createAction({
 	description: 'Creates an invoice in QuickBooks.',
 	props: {
 		customerRef: Property.Dropdown({
-			auth: quickbooksAuth,
-
 			displayName: 'Customer',
 			required: true,
 			refreshers: [],
@@ -157,7 +155,7 @@ export const createInvoiceAction = createAction({
 		const { access_token } = context.auth;
 		const companyId = context.auth.props?.['companyId'];
 
-		const apiUrl = quickbooksCommon.getApiUrl(companyId as string);
+		const apiUrl = quickbooksCommon.getApiUrl(companyId);
 		const props = context.propsValue;
 
 		if (props['emailStatus'] === 'NeedToSend' && !props['billEmail']) {

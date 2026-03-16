@@ -1,6 +1,6 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { ApitemplateAuth } from '../common/auth';
-import { ApitemplateRegion, makeRequest } from '../common/client';
+import { ApitemplateAuthConfig, makeRequest } from '../common/client';
 import { HttpMethod } from '@activepieces/pieces-common';
 
 export const listObjects = createAction({
@@ -50,7 +50,7 @@ export const listObjects = createAction({
     }),
   },
   async run({ auth, propsValue }) {
-    const authConfig = auth.props;
+    const authConfig = auth as ApitemplateAuthConfig;
     const {
       limit,
       offset,
@@ -103,7 +103,7 @@ export const listObjects = createAction({
         endpoint,
         undefined,
         undefined,
-        authConfig.region as ApitemplateRegion
+        authConfig.region
       );
 
       return response;

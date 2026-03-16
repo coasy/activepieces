@@ -1,4 +1,3 @@
-import { PieceAuth } from '@activepieces/pieces-framework';
 import { z } from 'zod';
 
 export const CreateChatbotDto = z.object({
@@ -51,7 +50,7 @@ export const RetrainOptions = z.object({
   }).optional(),
   products: z.array(z.object({
     id: z.string(),
-    information: z.record(z.string(), z.unknown()),
+    information: z.record(z.any()),
   })).optional(),
   qAndAs: z.array(z.object({
     question: z.string(),
@@ -142,8 +141,3 @@ export const UpdateChatbotSettingsDto = z.object({
 });
 
 export type UpdateChatbotSettingsDto = z.infer<typeof UpdateChatbotSettingsDto>;
-export const chatDataAuth =   PieceAuth.SecretText({
-  displayName: 'API Key',
-  description: 'Enter your Chat Data API key',
-  required: true,
-})

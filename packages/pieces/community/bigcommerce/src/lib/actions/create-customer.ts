@@ -41,7 +41,7 @@ export const createCustomer = createAction({
   },
   async run(context) {
     return await bigCommerceApiService.createCustomer({
-      auth: context.auth.props,
+      auth: context.auth,
       payload: [
         {
           email: context.propsValue.email,

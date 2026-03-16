@@ -1,5 +1,4 @@
 import {
-  AppConnectionValueForAuthProperty,
   createTrigger,
   TriggerStrategy,
 } from '@activepieces/pieces-framework';
@@ -13,10 +12,10 @@ import {
   pollingHelper,
 } from '@activepieces/pieces-common';
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof togglTrackAuth>, Record<string, any>> = {
+const polling: Polling<string, any> = {
   strategy: DedupeStrategy.TIMEBASED,
   items: async ({ auth, propsValue }) => {
-    const authHeader = `Basic ${Buffer.from(`${auth.secret_text}:api_token`).toString('base64')}`;
+    const authHeader = `Basic ${Buffer.from(`${auth}:api_token`).toString('base64')}`;
     
     const response = await httpClient.sendRequest({
       method: HttpMethod.GET,
@@ -31,8 +30,8 @@ const polling: Polling<AppConnectionValueForAuthProperty<typeof togglTrackAuth>,
     
     const runningEntries = timeEntries.filter((entry: any) => {
       const isRunning = entry.duration < 0;
-      const isInWorkspace = !propsValue['workspace_id'] || 
-                           entry.workspace_id === propsValue['workspace_id'];
+      const isInWorkspace = !propsValue.workspace_id || 
+                           entry.workspace_id === propsValue.workspace_id;
       return isRunning && isInWorkspace;
     });
 

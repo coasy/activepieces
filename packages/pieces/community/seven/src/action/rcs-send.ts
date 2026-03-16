@@ -87,7 +87,7 @@ export const sendRcsAction = createAction({
         foreign_id
       },
       method: HttpMethod.POST
-    }, 'rcs/messages', context.auth.secret_text);
+    }, 'rcs/messages', context.auth as string);
 
     return response.body;
   }

@@ -3,7 +3,6 @@ import { HttpMethod, propsValidation } from '@activepieces/pieces-common';
 import { edenAiApiCall } from '../common/client';
 import { createStaticDropdown } from '../common/providers';
 import { z } from 'zod';
-import { edenAiAuth } from '../..';
 
 const CHAT_PROVIDERS = [
   { label: 'OpenAI GPT-4o', value: 'openai' },
@@ -47,14 +46,12 @@ function normalizeChatResponse(provider: string, response: any) {
 }
 
 export const generateTextAction = createAction({
-  auth: edenAiAuth,
   name: 'generate_text',
   displayName: 'Generate Text',
   description:
     'Generate text completions using various AI providers through Eden AI chat endpoint.',
   props: {
     provider: Property.Dropdown({
-      auth: edenAiAuth,   
       displayName: 'Provider',
       description: 'The AI provider to use for text generation.',
       required: true,
@@ -92,7 +89,6 @@ export const generateTextAction = createAction({
       defaultValue: 1000
     }),
     reasoning_effort: Property.Dropdown({
-      auth: edenAiAuth,
       displayName: 'Reasoning Effort',
       description: 'Level of reasoning depth for the response.',
       required: false,
@@ -100,7 +96,6 @@ export const generateTextAction = createAction({
       options: createStaticDropdown(REASONING_EFFORT_OPTIONS)
     }),
     fallback_providers: Property.MultiSelectDropdown({
-      auth: edenAiAuth,
       displayName: 'Fallback Providers',
       description: 'Alternative providers to try if the main provider fails.',
       required: false,
@@ -194,7 +189,7 @@ export const generateTextAction = createAction({
 
     try {
       const response = await edenAiApiCall({
-        apiKey: auth.secret_text,
+        apiKey: auth as string,
         method: HttpMethod.POST,
         resourceUri: '/llm/chat',
         body

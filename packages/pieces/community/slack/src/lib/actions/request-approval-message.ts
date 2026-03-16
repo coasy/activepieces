@@ -13,7 +13,6 @@ import {
   text,
   username,
 } from '../common/props';
-import { ChatPostMessageResponse, WebClient } from '@slack/web-api';
 
 export const requestSendApprovalMessageAction = createAction({
   auth: slackAuth,
@@ -30,34 +29,30 @@ export const requestSendApprovalMessageAction = createAction({
   },
   async run(context) {
     if (context.executionType === ExecutionType.BEGIN) {
+      context.run.pause({
+        pauseMetadata: {
+          type: PauseType.WEBHOOK,
+          response: {},
+        },
+      });
       const token = context.auth.access_token;
       const { channel, username, profilePicture } = context.propsValue;
 
       assertNotNullOrUndefined(token, 'token');
       assertNotNullOrUndefined(text, 'text');
       assertNotNullOrUndefined(channel, 'channel');
-
-      const postMessage = await slackSendMessage({
-        token,
-        text: `${context.propsValue.text}`,
-        username,
-        profilePicture,
-        conversationId: channel,
-      });
-      const messageTs = (postMessage as ChatPostMessageResponse).ts as string
-
       const approvalLink = context.generateResumeUrl({
-        queryParams: { action: 'approve', channel, messageTs },
+        queryParams: { action: 'approve' },
       });
       const disapprovalLink = context.generateResumeUrl({
-        queryParams: { action: 'disapprove', channel, messageTs },
+        queryParams: { action: 'disapprove' },
       });
 
-      const client = new WebClient(token);
-      await client.chat.update({
-        channel: channel,
-        ts: messageTs,
-        text: context.propsValue.text,
+      await slackSendMessage({
+        token,
+        text: `${context.propsValue.text}\n\nApprove: ${approvalLink}\n\nDisapprove: ${disapprovalLink}`,
+        username,
+        profilePicture,
         blocks: [
           {
             type: 'section',
@@ -91,23 +86,15 @@ export const requestSendApprovalMessageAction = createAction({
             ],
           },
         ],
-      });
-
-      context.run.pause({
-        pauseMetadata: {
-          type: PauseType.WEBHOOK,
-          response: {},
-        },
+        conversationId: channel,
       });
 
       return {
         approved: false, // default approval is false
-        messageTs
       };
     } else {
       return {
         approved: context.resumePayload.queryParams['action'] === 'approve',
-        messageTs: context.resumePayload.queryParams['messageTs']
       };
     }
   },

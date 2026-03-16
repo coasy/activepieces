@@ -10,11 +10,10 @@ export const createPage = createAction({
 	description: 'Creates a page in section.',
 	props: {
 		notebook_id: Property.Dropdown({
-			auth: oneNoteAuth,
 			displayName: 'Notebook',
 			description: 'The notebook to create the page in.',
 			required: true,
-			refreshers: [],	
+			refreshers: [],
 			options: async ({ auth }) => {
 				if (!(auth as OAuth2PropertyValue)?.access_token) {
 					return {
@@ -27,7 +26,6 @@ export const createPage = createAction({
 			},
 		}),
 		section_id: Property.Dropdown({
-			auth: oneNoteAuth,
 			displayName: 'Section',
 			description: 'The section to create the page in.',
 			required: true,

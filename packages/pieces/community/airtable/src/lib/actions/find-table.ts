@@ -21,7 +21,7 @@ export const airtableFindTableAction = createAction({
     const { base: baseId, tableName } = propsValue;
 
     const tables: AirtableTable[] = await airtableCommon.fetchTableList({
-      token: personalToken.secret_text,
+      token: personalToken,
       baseId: baseId as string,
     });
 

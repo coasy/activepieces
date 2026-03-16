@@ -115,7 +115,6 @@ export const updatedDeal = createTrigger({
 			},
 		}),
 		filter_by_field_value: Property.DynamicProperties({
-			auth: pipedriveAuth,
 			displayName: 'Field Values',
 			required: false,
 			refreshers: ['filter_by'],
@@ -126,7 +125,7 @@ export const updatedDeal = createTrigger({
 				const authValue = auth as PiecePropValueSchema<typeof pipedriveAuth>;
 				const filterBy = filter_by as unknown as string;
 
-				if (filterBy === 'status') {	
+				if (filterBy === 'status') {
 					props['field_value'] = Property.StaticDropdown({
 						displayName: 'Deal Status',
 						required: true,
@@ -169,8 +168,7 @@ export const updatedDeal = createTrigger({
 				return props;
 			},
 		}),
-		field_to_watch: Property.Dropdown({	
-			auth: pipedriveAuth,
+		field_to_watch: Property.Dropdown({
 			displayName: 'Field to watch for Changes On',
 			required: false,
 			refreshers: [],

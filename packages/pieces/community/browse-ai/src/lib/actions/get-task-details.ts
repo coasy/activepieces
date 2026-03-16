@@ -19,7 +19,7 @@ export const getTaskDetailsAction = createAction({
 
     try {
       const response = await browseAiApiCall({
-        auth: { apiKey: context.auth.secret_text },
+        auth: { apiKey: context.auth as string },
         method: HttpMethod.GET,
         resourceUri: `/robots/${robotId}/tasks/${taskId}`,
       });

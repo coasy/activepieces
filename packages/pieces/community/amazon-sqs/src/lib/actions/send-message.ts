@@ -22,10 +22,10 @@ export const sendMessage = createAction({
   async run({ propsValue, auth }) {
     const sqs = new SQS({
       credentials: {
-        accessKeyId: auth.props.accessKeyId,
-        secretAccessKey: auth.props.secretAccessKey,
+        accessKeyId: auth.accessKeyId,
+        secretAccessKey: auth.secretAccessKey,
       },
-      region: auth.props.region,
+      region: auth.region,
     });
     const { queueUrl, messageBody } = propsValue;
 

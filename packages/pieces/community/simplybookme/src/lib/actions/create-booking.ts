@@ -72,7 +72,7 @@ export const createBooking = createAction({
     })
   },
   async run(context) {
-    const auth = context.auth.props;
+    const auth = context.auth as SimplybookAuth;
     const {
       eventId,
       unitId,

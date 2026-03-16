@@ -30,7 +30,7 @@ export const createAdmin = createAction({
     }),
   },
   async run(context) {
-    const onfleetApi = new Onfleet(context.auth.secret_text);
+    const onfleetApi = new Onfleet(context.auth);
 
     return await onfleetApi.administrators.create({
       name: context.propsValue.name,

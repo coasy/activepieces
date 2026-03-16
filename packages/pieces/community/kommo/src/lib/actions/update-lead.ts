@@ -47,7 +47,7 @@ export const updateLeadAction = createAction({
     const tagsToDelete = context.propsValue.tags_to_delete ?? [];
 
 
-    const { subdomain, apiToken } = context.auth.props;
+    const { subdomain, apiToken } = context.auth;
 
     const updatePayload: Record<string, any> = {};
 

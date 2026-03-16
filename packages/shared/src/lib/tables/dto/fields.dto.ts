@@ -25,10 +25,5 @@ export const UpdateFieldRequest = Type.Object({
     name: Type.String(),
 })
 
-export const ListFieldsRequestQuery = Type.Object({
-    tableId: Type.String(),
-})
-
 export type CreateFieldRequest = Static<typeof CreateFieldRequest>
 export type UpdateFieldRequest = Static<typeof UpdateFieldRequest>
-export type ListFieldsRequestQuery = Static<typeof ListFieldsRequestQuery>

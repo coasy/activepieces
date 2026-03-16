@@ -33,7 +33,7 @@ export const listBroadcasts = createAction({
   },
   run(context) {
     const page = context.propsValue.page || 1;
-    return fetchBroadcasts(context.auth.secret_text, page);
+    return fetchBroadcasts(context.auth, page);
   },
 });
 
@@ -114,7 +114,7 @@ export const getBroadcastById = createAction({
     const url = `${BROADCASTS_API_ENDPOINT}/${broadcastId}`;
 
     const body = {
-      api_secret: context.auth.secret_text,
+      api_secret: context.auth,
     };
 
     const request: HttpRequest = {

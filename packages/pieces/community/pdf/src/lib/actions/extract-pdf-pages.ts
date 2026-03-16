@@ -97,7 +97,7 @@ export const extractPdfPages = createAction({
   },
   async run(context) {
     try {
-      const srcDoc = await PDFDocument.load(context.propsValue.file.data as any);
+      const srcDoc = await PDFDocument.load(context.propsValue.file.data);
 
       const totalPages = srcDoc.getPageCount();
       const pageIndexes = context.propsValue.pageRanges.flatMap(

@@ -43,7 +43,6 @@ export const createNote = createAction({
       defaultValue: true
     }),
     providerId: Property.Dropdown({
-      auth: simplybookAuth,
       displayName: 'Provider',
       description: 'Select a provider (optional)',
       required: false,
@@ -51,7 +50,6 @@ export const createNote = createAction({
       options: providerDropdown.options
     }),
     serviceId: Property.Dropdown({
-      auth: simplybookAuth,
       displayName: 'Service',
       description: 'Select a service (optional)',
       required: false,
@@ -60,7 +58,7 @@ export const createNote = createAction({
     })
   },
   async run(context) {
-    const auth = context.auth.props;
+    const auth = context.auth as SimplybookAuth;
     const accessToken = await getAccessToken(auth);
 
     const noteData: any = {

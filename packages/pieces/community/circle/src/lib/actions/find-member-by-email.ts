@@ -30,7 +30,7 @@ export const findMemberByEmail = createAction({
                 email: email,
             },
             headers: {
-                "Authorization": `Bearer ${context.auth.secret_text}`,
+                "Authorization": `Bearer ${context.auth}`,
                 "Content-Type": "application/json"
             },
         });

@@ -1,20 +1,30 @@
-import { fileSystemUtils } from '@activepieces/server-shared'
-import { getPieceNameFromAlias, PiecePackage, unique } from '@activepieces/shared'
+import path from 'path'
+import { fileSystemUtils, PiecesSource } from '@activepieces/server-shared'
+import { ExecutionMode, PiecePackage, PieceType } from '@activepieces/shared'
 import { FastifyBaseLogger } from 'fastify'
+import { pieceManager } from '../cache/pieces'
+import { CodeArtifact } from '../compute/engine-runner-types'
 import { workerMachine } from '../utils/machine'
-import { CodeArtifact, codeBuilder } from './code-builder'
+import { codeBuilder } from './code-builder'
 import { engineInstaller } from './engine-installer'
-import { registryPieceManager } from './pieces/production/registry-piece-manager'
 import { GLOBAL_CACHE_COMMON_PATH, GLOBAL_CACHE_PATH_LATEST_VERSION, GLOBAL_CODE_CACHE_PATH } from './worker-cache'
 
 export const executionFiles = (log: FastifyBaseLogger) => ({
+
+    getCustomPiecesPath(params: { platformId: string }): string {
+        if (workerMachine.getSettings().EXECUTION_MODE === ExecutionMode.SANDBOX_PROCESS) {
+            return path.resolve(GLOBAL_CACHE_PATH_LATEST_VERSION, 'custom_pieces', params.platformId)
+        }
+        return GLOBAL_CACHE_PATH_LATEST_VERSION
+    },
     async provision({
         pieces,
         codeSteps,
+        customPiecesPath,
     }: ProvisionParams): Promise<void> {
-
         const startTime = performance.now()
 
+        const source = workerMachine.getSettings().PIECES_SOURCE as PiecesSource
         await fileSystemUtils.threadSafeMkdir(GLOBAL_CACHE_PATH_LATEST_VERSION)
 
         const startTimeCode = performance.now()
@@ -42,31 +52,46 @@ export const executionFiles = (log: FastifyBaseLogger) => ({
             cacheHit,
         }, 'Installed engine in sandbox')
 
-
-        const devPieces = workerMachine.getSettings().DEV_PIECES
-        const nonDevPieces = unique(pieces.filter((p) => !devPieces.includes(getPieceNameFromAlias(p.pieceName))))
-        if (nonDevPieces.length > 0) {
+        const officialPieces = pieces.filter(f => f.pieceType === PieceType.OFFICIAL)
+        if (officialPieces.length > 0) {
             const startTime = performance.now()
-            await registryPieceManager(log).install({
-                pieces: nonDevPieces,
-                includeFilters: true,
-                broadcast: true,
+            await pieceManager(source).install({
+                projectPath: GLOBAL_CACHE_COMMON_PATH,
+                pieces: officialPieces,
+                log,
             })
             log.info({
-                pieces: nonDevPieces.map(p => `${p.pieceName}@${p.pieceVersion}`),
+                pieces: officialPieces.map(p => `${p.pieceName}@${p.pieceVersion}`),
                 path: GLOBAL_CACHE_COMMON_PATH,
                 timeTaken: `${Math.floor(performance.now() - startTime)}ms`,
-            }, 'Installed pieces in sandbox')
+            }, 'Installed official pieces in sandbox')
         }
+
+        const customPieces = pieces.filter(f => f.pieceType === PieceType.CUSTOM)
+        if (customPieces.length > 0) {
+            const startTime = performance.now()
+            await fileSystemUtils.threadSafeMkdir(customPiecesPath)
+            await pieceManager(source).install({
+                projectPath: customPiecesPath,
+                pieces: customPieces,
+                log,
+            })
+            log.info({
+                customPieces: customPieces.map(p => `${p.pieceName}@${p.pieceVersion}`),
+                customPiecesPath,
+                timeTaken: `${Math.floor(performance.now() - startTime)}ms`,
+            }, 'Installed custom pieces in sandbox')
+        }
+
         log.info({
             timeTaken: `${Math.floor(performance.now() - startTime)}ms`,
         }, 'Sandbox installation complete')
 
     },
-
 })
 
 type ProvisionParams = {
     pieces: PiecePackage[]
     codeSteps: CodeArtifact[]
+    customPiecesPath: string
 }

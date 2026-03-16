@@ -1,16 +1,13 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { fetchWorkflowTemplates, fetchContacts, fetchProjects, fetchOpportunities, fetchUserGroups, WEALTHBOX_API_BASE, handleApiError } from '../common';
-import { wealthboxAuth } from '../..';
 
 export const startWorkflow = createAction({
   name: 'start_workflow',
   displayName: 'Start Workflow',
-  auth: wealthboxAuth,
   description: 'Triggers a workflow template on a contact/project/opportunity. Automate multi-step sequences based on CRM events.',
   props: {
     workflow_template: Property.Dropdown({
-      auth: wealthboxAuth,
       displayName: 'Workflow Template',
       description: 'Select the workflow template to trigger',
       required: true,
@@ -19,7 +16,7 @@ export const startWorkflow = createAction({
         if (!auth) return { options: [] };
 
         try {
-          const templates = await fetchWorkflowTemplates(auth.secret_text);
+          const templates = await fetchWorkflowTemplates(auth as unknown as string);
           return {
             options: templates.map((template: any) => ({
               label: template.name || template.label || `Template ${template.id}`,
@@ -49,7 +46,6 @@ export const startWorkflow = createAction({
     }),
 
     linked_record: Property.DynamicProperties({
-      auth: wealthboxAuth,
       displayName: 'Linked Record',
       description: 'Select the record to link this workflow to',
       required: true,
@@ -78,15 +74,15 @@ export const startWorkflow = createAction({
 
           switch (linkedTypeValue) {
             case 'Contact':
-              records = await fetchContacts(auth.secret_text, { active: true, order: 'recent' });
+              records = await fetchContacts(auth as unknown as string, { active: true, order: 'recent' });
               recordType = 'Contact';
               break;
             case 'Project':
-              records = await fetchProjects(auth.secret_text);
+              records = await fetchProjects(auth as unknown as string);
               recordType = 'Project';
               break;
             case 'Opportunity':
-              records = await fetchOpportunities(auth.secret_text);
+              records = await fetchOpportunities(auth as unknown as string);
               recordType = 'Opportunity';
               break;
             default:
@@ -154,7 +150,6 @@ export const startWorkflow = createAction({
     }),
 
     visible_to: Property.Dropdown({
-      auth: wealthboxAuth,
       displayName: 'Visible To',
       description: 'Select who can view this workflow',
       required: false,
@@ -163,7 +158,7 @@ export const startWorkflow = createAction({
         if (!auth) return { options: [] };
 
         try {
-          const userGroups = await fetchUserGroups(auth.secret_text);
+          const userGroups = await fetchUserGroups(auth as unknown as string);
           return {
             options: userGroups.map((group: any) => ({
               label: group.name,
@@ -180,7 +175,6 @@ export const startWorkflow = createAction({
     }),
 
     workflow_milestones: Property.DynamicProperties({
-      auth: wealthboxAuth,
       displayName: 'Workflow Milestones',
       description: 'Add milestones to this workflow',
       required: false,
@@ -299,19 +293,19 @@ export const startWorkflow = createAction({
         let recordName = linkedName;
 
         if (propsValue.linked_type === 'Contact' && linkedId) {
-          const contacts = await fetchContacts(auth.secret_text, { active: true });
+          const contacts = await fetchContacts(auth as unknown as string, { active: true });
           const contact = contacts.find((c: any) => c.id === linkedId);
           if (contact) {
             recordName = contact.name || `${contact.first_name} ${contact.last_name}`.trim();
           }
         } else if (propsValue.linked_type === 'Project' && linkedId) {
-          const projects = await fetchProjects(auth.secret_text);
+          const projects = await fetchProjects(auth as unknown as string);
           const project = projects.find((p: any) => p.id === linkedId);
           if (project) {
             recordName = project.name || project.title || `Project ${linkedId}`;
           }
         } else if (propsValue.linked_type === 'Opportunity' && linkedId) {
-          const opportunities = await fetchOpportunities(auth.secret_text);
+          const opportunities = await fetchOpportunities(auth as unknown as string);
           const opportunity = opportunities.find((o: any) => o.id === linkedId);
           if (opportunity) {
             recordName = opportunity.name || `Opportunity ${linkedId}`;
@@ -358,7 +352,7 @@ export const startWorkflow = createAction({
         method: HttpMethod.POST,
         url: `${WEALTHBOX_API_BASE}/workflows`,
         headers: {
-          'ACCESS_TOKEN': auth.secret_text,
+          'ACCESS_TOKEN': auth as unknown as string,
           'Content-Type': 'application/json'
         },
         body: requestBody

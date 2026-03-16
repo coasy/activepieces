@@ -14,7 +14,7 @@ const insertPieceMetadata = async (
   const body = JSON.stringify(pieceMetadata);
 
   const headers = {
-    ['api-key']: AP_CLOUD_API_KEY,
+    [HttpHeader.API_KEY]: AP_CLOUD_API_KEY,
     [HttpHeader.CONTENT_TYPE]: 'application/json'
   };
 
@@ -24,7 +24,7 @@ const insertPieceMetadata = async (
     body
   });
 
-  if (cloudResponse.status !== StatusCodes.OK && cloudResponse.status !== StatusCodes.CONFLICT) {
+  if (cloudResponse.status !== StatusCodes.OK) {
     throw new Error(await cloudResponse.text());
   }
 };

@@ -20,7 +20,7 @@ export const sendEmail = createAction({
       const secretRecoveryPhrase = auth;
 
       const mailchain =
-        Mailchain.fromSecretRecoveryPhrase(secretRecoveryPhrase.secret_text);
+        Mailchain.fromSecretRecoveryPhrase(secretRecoveryPhrase);
 
       const user = await mailchain.user();
       console.log(`username: ${user.username}, address: ${user.address}`);

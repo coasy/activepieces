@@ -47,7 +47,7 @@ export const findCompany = createAction({
         const response = await callZendeskApi(
             HttpMethod.GET,
             'v2/contacts', 
-            auth,
+            auth as ZendeskSellAuth,
             undefined, 
             params     
         );

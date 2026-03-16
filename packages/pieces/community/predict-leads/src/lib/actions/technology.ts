@@ -35,7 +35,7 @@ export const findTechnologiesByCompanyAction = createAction({
     const limit = context.propsValue.limit ?? 1000;
 
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof PredictLeadsAuth>
     );
 
     try {
@@ -85,7 +85,7 @@ export const findCompaniesByTechnologyIdAction = createAction({
     const limit = context.propsValue.limit ?? 1000;
 
     const client = makeClient(
-      context.auth
+      context.auth as PiecePropValueSchema<typeof PredictLeadsAuth>
     );
 
     try {

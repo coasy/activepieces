@@ -21,38 +21,22 @@ export const sendTemplatedEmail = createAction({
   description: 'Send personalized emails using pre-created templates',
   props: {
     fromEmailAddress: Property.Dropdown({
-      auth: amazonSesAuth,
       displayName: 'From Email',
       description: 'Verified sender email address',
       required: true,
       refreshers: [],
       options: async ({ auth }) => {
-        if (!auth) {
-          return {
-            disabled: true,
-            options: [],
-            placeholder: 'Please authenticate first',
-          };
-        }
-        const verifiedIdentities = await getVerifiedIdentities(auth.props);
+        const verifiedIdentities = await getVerifiedIdentities(auth as any);
         return createIdentityDropdownOptions(verifiedIdentities);
       },
     }),
     templateName: Property.Dropdown({
-      auth: amazonSesAuth,
       displayName: 'Email Template',
       description: 'Select template to use for this email',
       required: true,
       refreshers: [],
       options: async ({ auth }) => {
-        if (!auth) {
-          return {
-            disabled: true,
-            options: [],
-            placeholder: 'Please authenticate first',
-          };
-        }
-        const templates = await getEmailTemplates(auth.props);
+        const templates = await getEmailTemplates(auth as any);
 
         if (templates.length === 0) {
           return {
@@ -103,20 +87,12 @@ export const sendTemplatedEmail = createAction({
       required: false,
     }),
     configurationSetName: Property.Dropdown({
-      auth: amazonSesAuth,
       displayName: 'Configuration Set',
       description: 'SES configuration set for tracking',
       required: false,
       refreshers: [],
       options: async ({ auth }) => {
-        if (!auth) {
-          return {
-            disabled: true,
-            options: [],
-            placeholder: 'Please authenticate first',
-          };
-        }
-        const configSets = await getConfigurationSets(auth.props);
+        const configSets = await getConfigurationSets(auth as any);
         return createConfigSetDropdownOptions(configSets);
       },
     }),
@@ -152,7 +128,7 @@ export const sendTemplatedEmail = createAction({
       returnPathArn,
     } = context.propsValue;
 
-    const { accessKeyId, secretAccessKey, region } = context.auth.props;
+    const { accessKeyId, secretAccessKey, region } = context.auth;
 
     if (
       !templateData ||

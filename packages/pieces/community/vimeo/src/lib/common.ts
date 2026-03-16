@@ -1,6 +1,5 @@
 import { httpClient, HttpMethod, AuthenticationType } from '@activepieces/pieces-common';
 import { Property } from '@activepieces/pieces-framework';
-import { vimeoAuth } from './auth';
 
 export async function apiRequest({
   auth,
@@ -59,7 +58,6 @@ export async function apiRequest({
 }
 
 export const userFolderDropdown = Property.Dropdown({
-  auth: vimeoAuth,
   displayName: 'Folder ID',
   description: 'ID of the folder to add the video to',
   required: false,
@@ -86,7 +84,6 @@ export const userFolderDropdown = Property.Dropdown({
 });
 
 export const userVideoDropdown = Property.Dropdown({
-  auth: vimeoAuth,
   displayName: 'Video ID',
   required: true,
   refreshers: [],

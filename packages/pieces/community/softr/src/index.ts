@@ -30,9 +30,10 @@ export const softr = createPiece({
       baseUrl:()=>BASE_URL,
       authMapping:async (auth)=>{
         return{
-          'Softr-Api-Key':auth.secret_text
+          'Softr-Api-Key':auth as string
         }
       }
+
     })
   ],
   triggers: [newDatabaseRecord],

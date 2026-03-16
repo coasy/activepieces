@@ -35,7 +35,6 @@ export const xeroCreateRepeatingSalesInvoice = createAction({
       required: true,
     }),
     due_date_type: Property.Dropdown({
-      auth: xeroAuth,
       displayName: 'Due Date Type',
       required: true,
       refreshers: ['schedule_unit'],

@@ -7,7 +7,6 @@ import {
   pollingHelper,
 } from '@activepieces/pieces-common';
 import {
-  AppConnectionValueForAuthProperty,
   createTrigger,
   Property,
   TriggerStrategy,
@@ -26,7 +25,7 @@ interface Member {
   joined_at: string;
 }
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof discordAuth>, { guildId: string | undefined; limit: number }> =
+const polling: Polling<string, { guildId: string | undefined; limit: number }> =
   {
     strategy: DedupeStrategy.TIMEBASED,
     items: async ({ auth, propsValue: { guildId, limit } }) => {
@@ -36,7 +35,7 @@ const polling: Polling<AppConnectionValueForAuthProperty<typeof discordAuth>, { 
         method: HttpMethod.GET,
         url: `https://discord.com/api/v9/guilds/${guildId}/members?limit=${limit}`,
         headers: {
-           Authorization: 'Bot ' + auth.secret_text,
+          Authorization: 'Bot ' + auth,
         },
       };
 

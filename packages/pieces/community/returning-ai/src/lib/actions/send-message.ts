@@ -41,13 +41,12 @@ export const sendMessage = createAction({
       required: true,
     }),
     channel: Property.Dropdown({
-      auth: returningAiAuth,
       displayName: 'Channel',
       description: 'The channel where the message will be posted',
       required: true,
       refreshers: ['auth'],
       options: async ({ auth }) => {
-        const authToken = auth?.secret_text;
+        const authToken = auth as string;
 
         if (!authToken) {
           return {
@@ -95,7 +94,6 @@ export const sendMessage = createAction({
       },
     }),
     dynamicFields: Property.DynamicProperties({
-      auth: returningAiAuth,
       displayName: 'Channel Fields',
       description: 'Additional fields based on channel type',
       required: true,
@@ -125,7 +123,7 @@ export const sendMessage = createAction({
     }),
   },
   async run({ propsValue, auth }) {
-    const authToken = auth.secret_text;
+    const authToken = auth as string;
     const channelData = JSON.parse(propsValue.channel as string);
     const dynamicFields = propsValue.dynamicFields as DynamicPropsValue;
 

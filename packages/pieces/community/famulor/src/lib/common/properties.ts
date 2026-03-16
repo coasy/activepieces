@@ -1,11 +1,9 @@
 import { Property } from '@activepieces/pieces-framework';
 import { famulorCommon } from '.';
-import { famulorAuth } from '../..';
 
 // Dynamic Properties
 const campaignDropdown = () =>
   Property.Dropdown({
-    auth: famulorAuth,
     displayName: 'Campaign',
     description: 'Select the campaign',
     required: true,
@@ -20,7 +18,7 @@ const campaignDropdown = () =>
       }
 
       try {
-        const campaigns = await famulorCommon.listCampaigns({ auth: auth.secret_text });
+        const campaigns = await famulorCommon.listCampaigns({ auth: auth as string });
         
         if (!campaigns || campaigns.length === 0) {
           return {
@@ -85,8 +83,7 @@ export const addLead = () => ({
     description: 'Add secondary contacts for this lead. Each contact can have its own phone number and variables.',
     required: false,
     refreshers: ['num_secondary_contacts'],
-    auth: famulorAuth,
-      props: async ({ num_secondary_contacts }) => {
+    props: async ({ num_secondary_contacts }) => {
       const contacts: any = {};
       const numContacts = Math.min(Number(num_secondary_contacts) || 0, 10);
       
@@ -110,7 +107,6 @@ export const addLead = () => ({
 
 const phoneNumberDropdown = () =>
   Property.Dropdown({
-    auth: famulorAuth,
     displayName: 'From Phone Number',
     description: 'Select an SMS-capable phone number to send from',
     required: true,
@@ -125,7 +121,7 @@ const phoneNumberDropdown = () =>
       }
 
       try {
-        const phoneNumbers = await famulorCommon.listPhoneNumbers({ auth: auth.secret_text });
+        const phoneNumbers = await famulorCommon.listPhoneNumbers({ auth: auth as string });
         
         if (!phoneNumbers || phoneNumbers.length === 0) {
           return {
@@ -163,7 +159,6 @@ export const sendSms = () => ({
 
 const assistantDropdown = () =>
   Property.Dropdown({
-    auth: famulorAuth,
     displayName: 'Assistant',
     description: 'Select the AI assistant to use for the call',
     required: true,
@@ -178,7 +173,7 @@ const assistantDropdown = () =>
       }
 
       try {
-        const assistants = await famulorCommon.listAssistants({ auth: auth.secret_text });
+        const assistants = await famulorCommon.listAssistants({ auth: auth as string });
         
         if (!assistants || assistants.length === 0) {
           return {
@@ -234,8 +229,7 @@ export const campaignControl = () => ({
 });
 
 const leadDropdown = () =>
-  Property.Dropdown<number,true,typeof famulorAuth>({
-    auth: famulorAuth,
+  Property.Dropdown({
     displayName: 'Lead',
     description: 'Select the lead to delete',
     required: true,
@@ -250,7 +244,7 @@ const leadDropdown = () =>
       }
 
       try {
-        const leads = await famulorCommon.listLeads({ auth: auth.secret_text });
+        const leads = await famulorCommon.listLeads({ auth: auth as string });
         
         if (!leads || leads.length === 0) {
           return {

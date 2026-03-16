@@ -5,7 +5,6 @@ export const ApMultipartFile = Type.Object({
     filename: Type.String(),
     data: Type.Unknown(),
     type: Type.Literal('file'),
-    mimetype: Type.Optional(Type.String()),
 })
 
 export type ApMultipartFile = Static<typeof ApMultipartFile> & {

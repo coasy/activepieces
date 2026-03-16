@@ -21,7 +21,6 @@ export const askOpenAI = createAction({
   description: 'Ask ChatGPT anything you want!',
   props: {
     model: Property.Dropdown({
-  auth: openaiAuth,
       displayName: 'Model',
       required: true,
       description:
@@ -38,7 +37,7 @@ export const askOpenAI = createAction({
         }
         try {
           const openai = new OpenAI({
-            apiKey: auth.secret_text,
+            apiKey: auth as string,
           });
           const response = await openai.models.list();
           // We need to get only LLM models
@@ -122,7 +121,7 @@ export const askOpenAI = createAction({
       memoryKey: z.string().max(128).optional(),
     });
     const openai = new OpenAI({
-      apiKey: auth.secret_text,
+      apiKey: auth,
     });
     const {
       model,

@@ -71,7 +71,7 @@ export const updateSubscriptionAction = createAction({
 
 		console.log(JSON.stringify(body));
 		const response = await beehiivApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.PUT,
 			resourceUri: `/publications/${publicationId}/subscriptions/${subscriptionId}`,
 			body,

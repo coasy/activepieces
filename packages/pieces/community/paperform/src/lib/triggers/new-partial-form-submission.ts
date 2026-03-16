@@ -20,7 +20,7 @@ export const newPartialFormSubmission = createTrigger({
     const response = await paperformCommon.createWebhook({
       formId,
       webhookUrl: context.webhookUrl,
-      auth: context.auth.secret_text,
+      auth: context.auth,
       eventType: 'partial_submission',
     });
 
@@ -31,7 +31,7 @@ export const newPartialFormSubmission = createTrigger({
     if (webhookId) {
       await paperformCommon.deleteWebhook({
         webhookId,
-        auth: context.auth.secret_text,
+        auth: context.auth,
       });
     }
   },
@@ -41,14 +41,14 @@ export const newPartialFormSubmission = createTrigger({
 
     const response = await paperformCommon.getPartialSubmission({
       submissionId: payload.submission_id,
-      auth: context.auth.secret_text,
+      auth: context.auth,
     });
 
     const submission = response.results['partial-submission'];
 
     const fields = await paperformCommon.getFormFields({
       formSlugOrId: formId as string,
-      auth: context.auth.secret_text,
+      auth: context.auth as string,
     });
 
     const transformedFields =
@@ -71,7 +71,7 @@ export const newPartialFormSubmission = createTrigger({
 
     const response = await paperformCommon.getPartialSubmissions({
       formSlugOrId: formId,
-      auth: context.auth.secret_text,
+      auth: context.auth,
       limit: 10,
     });
 
@@ -79,7 +79,7 @@ export const newPartialFormSubmission = createTrigger({
 
     const fields = await paperformCommon.getFormFields({
       formSlugOrId: formId as string,
-      auth: context.auth.secret_text,
+      auth: context.auth as string,
     });
 
     return response.results['partial-submissions'].map((submission) => {

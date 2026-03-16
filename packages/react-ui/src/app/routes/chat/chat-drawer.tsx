@@ -1,7 +1,10 @@
 import { ArrowRight } from 'lucide-react';
 import { useRef } from 'react';
 
-import { useBuilderStateContext } from '@/app/builder/builder-hooks';
+import {
+  ChatDrawerSource,
+  useBuilderStateContext,
+} from '@/app/builder/builder-hooks';
 import { useSocket } from '@/components/socket-provider';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,7 +13,6 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { ChatDrawerSource } from '@/lib/types';
 import {
   FlowRun,
   RunEnvironment,

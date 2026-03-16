@@ -1,8 +1,4 @@
-import {
-  createCustomApiCallAction,
-  httpClient,
-  HttpMethod,
-} from '@activepieces/pieces-common';
+import { createCustomApiCallAction } from '@activepieces/pieces-common';
 import { PieceAuth, createPiece } from '@activepieces/pieces-framework';
 import { PieceCategory } from '@activepieces/shared';
 import { stripeCreateCustomer } from './lib/actions/create-customer';
@@ -41,25 +37,6 @@ export const stripeAuth = PieceAuth.SecretText({
   displayName: 'Secret API Key',
   required: true,
   description: 'Secret key acquired from your Stripe dashboard',
-  validate: async ({ auth }) => {
-    try {
-      await httpClient.sendRequest({
-        method: HttpMethod.GET,
-        url: `https://api.stripe.com/v1/customers`,
-        headers: {
-          Authorization: `Bearer ${auth}`,
-        },
-      });
-      return {
-        valid: true,
-      };
-    } catch (e) {
-      return {
-        valid: false,
-        error: 'Invalid API Key. Please check the key and try again.',
-      };
-    }
-  },
 });
 
 export const stripe = createPiece({
@@ -76,8 +53,8 @@ export const stripe = createPiece({
     'AbdulTheActivePiecer',
     'khaledmashaly',
     'abuaboud',
-    'Prabhukiran161',
-    'sanket-a11y',
+    'Prabhukiran161', 
+    'sanket-a11y'
   ],
   categories: [PieceCategory.COMMERCE, PieceCategory.PAYMENT_PROCESSING],
   auth: stripeAuth,
@@ -104,7 +81,7 @@ export const stripe = createPiece({
       baseUrl: () => 'https://api.stripe.com/v1',
       auth: stripeAuth,
       authMapping: async (auth) => ({
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       }),
     }),
   ],

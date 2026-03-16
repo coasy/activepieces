@@ -20,7 +20,7 @@ export const closeAuth = PieceAuth.SecretText({
   validate: async ({ auth }) => {
     try {
       await closeApiCall({
-        accessToken: auth,
+        accessToken: auth as string,
         method: HttpMethod.GET,
         resourceUri: '/me/',
       });

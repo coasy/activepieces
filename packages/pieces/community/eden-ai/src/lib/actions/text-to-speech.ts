@@ -3,7 +3,6 @@ import { HttpMethod, propsValidation } from '@activepieces/pieces-common';
 import { edenAiApiCall } from '../common/client';
 import { createStaticDropdown } from '../common/providers';
 import { z } from 'zod';
-import { edenAiAuth } from '../..';
 
 const TEXT_TO_SPEECH_PROVIDERS = [
   { label: 'Amazon', value: 'amazon' },
@@ -22,7 +21,7 @@ const TEXT_TO_SPEECH_LANGUAGES = [
   { label: 'Arabic', value: 'ar' },
   { label: 'Armenian', value: 'hy' },
   { label: 'Azerbaijani', value: 'az' },
-  { label: 'Basque', value: 'eu' }, 
+  { label: 'Basque', value: 'eu' },
   { label: 'Belarusian', value: 'be' },
   { label: 'Bengali', value: 'bn' },
   { label: 'Bosnian', value: 'bs' },
@@ -290,12 +289,10 @@ function normalizeTextToSpeechResponse(provider: string, response: any) {
 
 export const textToSpeechAction = createAction({
   name: 'text_to_speech',
-  auth: edenAiAuth,
   displayName: 'Generate Audio From Text',
   description: 'Convert text to spoken audio using Eden AI. Supports multiple providers, languages, and voice customization.',
   props: {
     provider: Property.Dropdown({
-      auth: edenAiAuth,
       displayName: 'Provider',
       description: 'The AI provider to use for text-to-speech synthesis.',
       required: true,
@@ -308,7 +305,6 @@ export const textToSpeechAction = createAction({
       required: true,
     }),
     language: Property.Dropdown({
-        auth: edenAiAuth,
       displayName: 'Language',
       description: 'The language and locale for the speech synthesis (defaults to en-US if not specified).',
       required: false,
@@ -316,7 +312,6 @@ export const textToSpeechAction = createAction({
       options: createStaticDropdown(TEXT_TO_SPEECH_LANGUAGES),
     }),
     option: Property.Dropdown({
-      auth: edenAiAuth,
       displayName: 'Voice Gender',
       description: 'Choose the voice gender for speech synthesis (defaults to Female if not specified).',
       required: false,
@@ -342,7 +337,6 @@ export const textToSpeechAction = createAction({
       defaultValue: 0,
     }),
     audio_format: Property.Dropdown({
-      auth: edenAiAuth,
       displayName: 'Audio Format',
       description: 'The audio format for the generated speech (default: MP3).',
       required: false,
@@ -356,7 +350,6 @@ export const textToSpeechAction = createAction({
       defaultValue: 0,
     }),
     fallback_providers: Property.MultiSelectDropdown({
-      auth: edenAiAuth,
       displayName: 'Fallback Providers',
       description: 'Alternative providers to try if the main provider fails (up to 5).',
       required: false,
@@ -422,7 +415,7 @@ export const textToSpeechAction = createAction({
 
     try {
       const response = await edenAiApiCall({
-        apiKey: auth.secret_text,
+        apiKey: auth as string,
         method: HttpMethod.POST,
         resourceUri: '/audio/text_to_speech/',
         body,

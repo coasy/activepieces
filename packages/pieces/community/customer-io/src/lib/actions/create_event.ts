@@ -39,7 +39,6 @@ export const createEvent = createAction({
       },
     }),
     body: Property.DynamicProperties({
-      auth: customerIOAuth,
       displayName: 'Body',
       refreshers: ['body_type'],
       required: false,
@@ -76,7 +75,7 @@ export const createEvent = createAction({
 
     const basic_track_api = `${
       Buffer.from(
-        `${context.auth.props.track_site_id}:${context.auth.props.track_api_key}`,
+        `${context.auth.track_site_id}:${context.auth.track_api_key}`,
         'utf8'
       ).toString('base64')
     }`
@@ -86,7 +85,7 @@ export const createEvent = createAction({
       'Content-Type': 'application/json',
     }
     const encoded_email = encodeURIComponent(context.propsValue.customer_identifier);
-    const url = customerIOCommon[context.auth.props.region || 'us'].trackUrl + 'customers/' + encoded_email + '/events';
+    const url = customerIOCommon[context.auth.region || 'us'].trackUrl + 'customers/' + encoded_email + '/events';
 
     const httprequestdata = {
       method: HttpMethod.POST,

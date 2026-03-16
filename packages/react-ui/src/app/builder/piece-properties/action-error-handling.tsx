@@ -46,7 +46,9 @@ const ActionErrorHandlingForm = React.memo(
                       onCheckedChange={field.onChange}
                     />
                   </FormControl>
-                  <span className="ml-3 grow">{t('Continue on Failure')}</span>
+                  <span className="ml-3 flex-grow">
+                    {t('Continue on Failure')}
+                  </span>
                 </FormLabel>
                 <ReadMoreDescription
                   text={t(

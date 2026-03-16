@@ -19,7 +19,6 @@ export const mediaTypeSupportsCaption = (type: string) =>
 
 export const commonProps = {
 	phone_number_id: Property.Dropdown({
-		auth: whatsappAuth,
 		displayName: 'Phone Number ID',
 		description: 'Phone number ID that will be used to send the message.',
 		refreshers: [],
@@ -33,7 +32,7 @@ export const commonProps = {
 				};
 			}
 
-			const authValue = auth.props;
+			const authValue = auth as PiecePropValueSchema<typeof whatsappAuth>;
 
 			const options: DropdownOption<string>[] = [];
 
@@ -83,7 +82,6 @@ export const commonProps = {
 		displayName: 'Message Template ID',
 		refreshers: [],
 		required: true,
-		auth: whatsappAuth,
 		options: async ({ auth }) => {
 			if (!auth) {
 				return {
@@ -93,7 +91,7 @@ export const commonProps = {
 				};
 			}
 
-			const authValue = auth.props;
+			const authValue = auth as PiecePropValueSchema<typeof whatsappAuth>;
 
 			const options: DropdownOption<string>[] = [];
 
@@ -142,12 +140,11 @@ export const commonProps = {
 		displayName: 'Template Fields',
 		refreshers: ['message_template_id'],
 		required: true,
-		auth: whatsappAuth,
-			props: async ({ auth, message_template_id }) => {
+		props: async ({ auth, message_template_id }) => {
 			if (!auth) return {};
 			if (!message_template_id) return {};
 
-			const authValue = auth.props;
+			const authValue = auth as PiecePropValueSchema<typeof whatsappAuth>;
 			const templateId = message_template_id as unknown as string;
 
 			const response = await httpClient.sendRequest({

@@ -1,17 +1,15 @@
 import { Property } from '@activepieces/pieces-framework';
 import { UscreenClient, UscreenProduct } from './client';
-import { uscreenAuth } from './auth';
 
 export const uscreenProps = {
   customerId: (required = true) =>
     Property.Dropdown({
-      auth: uscreenAuth,
       displayName: 'Customer ID or Email',
       description: 'The unique ID or email address of the customer.',
       required: required,
       refreshers: ['productType'],
       options: async (context) => {
-        const auth = context['auth'];
+        const auth = context['auth'] as string | undefined;
         if (!auth) {
           return {
             disabled: true,
@@ -19,7 +17,7 @@ export const uscreenProps = {
             options: [],
           };
         }
-        const client = new UscreenClient(auth.secret_text);
+        const client = new UscreenClient(auth);
         const customers = await client.getCustomers();
         return {
           disabled: false,
@@ -46,13 +44,12 @@ export const uscreenProps = {
 
   productId: (required = true) =>
     Property.Dropdown({
-      auth: uscreenAuth,
       displayName: 'Product',
       description: 'The bundle (program) or subscription (offer) to assign.',
       required: required,
       refreshers: ['productType'],
       options: async (context) => {
-        const auth = context['auth'];
+        const auth = context['auth'] as string | undefined;
 
         const propsValue = context['propsValue'] as Record<string, unknown>;
         const productType = propsValue['productType'] as
@@ -76,7 +73,7 @@ export const uscreenProps = {
           };
         }
 
-        const client = new UscreenClient(auth.secret_text);
+        const client = new UscreenClient(auth);
 
         let products: UscreenProduct[] = [];
 

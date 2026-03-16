@@ -1,13 +1,11 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { fetchContacts, fetchUserGroups, fetchTags, WEALTHBOX_API_BASE, handleApiError, DOCUMENT_TYPES } from '../common';
-import { wealthboxAuth } from '../..';
 
 export const createHousehold = createAction({
   name: 'create_household',
   displayName: 'Create Household',
   description: 'Creates a household record with emails, tags. Group family member contacts into one household.',
-  auth: wealthboxAuth,
   props: {
     name: Property.ShortText({
       displayName: 'Household Name',
@@ -16,7 +14,6 @@ export const createHousehold = createAction({
     }),
 
     head_contact_id: Property.Dropdown({
-      auth: wealthboxAuth,
       displayName: 'Head of Household',
       description: 'Select the contact who will be the head of this household',
       required: false,
@@ -25,7 +22,7 @@ export const createHousehold = createAction({
         if (!auth) return { options: [] };
 
         try {
-          const contacts = await fetchContacts(auth.secret_text, { active: true, order: 'recent' });
+          const contacts = await fetchContacts(auth as unknown as string, { active: true, order: 'recent' });
           return {
             options: contacts.map((contact: any) => ({
               label: contact.name || `${contact.first_name} ${contact.last_name}`.trim() || `Contact ${contact.id}`,
@@ -42,7 +39,6 @@ export const createHousehold = createAction({
     }),
 
     spouse_contact_id: Property.Dropdown({
-      auth: wealthboxAuth,
       displayName: 'Spouse/Partner (Optional)',
       description: 'Select the spouse or partner to automatically add to this household',
       required: false,
@@ -51,7 +47,7 @@ export const createHousehold = createAction({
         if (!auth) return { options: [] };
 
         try {
-          const contacts = await fetchContacts(auth.secret_text, { active: true, order: 'recent' });
+          const contacts = await fetchContacts(auth as unknown as string, { active: true, order: 'recent' });
           return {
             options: contacts.map((contact: any) => ({
               label: contact.name || `${contact.first_name} ${contact.last_name}`.trim() || `Contact ${contact.id}`,
@@ -149,7 +145,6 @@ export const createHousehold = createAction({
     }),
     
     tags: Property.DynamicProperties({
-      auth: wealthboxAuth,
       displayName: 'Tags',
       description: 'Select tags to associate with this household',
       required: false,
@@ -173,7 +168,7 @@ export const createHousehold = createAction({
         }
 
         try {
-          const tags = await fetchTags(auth.secret_text, DOCUMENT_TYPES.CONTACT);
+          const tags = await fetchTags(auth as unknown as string, DOCUMENT_TYPES.CONTACT);
           const tagOptions = tags.map((tag: any) => ({
             label: tag.name,
             value: tag.name
@@ -216,7 +211,6 @@ export const createHousehold = createAction({
     }),
 
           visible_to: Property.Dropdown({
-        auth: wealthboxAuth,
         displayName: 'Visible To',
         description: 'Select who can view this household',
         required: false,
@@ -225,7 +219,7 @@ export const createHousehold = createAction({
           if (!auth) return { options: [] };
 
           try {
-            const userGroups = await fetchUserGroups(auth.secret_text);
+            const userGroups = await fetchUserGroups(auth as unknown as string);
 
             const filteredGroups = userGroups.filter((group: any) => group.name !== 'Only Me');
 
@@ -316,7 +310,7 @@ export const createHousehold = createAction({
         method: HttpMethod.POST,
         url: `${WEALTHBOX_API_BASE}/contacts`,
         headers: {
-          'ACCESS_TOKEN': auth.secret_text,
+          'ACCESS_TOKEN': auth as unknown as string,
           'Content-Type': 'application/json'
         },
         body: requestBody
@@ -336,7 +330,7 @@ export const createHousehold = createAction({
             method: HttpMethod.POST,
             url: `${WEALTHBOX_API_BASE}/households/${householdContact.id}/members`,
             headers: {
-              'ACCESS_TOKEN': auth.secret_text,
+              'ACCESS_TOKEN': auth as unknown as string,
               'Content-Type': 'application/json'
             },
             body: {
@@ -359,7 +353,7 @@ export const createHousehold = createAction({
             method: HttpMethod.POST,
             url: `${WEALTHBOX_API_BASE}/households/${householdContact.id}/members`,
             headers: {
-              'ACCESS_TOKEN': auth.secret_text,
+              'ACCESS_TOKEN': auth as unknown as string,
               'Content-Type': 'application/json'
             },
             body: {

@@ -1,12 +1,10 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
-import { insightoAuth } from '../..';
 
 export const upsertContactAction = createAction({
   name: 'upsert_contact',
   displayName: 'Upsert Contact',
   description: 'Create or update a contact using email or phone number',
-  auth: insightoAuth,
   props: {
     first_name: Property.ShortText({
       displayName: 'First Name',
@@ -38,7 +36,7 @@ export const upsertContactAction = createAction({
         throw new Error('Either email or phone number must be provided');
       }
 
-      const apiKey = context.auth.secret_text;
+      const apiKey = context.auth as string;
       const url = `https://api.insighto.ai/api/v1/contact/upsert`;
 
       const queryParams: Record<string, string> = {

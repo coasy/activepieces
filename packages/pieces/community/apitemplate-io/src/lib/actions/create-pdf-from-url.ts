@@ -1,6 +1,6 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { ApitemplateAuth } from '../common/auth';
-import { ApitemplateRegion, makeRequest } from '../common/client';
+import { ApitemplateAuthConfig, makeRequest } from '../common/client';
 import { HttpMethod } from '@activepieces/pieces-common';
 
 export const createPdfFromUrl = createAction({
@@ -134,7 +134,7 @@ export const createPdfFromUrl = createAction({
     }),
   },
   async run({ auth, propsValue }) {
-    const authConfig = auth.props;
+    const authConfig = auth as ApitemplateAuthConfig;
     const {
       url,
       expiration,
@@ -259,7 +259,7 @@ export const createPdfFromUrl = createAction({
         endpoint,
         requestBody,
         undefined,
-        authConfig.region as ApitemplateRegion
+        authConfig.region
       );
 
       return response;

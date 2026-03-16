@@ -48,7 +48,6 @@ import { salesQuotesEntityProps } from './props/salesQuotes.entity';
 
 export const commonProps = {
   company_id: Property.Dropdown({
-    auth: businessCentralAuth,
     displayName: 'Company',
     required: true,
     refreshers: [],
@@ -61,7 +60,9 @@ export const commonProps = {
         };
       }
 
-      const authValue = auth
+      const authValue = auth as PiecePropValueSchema<
+        typeof businessCentralAuth
+      >;
       const client = makeClient(authValue);
 
       const res = await client.listCompanies();
@@ -90,7 +91,6 @@ export const commonProps = {
     },
   }),
   record_fields: Property.DynamicProperties({
-    auth: businessCentralAuth,
     displayName: 'Record Fields',
     refreshers: ['company_id', 'record_type'],
     required: true,
@@ -101,7 +101,9 @@ export const commonProps = {
 
       const recordType = record_type as unknown as string;
       const companyId = company_id as unknown as string;
-      const authValue = auth
+      const authValue = auth as PiecePropValueSchema<
+        typeof businessCentralAuth
+      >;
       const client = makeClient(authValue);
 
       const fields: DynamicPropsValue = {};
@@ -210,7 +212,6 @@ export const commonProps = {
     },
   }),
   record_filter_fields: Property.DynamicProperties({
-    auth: businessCentralAuth,
     displayName: 'Filter Fields',
     refreshers: ['company_id', 'record_type'],
     required: true,

@@ -18,7 +18,7 @@ export const getMinimalSessionDates = createAction({
         url: wedofCommon.baseUrl + '/registrationFolders/utils/sessionMinDates',
         headers: {
           'Content-Type': 'application/json',
-          'X-Api-Key': context.auth.secret_text,
+          'X-Api-Key': context.auth as string,
         },
       })
     ).body;

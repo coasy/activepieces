@@ -3,7 +3,6 @@ import {
   TriggerStrategy,
   PiecePropValueSchema,
   Property,
-  AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import {
   DedupeStrategy,
@@ -20,7 +19,7 @@ import oracledb from 'oracledb';
 type OrderDirection = 'ASC' | 'DESC';
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof oracleDbAuth>,
+  PiecePropValueSchema<typeof oracleDbAuth>,
   {
     tableName: string;
     orderBy: string;
@@ -29,7 +28,7 @@ const polling: Polling<
 > = {
   strategy: DedupeStrategy.LAST_ITEM,
   items: async ({ auth, propsValue, lastItemId }) => {
-    const client = new OracleDbClient(auth.props);
+    const client = new OracleDbClient(auth);
     await client['connect']();
 
     if (!client['connection']) {

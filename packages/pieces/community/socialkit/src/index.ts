@@ -54,7 +54,7 @@ export const socialkit = createPiece({
       baseUrl: () => socialkitApiUrl,
       authMapping: async (auth) => {
         return {
-          'x-access-key': auth.secret_text
+          'x-access-key': auth as string
         } as HttpHeaders;
       }
     })

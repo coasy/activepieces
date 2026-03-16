@@ -32,7 +32,6 @@ export const addNoteToEntityAction = createAction({
       },
     }),
     entityId: Property.DynamicProperties({
-      auth: capsuleCrmAuth,
       displayName: 'Entity',
       required: true,
       refreshers: ['entityType'],
@@ -42,49 +41,79 @@ export const addNoteToEntityAction = createAction({
         if (!auth || !entityTypeStr) return fields;
 
         if (entityTypeStr === 'party') {
-          const contacts = await capsuleCrmClient.searchContacts(
-            auth,
-            ''
-          );
-          fields['partyId'] = Property.StaticDropdown({
+          fields['partyId'] = Property.Dropdown({
             displayName: 'Party',
             required: true,
-            options:{
-              options: contacts.map((contact) => ({
-                label:
-                  contact.type === 'person'
-                    ? `${contact.firstName} ${contact.lastName}`
-                    : contact.name || `Unnamed ${contact.type}`,
-                value: contact.id,
-              })),
-            }})
+            refreshers: [],
+            options: async () => {
+              if (!auth)
+                return {
+                  options: [],
+                  disabled: true,
+                  placeholder: 'Please connect your Capsule CRM account first',
+                };
+              const contacts = await capsuleCrmClient.searchContacts(
+                auth as CapsuleCrmAuthType,
+                ''
+              );
+              return {
+                options: contacts.map((contact) => ({
+                  label:
+                    contact.type === 'person'
+                      ? `${contact.firstName} ${contact.lastName}`
+                      : contact.name || `Unnamed ${contact.type}`,
+                  value: contact.id,
+                })),
+              };
+            },
+          });
         } else if (entityTypeStr === 'opportunity') {
-          const opportunities =
-          await capsuleCrmClient.searchOpportunities(
-            auth
-          );
-          fields['opportunityId'] = Property.StaticDropdown({
+          fields['opportunityId'] = Property.Dropdown({
             displayName: 'Opportunity',
             required: true,
-            options: {
-              options: opportunities.map((opportunity) => ({
-                label: opportunity.name,
-                value: opportunity.id,
-              })),
-            }})
+            refreshers: [],
+            options: async () => {
+              if (!auth)
+                return {
+                  options: [],
+                  disabled: true,
+                  placeholder: 'Please connect your Capsule CRM account first',
+                };
+              const opportunities =
+                await capsuleCrmClient.searchOpportunities(
+                  auth as CapsuleCrmAuthType
+                );
+              return {
+                options: opportunities.map((opportunity) => ({
+                  label: opportunity.name,
+                  value: opportunity.id,
+                })),
+              };
+            },
+          });
         } else if (entityTypeStr === 'project') {
-          const projects = await capsuleCrmClient.searchProjects(
-            auth
-          );
-          fields['projectId'] = Property.StaticDropdown({
+          fields['projectId'] = Property.Dropdown({
             displayName: 'Project',
             required: true,
-            options:{
-              options: projects.map((project) => ({
-                label: project.name,
-                value: project.id,
-              })),
-            }})
+            refreshers: [],
+            options: async () => {
+              if (!auth)
+                return {
+                  options: [],
+                  disabled: true,
+                  placeholder: 'Please connect your Capsule CRM account first',
+                };
+              const projects = await capsuleCrmClient.searchProjects(
+                auth as CapsuleCrmAuthType
+              );
+              return {
+                options: projects.map((project) => ({
+                  label: project.name,
+                  value: project.id,
+                })),
+              };
+            },
+          });
         }
         return fields;
       },
@@ -94,7 +123,6 @@ export const addNoteToEntityAction = createAction({
       description: 'The activity type for this entry. Defaults to "Note".',
       required: false,
       refreshers: [],
-      auth: capsuleCrmAuth,
       options: async ({ auth }) => {
         if (!auth)
           return {
@@ -103,7 +131,7 @@ export const addNoteToEntityAction = createAction({
             placeholder: 'Please connect your Capsule CRM account first',
           };
         const activityTypes = await capsuleCrmClient.listActivityTypes(
-          auth
+          auth as CapsuleCrmAuthType
         );
         return {
           options: activityTypes.map((activityType) => ({

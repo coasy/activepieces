@@ -3,7 +3,6 @@ import {
   TriggerStrategy,
   PiecePropValueSchema,
   Property,
-  AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import {
@@ -43,12 +42,12 @@ interface MollieRefundResponse {
 }
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof mollieAuth>,
+  PiecePropValueSchema<typeof mollieAuth>,
   { paymentId: string }
 > = {
   strategy: DedupeStrategy.TIMEBASED,
   items: async ({ auth, lastFetchEpochMS, propsValue }) => {
-    const apiKey = auth;
+    const apiKey = auth as string;
     const { paymentId } = propsValue;
     const isTest = lastFetchEpochMS === 0;
 
@@ -132,7 +131,6 @@ export const mollieNewRefund = createTrigger({
 
   props: {
     paymentId: Property.Dropdown({
-  auth: mollieAuth,
       displayName: 'Payment ID',
       description: 'The payment to monitor for refunds',
       required: true,
@@ -147,7 +145,7 @@ export const mollieNewRefund = createTrigger({
         }
 
         try {
-          const apiKey = auth;
+          const apiKey = auth as string;
           const response = await mollieCommon.makeRequest(
             apiKey,
             HttpMethod.GET,

@@ -43,7 +43,7 @@ export const respaidTriggersCommon = {
       await httpClient.sendRequest({
         method: HttpMethod.POST,
         url: `${respaidCommon.baseUrl}/webhook/subscribe`,
-        headers: respaidCommon.getHeadersStructure(context.auth.secret_text as string),
+        headers: respaidCommon.getHeadersStructure(context.auth),
         body: {
           type: 'active_pieces',
           event_type: eventType,
@@ -61,7 +61,7 @@ export const respaidTriggersCommon = {
       await httpClient.sendRequest({
         method: HttpMethod.DELETE,
         url: `${respaidCommon.baseUrl}/webhook/unsubscribe`,
-        headers: respaidCommon.getHeadersStructure(context.auth.secret_text),
+        headers: respaidCommon.getHeadersStructure(context.auth),
         body: {
           type: 'active_pieces',
           event_type: eventType,

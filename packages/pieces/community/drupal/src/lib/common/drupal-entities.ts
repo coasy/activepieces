@@ -2,13 +2,14 @@ import {
   HttpMethod,
 } from '@activepieces/pieces-common';
 import {
+  PiecePropValueSchema,
   DynamicPropsValue,
   Property,
-  AppConnectionValueForAuthProperty,
 } from '@activepieces/pieces-framework';
 import { drupalAuth } from '../../';
-import { DrupalAuthType, makeJsonApiRequest } from './jsonapi';
+import { makeJsonApiRequest } from './jsonapi';
 
+type DrupalAuthType = PiecePropValueSchema<typeof drupalAuth>;
 
 // =============================================================================
 // ENTITY TYPE DISCOVERY
@@ -27,7 +28,7 @@ import { DrupalAuthType, makeJsonApiRequest } from './jsonapi';
  * @returns Dropdown options for entity type selection
  */
 async function fetchEntityTypes(auth: DrupalAuthType, context: 'reading' | 'editing') {
-  if (!auth || !auth.props.website_url) {
+  if (!auth || !auth.website_url) {
     return {
       disabled: true,
       options: [],
@@ -39,7 +40,7 @@ async function fetchEntityTypes(auth: DrupalAuthType, context: 'reading' | 'edit
   const type = context === 'editing'
     ? 'form'
     : 'view';
-  const response = await makeJsonApiRequest(auth, `${auth.props.website_url}/jsonapi/entity_${type}_display/entity_${type}_display`, HttpMethod.GET);
+  const response = await makeJsonApiRequest(auth, `${auth.website_url}/jsonapi/entity_${type}_display/entity_${type}_display`, HttpMethod.GET);
   const data = (response.body as any).data || [];
   const allowedEntityTypes: string[] = [];
   data.forEach((entityType: any) => {
@@ -47,7 +48,7 @@ async function fetchEntityTypes(auth: DrupalAuthType, context: 'reading' | 'edit
   });
 
   try {
-    const response = await makeJsonApiRequest(auth, `${auth.props.website_url}/jsonapi`, HttpMethod.GET);
+    const response = await makeJsonApiRequest(auth, `${auth.website_url}/jsonapi`, HttpMethod.GET);
 
     if (response.status === 200) {
       const entityTypes: Array<{label: string; value: any}> = [];
@@ -95,25 +96,11 @@ async function fetchEntityTypes(auth: DrupalAuthType, context: 'reading' | 'edit
   };
 }
 
-export async function fetchEntityTypesForReading(auth?: DrupalAuthType) {
-  if (!auth) {
-    return {
-      disabled: true,
-      options: [],
-      placeholder: 'Please configure authentication first',
-    };
-  }
+export async function fetchEntityTypesForReading(auth: DrupalAuthType) {
   return await fetchEntityTypes(auth, 'reading');
 }
 
-export async function fetchEntityTypesForEditing(auth?: DrupalAuthType) {
-  if (!auth) {
-    return {
-      disabled: true,
-      options: [],
-      placeholder: 'Please configure authentication first',
-    };
-  }
+export async function fetchEntityTypesForEditing(auth: DrupalAuthType) {
   return await fetchEntityTypes(auth, 'editing');
 }
 
@@ -142,7 +129,7 @@ export async function fetchEntityFormDisplay(auth: DrupalAuthType, entityType: s
     const formDisplayId = `${entityType}.${bundle}.default`;
     const response = await makeJsonApiRequest(
       auth,
-      `${auth.props.website_url}/jsonapi/entity_form_display/entity_form_display?filter[drupal_internal__id]=${encodeURIComponent(formDisplayId)}`,
+      `${auth.website_url}/jsonapi/entity_form_display/entity_form_display?filter[drupal_internal__id]=${encodeURIComponent(formDisplayId)}`,
       HttpMethod.GET
     );
 
@@ -170,7 +157,7 @@ export async function fetchTextFormats(auth: DrupalAuthType) {
   try {
     const response = await makeJsonApiRequest(
       auth,
-      `${auth.props.website_url}/jsonapi/filter_format/filter_format`,
+      `${auth.website_url}/jsonapi/filter_format/filter_format`,
       HttpMethod.GET
     );
 
@@ -213,7 +200,7 @@ export async function fetchEntityFieldConfig(auth: DrupalAuthType, entityType: s
   try {
     const response = await makeJsonApiRequest(
       auth,
-      `${auth.props.website_url}/jsonapi/field_config/field_config?filter[entity_type]=${entityType}&filter[bundle]=${bundle}`,
+      `${auth.website_url}/jsonapi/field_config/field_config?filter[entity_type]=${entityType}&filter[bundle]=${bundle}`,
       HttpMethod.GET
     );
 
@@ -255,7 +242,7 @@ export async function isEntitySupportingWorkflow(auth: DrupalAuthType, entityTyp
   try {
     const response = await makeJsonApiRequest(
       auth,
-      `${auth.props.  website_url}/jsonapi/workflow/workflow`,
+      `${auth.website_url}/jsonapi/workflow/workflow`,
       HttpMethod.GET
     );
 

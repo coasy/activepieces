@@ -1,9 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
+import { useEffectOnce } from 'react-use';
 import { io } from 'socket.io-client';
-import { toast } from 'sonner';
 
 import { API_BASE_URL } from '@/lib/api';
 import { authenticationSession } from '@/lib/authentication-session';
+
+import { useToast } from './ui/use-toast';
 
 const socket = io(API_BASE_URL, {
   transports: ['websocket'],
@@ -16,18 +18,18 @@ const SocketContext = React.createContext<typeof socket>(socket);
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const token = authenticationSession.getToken();
-  const projectId = authenticationSession.getProjectId();
+  const { dismiss, toast } = useToast();
   const toastIdRef = useRef<string | null>(null);
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (token) {
-      socket.auth = { token, projectId };
+      socket.auth = { token };
       if (!socket.connected) {
         socket.connect();
 
         socket.on('connect', () => {
           if (toastIdRef.current) {
-            toast.dismiss(toastIdRef.current);
+            dismiss(toastIdRef.current);
             toastIdRef.current = null;
           }
           console.log('connected to socket');
@@ -35,12 +37,14 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
         socket.on('disconnect', (reason) => {
           if (!toastIdRef.current) {
-            const id = toast('Connection Lost', {
-              id: 'websocket-disconnected',
+            const { id } = toast({
+              itemID: 'websocket-disconnected',
+              title: 'Connection Lost',
               description: 'We are trying to reconnect...',
               duration: Infinity,
+              variant: 'default',
             });
-            toastIdRef.current = id?.toString() ?? null;
+            toastIdRef.current = id;
           }
           if (reason === 'io server disconnect') {
             socket.connect();
@@ -50,12 +54,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       socket.disconnect();
     }
-    return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.disconnect();
-    };
-  }, [token, projectId]);
+  });
 
   return (
     <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>

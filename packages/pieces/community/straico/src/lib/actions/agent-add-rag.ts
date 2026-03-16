@@ -35,7 +35,6 @@ export const agentAddRag = createAction({
   props: {
     agent_id: agentIdDropdown('Agent','The agent to add the RAG to.'),
     rag_id: Property.Dropdown({
-  auth: straicoAuth,
       displayName: 'RAG ID',
       required: true,
       description: 'The ID of the RAG to add to the agent',
@@ -60,7 +59,7 @@ export const agentAddRag = createAction({
             method: HttpMethod.GET,
             authentication: {
               type: AuthenticationType.BEARER_TOKEN,
-              token: auth.secret_text,
+              token: auth as string,
             },
           });
           return {
@@ -91,7 +90,7 @@ export const agentAddRag = createAction({
       method: HttpMethod.POST,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: auth.secret_text,
+        token: auth as string,
       },
       body: {
         rag: rag_id,

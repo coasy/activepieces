@@ -1,11 +1,9 @@
 import { createAction, Property } from '@activepieces/pieces-framework';
 import { HttpMethod, httpClient } from '@activepieces/pieces-common';
-import { socialkitAuth } from '../..';
 
 const socialkitApiUrl = 'https://api.socialkit.dev';
 
 export const getYoutubeComments = createAction({
-  auth: socialkitAuth,
   name: 'get_youtube_comments',
   displayName: 'Get YouTube Comments',
   description:
@@ -42,7 +40,7 @@ export const getYoutubeComments = createAction({
     const accessKey = context.auth;
 
     const queryParams: Record<string, string> = {
-      access_key: accessKey.secret_text,
+      access_key: accessKey as string,
       url: url,
     };
 

@@ -10,7 +10,6 @@ export const getFeature = createAction({
     auth: productboardAuth,
     props: {
         feature_id: Property.Dropdown({
-            auth: productboardAuth,
             displayName: 'Feature',
             description: 'The feature to retrieve.',
             required: true,
@@ -24,7 +23,7 @@ export const getFeature = createAction({
                     };
                 }
                 const response = await productboardCommon.apiCall({
-                    auth: auth,
+                    auth: auth as string,
                     method: HttpMethod.GET,
                     resourceUri: '/features'
                 });

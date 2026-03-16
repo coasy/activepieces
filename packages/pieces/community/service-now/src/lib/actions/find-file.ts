@@ -5,7 +5,6 @@ import {
   tableDropdown,
   recordDropdown,
   createServiceNowClient,
-  servicenowAuth,
 } from '../common/props';
 
 const FindFileInputSchema = z
@@ -36,7 +35,6 @@ const FindFileInputSchema = z
 export const findFileAction = createAction({
   name: 'find_file',
   displayName: 'Find File',
-  auth: servicenowAuth,
   description: 'List or download file attachments from a record',
   props: {
     action_type: Property.StaticDropdown({

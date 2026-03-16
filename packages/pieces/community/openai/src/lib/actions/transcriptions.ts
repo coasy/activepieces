@@ -48,7 +48,7 @@ export const transcribeAction = createAction({
     form.append('language', language);
 
     const headers = {
-      Authorization: `Bearer ${context.auth.secret_text}`,
+      Authorization: `Bearer ${context.auth}`,
     };
 
     const request: HttpRequest = {

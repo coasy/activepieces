@@ -73,12 +73,12 @@ export const woocommerce = createPiece({
     wooFindCustomer,
     wooFindProduct,
     createCustomApiCallAction({
-      baseUrl: (auth) => (auth?.props.baseUrl ?? ''),
+      baseUrl: (auth) => (auth as { baseUrl: string }).baseUrl,
       auth: wooAuth,
       authMapping: async (auth) => ({
         Authorization: `Basic ${Buffer.from(
-          `${auth.props.consumerKey}:${
-            auth.props.consumerSecret
+          `${(auth as { consumerKey: string }).consumerKey}:${
+            (auth as { consumerSecret: string }).consumerSecret
           }`
         ).toString('base64')}`,
       }),

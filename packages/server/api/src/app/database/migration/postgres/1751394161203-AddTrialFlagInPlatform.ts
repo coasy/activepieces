@@ -1,14 +1,9 @@
-import { ApEdition } from '@activepieces/shared'
 import { MigrationInterface, QueryRunner } from 'typeorm'
-import { isNotOneOfTheseEditions } from '../../database-common'
 
 export class AddTrialFlagInPlatform1751394161203 implements MigrationInterface {
     name = 'AddTrialFlagInPlatform1751394161203'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        if (isNotOneOfTheseEditions([ApEdition.CLOUD, ApEdition.ENTERPRISE])) {
-            return
-        }
         await queryRunner.query(`
             ALTER TABLE "platform_plan"
             ADD "eligibleForTrial" boolean
@@ -32,9 +27,6 @@ export class AddTrialFlagInPlatform1751394161203 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        if (isNotOneOfTheseEditions([ApEdition.CLOUD, ApEdition.ENTERPRISE])) {
-            return
-        }
         await queryRunner.query(`
             ALTER TABLE "platform_plan" DROP COLUMN "eligibleForTrial"
         `)

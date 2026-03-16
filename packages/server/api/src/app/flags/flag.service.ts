@@ -1,6 +1,7 @@
 import { AppSystemProp, apVersionUtil, webhookSecretsUtils } from '@activepieces/server-shared'
 import { ApEdition, ApFlagId, ExecutionMode, Flag, isNil } from '@activepieces/shared'
 import { In } from 'typeorm'
+import { aiProviderService } from '../ai/ai-provider-service'
 import { repoFactory } from '../core/db/repo-factory'
 import { federatedAuthnService } from '../ee/authentication/federated-authn/federated-authn-service'
 import { domainHelper } from '../ee/custom-domains/domain-helper'
@@ -9,6 +10,7 @@ import { FlagEntity } from './flag.entity'
 import { defaultTheme } from './theme'
 
 const flagRepo = repoFactory(FlagEntity)
+
 
 export const flagService = {
     save: async (flag: FlagType): Promise<Flag> => {
@@ -51,7 +53,6 @@ export const flagService = {
                 ApFlagId.MAX_FIELDS_PER_TABLE,
                 ApFlagId.MAX_RECORDS_PER_TABLE,
                 ApFlagId.MAX_FILE_SIZE_MB,
-                ApFlagId.TEMPLATES_CATEGORIES,
             ]),
         })
         const now = new Date().toISOString()
@@ -68,8 +69,7 @@ export const flagService = {
             },
             {
                 id: ApFlagId.AGENTS_CONFIGURED,
-                // TODO (@abuaboud): add new check
-                value: true,
+                value: await aiProviderService.isAgentConfigured(),
                 created,
                 updated,
             },
@@ -88,36 +88,6 @@ export const flagService = {
             {
                 id: ApFlagId.CAN_CONFIGURE_AI_PROVIDER,
                 value: true,
-                created,
-                updated,
-            },
-            {
-                id: ApFlagId.SHOW_BADGES,
-                value: true,
-                created,
-                updated,
-            },
-            {
-                id: ApFlagId.CAN_BUY_ACTIVE_FLOWS,
-                value: system.getEdition() === ApEdition.CLOUD,
-                created,
-                updated,
-            },
-            {
-                id: ApFlagId.CAN_BUY_AI_CREDITS,
-                value: !isNil(system.get(AppSystemProp.OPENROUTER_PROVISION_KEY)),
-                created,
-                updated,
-            },
-            {
-                id: ApFlagId.SHOW_BILLING_LIMITS_ON_SIDEBAR,
-                value: system.getEdition() === ApEdition.CLOUD,
-                created,
-                updated,
-            },
-            {
-                id: ApFlagId.SHOW_BILLING_PAGE,
-                value: system.getEdition() === ApEdition.CLOUD,
                 created,
                 updated,
             },
@@ -154,6 +124,13 @@ export const flagService = {
             {
                 id: ApFlagId.EDITION,
                 value: system.getEdition(),
+                created,
+                updated,
+            },
+     
+            {
+                id: ApFlagId.SHOW_BILLING,
+                value: system.getEdition() === ApEdition.CLOUD,
                 created,
                 updated,
             },
@@ -279,6 +256,12 @@ export const flagService = {
                 created,
                 updated,
             },
+            {
+                id: ApFlagId.SHOW_TUTORIALS,
+                value: true,
+                created,
+                updated,
+            },
         )
 
         if (system.isApp()) {
@@ -302,9 +285,6 @@ export const flagService = {
         return flags
     },
 
-    aiCreditsEnabled(): boolean {
-        return !isNil(system.get(AppSystemProp.OPENROUTER_PROVISION_KEY))
-    },
 }
 
 
@@ -323,7 +303,6 @@ export type FlagType =
     | BaseFlagStructure<ApFlagId.TELEMETRY_ENABLED, boolean>
     | BaseFlagStructure<ApFlagId.USER_CREATED, boolean>
     | BaseFlagStructure<ApFlagId.WEBHOOK_URL_PREFIX, string>
-    | BaseFlagStructure<ApFlagId.TEMPLATES_CATEGORIES, string[]>
 
 type BaseFlagStructure<K extends ApFlagId, V> = {
     id: K

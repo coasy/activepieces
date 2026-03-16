@@ -12,16 +12,16 @@ import {
   pollingHelper,
 } from '@activepieces/pieces-common';
 import { drupalAuth } from '../../';
-import { DrupalAuthType } from '../common/jsonapi';
+type DrupalAuthType = PiecePropValueSchema<typeof drupalAuth>;
 
-const polling: Polling<DrupalAuthType, { name: string }> = {
+const polling: Polling<PiecePropValueSchema<typeof drupalAuth>, { name: string }> = {
   strategy: DedupeStrategy.LAST_ITEM,
   items: async ({ auth, propsValue, lastItemId }) => {
     if (lastItemId === undefined || lastItemId === null) {
       lastItemId = '0';
     }
     console.debug('Polling by ID', propsValue['name'], lastItemId);
-    const { website_url, username, password } = auth.props;
+    const { website_url, username, password } = (auth as DrupalAuthType);
     const body: any = {
       name: propsValue['name'],
       id: lastItemId,

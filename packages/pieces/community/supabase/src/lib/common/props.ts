@@ -1,10 +1,9 @@
 import { Property, DynamicPropsValue } from "@activepieces/pieces-framework";
 import { createClient } from "@supabase/supabase-js";
-import { supabaseAuth } from "../..";
 
 async function getColumnOptions(auth: any, table_name: string) {
   try {
-    const { url, apiKey } =auth.props
+    const { url, apiKey } = auth as { url: string; apiKey: string };
     const supabase = createClient(url, apiKey);
     
     try {
@@ -55,8 +54,6 @@ async function getColumnOptions(auth: any, table_name: string) {
 
 export const supabaseCommon = {
   table_name: Property.Dropdown({
-    auth: supabaseAuth,
-
     displayName: 'Table Name',
     description: 'Select a table from your database',
     required: true,
@@ -71,7 +68,7 @@ export const supabaseCommon = {
       }
 
       try {
-        const { url, apiKey } = auth.props;
+        const { url, apiKey } = auth as { url: string; apiKey: string };
         const supabase = createClient(url, apiKey);
         
         try {
@@ -154,7 +151,6 @@ export const supabaseCommon = {
   }),
 
   table_columns: Property.DynamicProperties({
-    auth: supabaseAuth,
     displayName: 'Row Data',
     description: 'Enter the data for each column',
     required: true,
@@ -168,7 +164,7 @@ export const supabaseCommon = {
       }
 
       try {
-        const { url, apiKey } =auth.props
+        const { url, apiKey } = auth as { url: string; apiKey: string };
         const supabase = createClient(url, apiKey);
         
         let columns: any[] = [];
@@ -382,7 +378,6 @@ export const supabaseCommon = {
   }),
 
   update_fields: Property.DynamicProperties({
-    auth: supabaseAuth,
     displayName: 'Update Data',
     description: 'Select which columns to update (auto-generated fields excluded)',
     required: true,
@@ -396,7 +391,7 @@ export const supabaseCommon = {
       }
 
       try {
-        const { url, apiKey } =auth.props
+        const { url, apiKey } = auth as { url: string; apiKey: string };
         const supabase = createClient(url, apiKey);
         
         let columns: any[] = [];
@@ -573,8 +568,7 @@ export const supabaseCommon = {
   }),
 
   upsert_fields: Property.DynamicProperties({
-    auth: supabaseAuth,
-      displayName: 'Row Data',
+    displayName: 'Row Data',
     description: 'Enter data for the row (conflict detection handled separately)',
     required: true,
     refreshers: ['table_name', 'on_conflict'],
@@ -587,7 +581,7 @@ export const supabaseCommon = {
       }
 
       try {
-        const { url, apiKey } =auth.props
+        const { url, apiKey } = auth as { url: string; apiKey: string };
         const supabase = createClient(url, apiKey);
         
         let columns: any[] = [];

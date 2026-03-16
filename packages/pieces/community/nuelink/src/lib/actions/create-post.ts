@@ -48,7 +48,7 @@ export const createPost = createAction({
       method: HttpMethod.POST,
       url: 'https://nuelink.com/api/v1/pabbly',
       headers: {
-        Authorization: `Bearer ${context.auth.secret_text}`,
+        Authorization: `Bearer ${context.auth}`,
       },
       body: {
         body: context.propsValue.body,

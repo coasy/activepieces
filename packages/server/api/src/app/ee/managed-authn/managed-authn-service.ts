@@ -7,7 +7,6 @@ import {
     PlatformRole,
     PrincipalType,
     Project,
-    ProjectType,
     User,
     UserIdentity,
     UserIdentityProvider,
@@ -31,14 +30,13 @@ export const managedAuthnService = (log: FastifyBaseLogger) => ({
             externalAccessToken,
         )
 
-        const { project } = await getOrCreateProject({
+        const { project, isNewProject } = await getOrCreateProject({
             platformId: externalPrincipal.platformId,
             externalProjectId: externalPrincipal.externalProjectId,
         })
 
         if (!isNil(externalPrincipal.projectDisplayName)) {
             await projectService.update(project.id, {
-                type: project.type,
                 displayName: externalPrincipal.projectDisplayName,
             })
         }
@@ -48,7 +46,9 @@ export const managedAuthnService = (log: FastifyBaseLogger) => ({
             projectId: project.id,
             piecesTags: externalPrincipal.pieces.tags,
             piecesFilterType: externalPrincipal.pieces.filterType,
+            aiCredits: externalPrincipal.aiCredits,
             log,
+            isNewProject,
         })
 
         const user = await getOrCreateUser(externalPrincipal, log)
@@ -66,6 +66,7 @@ export const managedAuthnService = (log: FastifyBaseLogger) => ({
         const token = await accessTokenManager.generateToken({
             id: user.id,
             type: PrincipalType.USER,
+            projectId: project.id,
             platform: {
                 id: externalPrincipal.platformId,
             },
@@ -95,18 +96,25 @@ type UpdateProjectLimitsParams =
         projectId: string
         piecesTags: string[]
         piecesFilterType: PiecesFilterType
+        aiCredits: number | undefined
         log: FastifyBaseLogger
+        isNewProject: boolean
     }
 
-const updateProjectLimits = async ({ platformId, projectId, piecesTags, piecesFilterType, log }: UpdateProjectLimitsParams): Promise<void> => {
+const updateProjectLimits = async (
+    { platformId, projectId, piecesTags, piecesFilterType, aiCredits, log, isNewProject }:
+    UpdateProjectLimitsParams,
+): Promise<void> => {
     const pieces = await getPiecesList({
         platformId,
         projectId,
         piecesTags,
         piecesFilterType,
     })
+    const aiCreditsLimit = isNewProject ? (aiCredits ?? 200) : aiCredits
     await projectLimitsService(log).upsert({
         nickname: 'default-embeddings-limit',
+        aiCredits: aiCreditsLimit,
         pieces,
         piecesFilterType,
     }, projectId)
@@ -175,7 +183,6 @@ const getOrCreateProject = async ({
         ownerId: platform.ownerId,
         platformId,
         externalId: externalProjectId,
-        type: ProjectType.TEAM,
     })
 
     return { project, isNewProject: true }

@@ -42,15 +42,10 @@ export const totalcms = createPiece({
     saveToggleAction,
     saveVideoAction,
     createCustomApiCallAction({
-        baseUrl: (auth) => {
-          if (!auth) {
-            return '';
-          }
-          return (auth.props).domain;
-        },
+      baseUrl: (auth) => (auth as { domain: string }).domain,
       auth: cmsAuth,
       authMapping: async (auth) => ({
-        'total-key': (auth.props ).license,
+        'total-key': (auth as { license: string }).license,
       }),
     }),
   ],

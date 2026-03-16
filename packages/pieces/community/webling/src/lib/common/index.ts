@@ -4,20 +4,13 @@ import { weblingAuth } from '../../index';
 
 export const weblingCommon = {
   calendarDropdown: () => {
-    return Property.Dropdown<string,true,typeof weblingAuth>({
-      auth: weblingAuth,
+    return Property.Dropdown<string>({
       displayName: 'Calendar',
       refreshers: [],
       required: true,
       options: async ({ auth }) => {
-        if (!auth) {
-          return {
-            disabled: true,
-            placeholder: 'connect your account first',
-            options: [],
-          };
-        }
-        const calendars = await getCalendars(auth);
+        const authProp = auth as PiecePropValueSchema<typeof weblingAuth>;
+        const calendars = await getCalendars(authProp);
         return {
           disabled: false,
           options: calendars.map((calendar) => {

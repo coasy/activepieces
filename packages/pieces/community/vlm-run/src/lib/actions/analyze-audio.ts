@@ -15,15 +15,15 @@ export const analyzeAudio = createAction({
 
 
     const uploadResponse = await vlmRunCommon.uploadFile({
-      apiKey:apiKey.secret_text,
+      apiKey,
       file: propsValue.audio,
     });
 
     const response = await vlmRunCommon.analyzeAudio({
-      apiKey:apiKey.secret_text,
+      apiKey,
       file_id: uploadResponse.id,
     });
 
-    return await vlmRunCommon.getresponse(apiKey.secret_text, response.id, response.status);
+    return await vlmRunCommon.getresponse(apiKey, response.id, response.status);
   },
 });

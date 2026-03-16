@@ -97,7 +97,7 @@ export const airtable = createPiece({
       },
       auth: airtableAuth,
       authMapping: async (auth) => ({
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       }),
     }),
   ],

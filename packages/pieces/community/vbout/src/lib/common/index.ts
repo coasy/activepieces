@@ -5,7 +5,6 @@ import {
   SocialMediaChannelValues,
   SocialMediaProfile,
 } from './models';
-import { vboutAuth } from '../..';
 export function makeClient(apiKey: string): VboutClient {
   return new VboutClient(apiKey);
 }
@@ -14,7 +13,6 @@ export const vboutCommon = {
   baseUrl: 'https://api.vbout.com/1',
   listid: (required = true) =>
     Property.Dropdown({
-      auth: vboutAuth,
       displayName: 'List ID',
       required: required,
       refreshers: [],
@@ -26,7 +24,7 @@ export const vboutCommon = {
             options: [],
           };
         }
-        const client = makeClient(auth.secret_text);
+        const client = makeClient(auth as string);
         const res = await client.listEmailLists();
         return {
           disabled: false,
@@ -40,7 +38,6 @@ export const vboutCommon = {
       },
     }),
   listFields: Property.DynamicProperties({
-    auth: vboutAuth,
     displayName: 'Fields',
     required: true,
     refreshers: ['listid'],
@@ -53,7 +50,7 @@ export const vboutCommon = {
         };
       }
       const fields: DynamicPropsValue = {};
-      const client = makeClient(auth.secret_text);
+      const client = makeClient(auth as unknown as string);
       const contactList = await client.getEmailList(
         listid as unknown as string
       );
@@ -115,7 +112,6 @@ export const vboutCommon = {
     },
   }),
   socialMediaProfile: Property.Dropdown({
-    auth: vboutAuth,
     displayName: 'Social Media Account',
     required: true,
     refreshers: ['channel'],
@@ -128,7 +124,7 @@ export const vboutCommon = {
             'Please connect your account and select social media channel.',
         };
       }
-      const client = makeClient(auth.secret_text);
+      const client = makeClient(auth as string);
       const { channels } = await client.listSocialMediaChannels();
       let options: { label: string; value: string }[] = [];
       switch (channel as string) {

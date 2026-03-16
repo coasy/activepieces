@@ -1,5 +1,4 @@
 import {
-  AppConnectionValueForAuthProperty,
   createAction,
   Property,
 } from '@activepieces/pieces-framework';
@@ -10,6 +9,7 @@ import {
   HttpMethod,
 } from '@activepieces/pieces-common';
 import { localaiAuth } from '../..';
+import { json } from 'stream/consumers';
 
 const billingIssueMessage = `Error Occurred: 429 \n
 
@@ -31,7 +31,6 @@ export const askLocalAI = createAction({
   description: 'Ask LocalAI anything you want!',
   props: {
     model: Property.Dropdown({
-      auth: localaiAuth,
       displayName: 'Model',
       required: true,
       description:
@@ -46,17 +45,15 @@ export const askLocalAI = createAction({
             options: [],
           };
         }
-
-        const authValue = auth as AppConnectionValueForAuthProperty<typeof localaiAuth>;
         try {
           const response = await httpClient.sendRequest<{
             data: { id: string }[];
           }>({
-            url: authValue.props.base_url + '/models',
+            url: (<any>auth).base_url + '/models',
             method: HttpMethod.GET,
             authentication: {
               type: AuthenticationType.BEARER_TOKEN,
-              token: authValue.props.access_token as string,
+              token: (<any>auth).access_token as string,
             },
           });
           return {
@@ -122,8 +119,8 @@ export const askLocalAI = createAction({
   },
   async run({ auth, propsValue }) {
     const openai = new OpenAI({
-      baseURL: auth.props.base_url,
-      apiKey: auth.props.access_token,
+      baseURL: auth.base_url,
+      apiKey: auth.access_token,
     });
     let billingIssue = false;
     let unaurthorized = false;

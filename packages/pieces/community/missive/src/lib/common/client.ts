@@ -1,6 +1,4 @@
 import { httpClient, HttpMethod, AuthenticationType } from '@activepieces/pieces-common';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-import { missiveAuth } from './auth';
 
 const MISSIVE_API_BASE_URL = 'https://public.missiveapp.com/v1';
 
@@ -14,7 +12,7 @@ export const missiveCommon = {
         body = undefined,
         queryParams = undefined,
     }: {
-        auth: AppConnectionValueForAuthProperty<typeof missiveAuth>;
+        auth: string;
         method: HttpMethod;
         resourceUri: string;
         body?: any;
@@ -27,7 +25,7 @@ export const missiveCommon = {
             queryParams,
             authentication: {
                 type: AuthenticationType.BEARER_TOKEN,
-                token: auth.secret_text,
+                token: auth,
             }
         });
     }

@@ -1,4 +1,5 @@
 import {
+  PiecePropValueSchema,
   Property,
   createAction,
 } from '@activepieces/pieces-framework';
@@ -26,7 +27,7 @@ export const deleteRowAction = createAction({
   async run(context) {
     const { table_id, row_id } = context.propsValue;
     const client = makeClient(
-      context.auth.props
+      context.auth as PiecePropValueSchema<typeof baserowAuth>
     );
     return await client.deleteRow(table_id, row_id);
   },

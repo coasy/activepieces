@@ -46,7 +46,6 @@ export const objectDetection = createAction({
       defaultValue: 'general',
     }),
     model: Property.Dropdown({
-      auth: huggingFaceAuth,
       displayName: 'Detection Model',
       description: 'Select the best model for your detection task',
       required: true,
@@ -284,7 +283,7 @@ export const objectDetection = createAction({
       type: mimeType,
     });
 
-    const hf = new InferenceClient(context.auth.secret_text);
+    const hf = new InferenceClient(context.auth as string);
 
     // Build detection arguments
     const args: ObjectDetectionInput = {

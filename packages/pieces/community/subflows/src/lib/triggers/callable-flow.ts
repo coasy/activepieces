@@ -1,7 +1,6 @@
 import {
   createTrigger,
   DynamicPropsValue,
-  PieceAuth,
   Property,
   StoreScope,
   TriggerStrategy,
@@ -33,7 +32,6 @@ export const callableFlow = createTrigger({
       },
     }),
     exampleData: Property.DynamicProperties({
-      auth: PieceAuth.None(),
       displayName: 'Sample Data',
       description: 'The schema to be passed to the flow',
       required: true,

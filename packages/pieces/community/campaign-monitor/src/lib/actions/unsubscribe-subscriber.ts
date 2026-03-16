@@ -27,7 +27,7 @@ export const unsubscribeSubscriberAction = createAction({
     };
 
     const response = await makeRequest(
-        { apiKey: auth.secret_text },
+      { apiKey: auth as string },
       HttpMethod.POST,
       `/subscribers/${listId}/unsubscribe.json`,
       payload

@@ -1,4 +1,3 @@
-import { securityAccess } from '@activepieces/server-shared'
 import {
     ActivepiecesError,
     AppConnection,
@@ -7,6 +6,7 @@ import {
     ErrorCode,
     GetAppConnectionForWorkerRequestQuery,
     isNil,
+    PrincipalType,
 } from '@activepieces/shared'
 import {
     FastifyPluginAsyncTypebox,
@@ -42,7 +42,7 @@ export const appConnectionWorkerController: FastifyPluginAsyncTypebox = async (a
 
 const GetAppConnectionRequest = {
     config: {
-        security: securityAccess.engine(),
+        allowedPrincipals: [PrincipalType.ENGINE],
     },
     schema: {
         params: GetAppConnectionForWorkerRequestQuery,

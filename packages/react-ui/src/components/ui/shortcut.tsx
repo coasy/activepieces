@@ -12,6 +12,7 @@ export type ShortcutProps = {
   shortcutKey: string;
   withCtrl?: boolean;
   withShift?: boolean;
+  shouldNotPreventDefault?: boolean;
 };
 
 export const Shortcut = ({
@@ -25,7 +26,7 @@ export const Shortcut = ({
   return (
     <span
       className={cn(
-        'grow text-xs tracking-widest text-muted-foreground',
+        'flex-grow text-xs tracking-widest text-muted-foreground',
         className,
       )}
     >

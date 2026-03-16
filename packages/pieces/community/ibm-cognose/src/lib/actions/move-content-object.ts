@@ -25,7 +25,7 @@ export const moveContentObjectAction = createAction({
     }
 
     try {
-      const client = new CognosClient(auth.props);
+      const client = new CognosClient(auth);
 
       const moveRequest = {
         source_id: sourceId,

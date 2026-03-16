@@ -1,11 +1,8 @@
-import { EntitySourceType, ProjectResourceType, securityAccess } from '@activepieces/server-shared'
-import { CreateTodoRequestBody, ListTodoAssigneesRequestQuery, ListTodosQueryParams, PrincipalType, ResolveTodoRequestQuery, SeekPage, TodoEnvironment, UpdateTodoRequestBody, UserWithMetaInformation } from '@activepieces/shared'
+import { ALL_PRINCIPAL_TYPES, CreateTodoRequestBody, ListTodoAssigneesRequestQuery, ListTodosQueryParams, PrincipalType, ResolveTodoRequestQuery, SeekPage, TodoEnvironment, UpdateTodoRequestBody, UserWithMetaInformation } from '@activepieces/shared'
 import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'
 import { StatusCodes } from 'http-status-codes'
-import { FlowEntity } from '../flows/flow/flow.entity'
 import { paginationHelper } from '../helper/pagination/pagination-utils'
 import { userService } from '../user/user-service'
-import { TodoEntity } from './todo.entity'
 import { todoService } from './todo.service'
 
 const DEFAULT_LIMIT = 10
@@ -13,10 +10,10 @@ const DEFAULT_CURSOR = null
 
 export const todoController: FastifyPluginAsyncTypebox = async (app) => {
     app.get('/', ListTodosRequest, async (request) => {
-        const { platformId, assigneeId, limit, cursor, statusOptions, title } = request.query
+        const { platformId, projectId, assigneeId, limit, cursor, statusOptions, title } = request.query
         return todoService(request.log).list({
             platformId,
-            projectId: request.projectId,
+            projectId,
             assigneeId,
             limit: limit ?? DEFAULT_LIMIT,
             cursor: cursor ?? DEFAULT_CURSOR,
@@ -30,7 +27,7 @@ export const todoController: FastifyPluginAsyncTypebox = async (app) => {
         return todoService(request.log).getOnePopulatedOrThrow({
             id,
             platformId: request.principal.platform.id,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
         })
     })
 
@@ -46,7 +43,7 @@ export const todoController: FastifyPluginAsyncTypebox = async (app) => {
             environment: environment ?? TodoEnvironment.PRODUCTION,
             resolveUrl,
             platformId: request.principal.platform.id,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
         })
     })
 
@@ -61,7 +58,7 @@ export const todoController: FastifyPluginAsyncTypebox = async (app) => {
             statusOptions,
             assigneeId,
             platformId: request.principal.platform.id,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
             isTest,
             socket: app.io,
         })
@@ -91,7 +88,7 @@ export const todoController: FastifyPluginAsyncTypebox = async (app) => {
         return todoService(request.log).delete({
             id,
             platformId: request.principal.platform.id,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
         })
     })
 }
@@ -104,10 +101,7 @@ const DeleteTodoRequest = {
         }),
     },
     config: {
-        security: securityAccess.project([PrincipalType.USER], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: TodoEntity,
-        }),
+        allowedPrincipals: [PrincipalType.USER] as const,
     },
 }
 
@@ -120,7 +114,7 @@ const ListTodoAssigneesRequest = {
         },
     },
     config: {
-        security: securityAccess.engine(),
+        allowedPrincipals: [PrincipalType.ENGINE] as const,
     },
 
 }
@@ -131,9 +125,7 @@ const ListTodosRequest = {
         querystring: ListTodosQueryParams,
     },
     config: {
-        security: securityAccess.project([PrincipalType.USER], undefined, {
-            type: ProjectResourceType.QUERY,
-        }),
+        allowedPrincipals: [PrincipalType.USER],
     },
 }
 
@@ -142,15 +134,7 @@ const CreateTodoRequest = {
         body: CreateTodoRequestBody,
     },
     config: {
-        security: securityAccess.project([PrincipalType.SERVICE, PrincipalType.ENGINE], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: FlowEntity,
-            entitySourceType: EntitySourceType.BODY,
-            lookup: {
-                paramKey: 'flowId',
-                entityField: 'id',
-            },
-        }),
+        allowedPrincipals: [PrincipalType.SERVICE, PrincipalType.ENGINE] as const,
     },
 }
 
@@ -162,7 +146,7 @@ const RequestResolveTodoRequest = {
         querystring: ResolveTodoRequestQuery,
     },
     config: {
-        security: securityAccess.public(),
+        allowedPrincipals: ALL_PRINCIPAL_TYPES,
     },
 }
 
@@ -173,10 +157,7 @@ const GetTodoRequest = {
         }),
     },
     config: {
-        security: securityAccess.project([PrincipalType.USER, PrincipalType.SERVICE, PrincipalType.ENGINE], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: TodoEntity,
-        }),
+        allowedPrincipals: [PrincipalType.USER, PrincipalType.SERVICE, PrincipalType.ENGINE] as const,
     },
 }
 
@@ -188,9 +169,6 @@ const UpdateTodoRequest = {
         body: UpdateTodoRequestBody,
     },
     config: {
-        security: securityAccess.project([PrincipalType.USER], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: TodoEntity,
-        }),
+        allowedPrincipals: [PrincipalType.USER] as const,
     },
 }

@@ -24,7 +24,6 @@ export const searchRecords = createAction({
   props: {
     elementType: elementTypeProperty,
     fields: Property.DynamicProperties({
-      auth: vtigerAuth,
       displayName: 'Search Fields',
       description: 'Enter your filter criteria',
       required: true,
@@ -35,9 +34,9 @@ export const searchRecords = createAction({
         }
 
         const instance = await instanceLogin(
-          auth.props.instance_url,
-          auth.props.username,
-          auth.props.password
+          (auth as PiecePropValueSchema<typeof vtigerAuth>).instance_url,
+          (auth as PiecePropValueSchema<typeof vtigerAuth>).username,
+          (auth as PiecePropValueSchema<typeof vtigerAuth>).password
         );
 
         if (instance === null) {
@@ -45,7 +44,7 @@ export const searchRecords = createAction({
         }
 
         return generateElementFields(
-          auth,
+          auth as VTigerAuthValue,
           elementType as unknown as string,
           {},
           true
@@ -60,9 +59,9 @@ export const searchRecords = createAction({
   },
   async run({ propsValue, auth }) {
     const vtigerInstance = await instanceLogin(
-      auth.props.instance_url,
-      auth.props.username,
-      auth.props.password
+      auth.instance_url,
+      auth.username,
+      auth.password
     );
     if (vtigerInstance === null) return;
 

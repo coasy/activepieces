@@ -91,7 +91,7 @@ export const createPaymentlink = createAction({
       callback_method: context.propsValue.callback_method,
     };
 
-    const authHeader = await generateRazorpayAuthHeader(context.auth.props);
+    const authHeader = await generateRazorpayAuthHeader(context.auth as RazorpayCredentials);
 
     const response = await httpClient.sendRequest({
       method: HttpMethod.POST,

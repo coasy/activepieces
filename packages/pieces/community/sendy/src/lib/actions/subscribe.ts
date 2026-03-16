@@ -15,7 +15,6 @@ export const subscribeAction = createAction({
   description: 'Add a new subscriber to a list',
   props: {
     list: Property.Dropdown({
-      auth: sendyAuth,
       displayName: 'List',
       description: 'Select the list to subscribe to',
       required: true,

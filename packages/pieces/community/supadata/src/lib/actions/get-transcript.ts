@@ -41,7 +41,7 @@ export const getTranscriptAction = createAction({
       method: HttpMethod.GET,
       url: `${supadataConfig.baseUrl}/youtube/transcript`,
       headers: {
-        [supadataConfig.accessTokenHeaderKey]: context.auth.secret_text,
+        [supadataConfig.accessTokenHeaderKey]: context.auth,
       },
       queryParams: qs,
     });

@@ -11,7 +11,7 @@ export const getAccounts = createAction({
   description: 'Get your accounts',
   props: {},
   async run(context) {
-    await initializeAndDownloadBudget(api, context.auth.props)
+    await initializeAndDownloadBudget(api, context.auth)
     const accounts = await api.getAccounts();
     await api.shutdown();
     return accounts;

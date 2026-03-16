@@ -1,6 +1,6 @@
 import { isNil } from '@activepieces/shared';
-import { googleSheetsAuth } from '../common/common';
-import { areSheetIdsValid, columnToLabel, GoogleSheetsAuthValue, labelToColumn } from '../common/common';
+import { googleSheetsAuth } from '../../';
+import { areSheetIdsValid, columnToLabel, labelToColumn } from '../common/common';
 import {
 	createFileNotification,
 	deleteFileNotification,
@@ -19,6 +19,7 @@ import {
 	DEDUPE_KEY_PROPERTY,
 	WebhookRenewStrategy,
 	Property,
+	PiecePropValueSchema,
 	DropdownOption,
 } from '@activepieces/pieces-framework';
 
@@ -39,7 +40,6 @@ export const newOrUpdatedRowTrigger = createTrigger({
 		}),
 		...commonProps,
 		trigger_column: Property.Dropdown({
-			auth: googleSheetsAuth,
 			displayName: 'Trigger Column',
 			description: `Trigger on changes to cells in this column only. \nSelect **Any Column** if you want the flow to trigger on changes to any cell within the row.`,
 			required: false,
@@ -54,13 +54,14 @@ export const newOrUpdatedRowTrigger = createTrigger({
 					};
 				}
 
+				const authValue = auth as PiecePropValueSchema<typeof googleSheetsAuth>;
 				const spreadsheet_id = spreadsheetId as string;
 				const sheet_id = sheetId as number;
 
-				const sheetName = await getWorkSheetName(auth, spreadsheet_id, sheet_id);
+				const sheetName = await getWorkSheetName(authValue, spreadsheet_id, sheet_id);
 
 				const firstRowValues = await getWorkSheetValues(
-					auth,
+					authValue,
 					spreadsheet_id,
 					`${sheetName}!1:1`,
 				);

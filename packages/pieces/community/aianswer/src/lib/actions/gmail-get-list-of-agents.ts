@@ -14,7 +14,7 @@ export const gmailGetListOfAgents = createAction({
       method: HttpMethod.GET,
       url: `${aiAnswerConfig.baseUrl}/gmail/list_agents`,
       headers: {
-        [aiAnswerConfig.accessTokenHeaderKey]: context.auth.secret_text,
+        [aiAnswerConfig.accessTokenHeaderKey]: context.auth,
         },
     });
     return res.body;

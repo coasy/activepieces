@@ -25,7 +25,7 @@ import { FlowAction, ApFlagId, apId, FlowTrigger } from '@activepieces/shared';
 
 import { useBuilderStateContext } from '../../builder-hooks';
 import { DictionaryProperty } from '../../piece-properties/dictionary-property';
-import { testStepHooks } from '../utils/test-step-hooks';
+import { testStepHooks } from '../test-step-hooks';
 
 enum BodyType {
   JSON = 'json',
@@ -165,7 +165,6 @@ const TestWaitForNextWebhookDialog = ({
                 standardOutput: '',
                 input: {},
               },
-              onProgress: undefined,
             });
           }}
           isLoading={isLoading}

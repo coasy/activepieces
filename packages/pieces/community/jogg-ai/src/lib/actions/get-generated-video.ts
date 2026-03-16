@@ -32,7 +32,7 @@ export const getGeneratedVideo = createAction({
       method: HttpMethod.GET,
       url: 'https://api.jogg.ai/v1/project',
       headers: {
-        'x-api-key': auth.secret_text,
+        'x-api-key': auth,
       },
       queryParams: {
         project_id,

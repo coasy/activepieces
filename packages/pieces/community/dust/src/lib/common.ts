@@ -4,10 +4,10 @@ import {
   HttpMessageBody,
   HttpMethod,
 } from '@activepieces/pieces-common';
-import { dustAuth, DustAuthType } from '..';
+import { DustAuthType } from '..';
 import { DustAPI } from '@dust-tt/client';
 
-export const DUST_BASE_URL: Record<string, string> = {
+export const DUST_BASE_URL = {
   us: 'https://dust.tt/api/v1/w',
   eu: 'https://eu.dust.tt/api/v1/w',
 };
@@ -24,7 +24,6 @@ export const createClient = (auth: DustAuthType) => {
 };
 
 export const assistantProp = Property.Dropdown({
-  auth: dustAuth,
   displayName: 'Agent',
   required: true,
   refreshers: ['auth'],
@@ -36,7 +35,7 @@ export const assistantProp = Property.Dropdown({
         placeholder: 'Please authenticate first',
       };
     }
-    const client = createClient(auth.props);
+    const client = createClient(auth as DustAuthType);
     const response = await client.getAgentConfigurations({});
 
     if (response.isErr()) {

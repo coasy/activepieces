@@ -7,7 +7,6 @@ import {
   pollingHelper,
 } from '@activepieces/pieces-common';
 import {
-  AppConnectionValueForAuthProperty,
   createTrigger,
   OAuth2PropertyValue,
   TriggerStrategy,
@@ -123,7 +122,7 @@ export const newContact = createTrigger({
   },
 });
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof zohoCrmAuth>, unknown> = {
+const polling: Polling<OAuth2PropertyValue, unknown> = {
   strategy: DedupeStrategy.TIMEBASED,
   items: async ({ auth }) => {
     const response = await httpClient.sendRequest<{

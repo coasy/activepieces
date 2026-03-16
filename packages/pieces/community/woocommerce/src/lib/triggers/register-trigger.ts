@@ -40,7 +40,7 @@ export const woocommerceRegisterTrigger = ({
         displayName,
         context.webhookUrl,
         topic,
-        context.auth.props
+        context.auth as PiecePropValueSchema<typeof wooAuth>
       );
       await context.store.put<WebhookInformation>(
         `$woocommerce_trigger_${name}`,
@@ -54,7 +54,7 @@ export const woocommerceRegisterTrigger = ({
       if (webhook != null) {
         await wooCommon.deleteWebhook(
           webhook.id,
-          context.auth.props
+          context.auth as PiecePropValueSchema<typeof wooAuth>
         );
       }
     },
@@ -70,15 +70,15 @@ export const woocommerceRegisterTrigger = ({
       };
     },
     async test(context) {
-      const trimmedBaseUrl = context.auth.props.baseUrl.replace(/\/$/, '');
+      const trimmedBaseUrl = context.auth.baseUrl.replace(/\/$/, '');
 
       const request: HttpRequest = {
         url: `${trimmedBaseUrl}${testDataEndpoint}`,
         method: HttpMethod.GET,
         authentication: {
           type: AuthenticationType.BASIC,
-          username: context.auth.props.consumerKey,
-          password: context.auth.props.consumerSecret,
+          username: context.auth.consumerKey,
+          password: context.auth.consumerSecret,
         },
         queryParams: {
           per_page: '10',
@@ -95,7 +95,7 @@ export const woocommerceRegisterTrigger = ({
     },
     async run(context) {
       const payload = context.payload.body as Record<string, any>;
-      const trimmedBaseUrl = context.auth.props.baseUrl.replace(/\/$/, '');
+      const trimmedBaseUrl = context.auth.baseUrl.replace(/\/$/, '');
 
       if (payload['webhook_id']) return [];
 
@@ -105,8 +105,8 @@ export const woocommerceRegisterTrigger = ({
           method: HttpMethod.GET,
           authentication: {
             type: AuthenticationType.BASIC,
-            username: context.auth.props.consumerKey,
-            password: context.auth.props.consumerSecret,
+            username: context.auth.consumerKey,
+            password: context.auth.consumerSecret,
           },
           queryParams: {
             per_page: '10',

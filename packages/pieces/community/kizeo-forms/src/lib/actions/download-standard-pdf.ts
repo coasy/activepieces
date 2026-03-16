@@ -24,7 +24,7 @@ export const downloadStandardPDF = createAction({
       {
         headers: {
           'Content-Type': 'application/pdf',
-          Authorization: context.auth.secret_text,
+          Authorization: context.auth,
         },
         responseType: 'arraybuffer',
       }

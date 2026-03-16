@@ -2,10 +2,10 @@ import { t } from 'i18next';
 import { Copy, Check } from 'lucide-react';
 import React, { useState } from 'react';
 import ReactJson from 'react-json-view';
-import { toast } from 'sonner';
 
 import { useTheme } from './theme-provider';
 import { Button } from './ui/button';
+import { toast } from './ui/use-toast';
 
 interface SimpleJsonViewerProps {
   data: any;
@@ -29,7 +29,8 @@ export const SimpleJsonViewer: React.FC<SimpleJsonViewerProps> = ({
   const handleCopy = () => {
     navigator.clipboard.writeText(formattedJson);
     setCopied(true);
-    toast.success(t('Copied to clipboard'), {
+    toast({
+      title: t('Copied to clipboard'),
       duration: 1000,
     });
 

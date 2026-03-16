@@ -31,7 +31,7 @@ export const unsubscribe = createAction({
     };
 
     const response = await makeRequest(
-      auth.secret_text, 
+      auth, 
       HttpMethod.POST, 
       `/Contacts/${encodeURIComponent(contactIdStr.trim())}/Unsubscribe?by=ContactId`,
       body

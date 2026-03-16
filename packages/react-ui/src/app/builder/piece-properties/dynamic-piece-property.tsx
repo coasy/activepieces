@@ -1,27 +1,29 @@
 import deepEqual from 'deep-equal';
 import React, { useState, useRef, useContext } from 'react';
-import { useFormContext, UseFormReturn, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect';
 
 import { useBuilderStateContext } from '@/app/builder/builder-hooks';
 import { SkeletonList } from '@/components/ui/skeleton';
 import { formUtils } from '@/features/pieces/lib/form-utils';
 import { piecesHooks } from '@/features/pieces/lib/pieces-hooks';
-import { authenticationSession } from '@/lib/authentication-session';
 import { PiecePropertyMap, PropertyType } from '@activepieces/pieces-framework';
-import {
-  AUTHENTICATION_PROPERTY_NAME,
-  isNil,
-  PropertySettings,
-} from '@activepieces/shared';
+import { FlowAction, FlowTrigger } from '@activepieces/shared';
 
+import { useStepSettingsContext } from '../step-settings/step-settings-context';
+
+import { AutoPropertiesFormComponent } from './auto-properties-form';
 import { DynamicPropertiesErrorBoundary } from './dynamic-piece-properties-error-boundary';
 import { DynamicPropertiesContext } from './dynamic-properties-context';
-import { GenericPropertiesForm } from './generic-properties-form';
+type DynamicPropertiesProps = {
+  refreshers: string[];
+  propertyName: string;
+  disabled: boolean;
+};
 
 const removeOptionsFromDropdownPropertiesSchema = (
   schema: PiecePropertyMap,
-): PiecePropertyMap => {
+) => {
   return Object.fromEntries(
     Object.entries(schema).map(([key, value]) => {
       if (
@@ -32,7 +34,7 @@ const removeOptionsFromDropdownPropertiesSchema = (
       }
       return [key, value];
     }),
-  ) as PiecePropertyMap;
+  );
 };
 
 const DynamicPropertiesImplementation = React.memo(
@@ -41,32 +43,27 @@ const DynamicPropertiesImplementation = React.memo(
       state.flowVersion,
       state.readonly,
     ]);
-    const form = useFormContext();
-    const watchConfig: Record<string, unknown> = {
-      name:
-        props.placedInside === 'stepSettings' ? 'settings.input' : undefined,
-    };
-    const allInputsValues = useWatch(watchConfig);
-    const refreshersPropertiesNames = [
-      ...props.refreshers,
-      AUTHENTICATION_PROPERTY_NAME,
-    ];
+    const form = useFormContext<FlowAction | FlowTrigger>();
+    const { updateFormSchema } = useStepSettingsContext();
+    const allInputValues = useWatch({
+      name: `settings.input`,
+      control: form.control,
+    });
+    const refreshersPropertiesNames = [...props.refreshers, 'auth'];
     const refresherValues = refreshersPropertiesNames.reduce<
       Record<string, unknown>
     >((acc, refresher) => {
-      acc[refresher] = allInputsValues[refresher];
+      acc[refresher] = allInputValues[refresher];
       return acc;
     }, {});
-    const previousRefresherValues =
-      useRef<Record<string, unknown>>(refresherValues);
+    const previousValues = useRef<Record<string, unknown>>(refresherValues);
     const { propertyLoadingFinished, propertyLoadingStarted } = useContext(
       DynamicPropertiesContext,
     );
     const [propertyMap, setPropertyMap] = useState<
       PiecePropertyMap | undefined
     >(undefined);
-    const propertyPrefix =
-      props.placedInside === 'stepSettings' ? 'settings.input' : '';
+
     const { mutate, isPending } =
       piecesHooks.usePieceOptions<PropertyType.DYNAMIC>({
         onMutate: () => {
@@ -81,47 +78,37 @@ const DynamicPropertiesImplementation = React.memo(
         },
       });
 
-    const clearPropertyValue = () => {
-      // the field state won't be cleared if you only unset the parent prop value
-      if (propertyMap) {
-        Object.keys(propertyMap).forEach((childPropName) => {
-          form.setValue(
-            prependPrefixToPropertyName({
-              propertyName: `${props.propertyName}.${childPropName}`,
-              prefix: propertyPrefix,
-            }),
-            null,
-            {
-              //never validate for each prop, it can be a long list of props and cause the browser to freeze
-              shouldValidate: false,
-            },
-          );
+    useDeepCompareEffectNoCheck(() => {
+      if (!deepEqual(previousValues.current, refresherValues)) {
+        // the field state won't be cleared if you only unset the parent prop value
+        if (propertyMap) {
+          Object.keys(propertyMap).forEach((childPropName) => {
+            form.setValue(
+              `settings.input.${props.propertyName}.${childPropName}` as const,
+              null,
+              {
+                //never validate for each prop, it can be a long list of props and cause the browser to freeze
+                shouldValidate: false,
+              },
+            );
+          });
+        }
+        form.setValue(`settings.input.${props.propertyName}` as const, null, {
+          shouldValidate: true,
         });
       }
-      form.setValue(
-        prependPrefixToPropertyName({
-          propertyName: props.propertyName,
-          prefix: propertyPrefix,
-        }),
-        null,
-        {
-          shouldValidate: true,
-        },
-      );
-    };
-    useDeepCompareEffectNoCheck(() => {
-      if (!deepEqual(previousRefresherValues.current, refresherValues)) {
-        clearPropertyValue();
-      }
-      previousRefresherValues.current = refresherValues;
+
+      previousValues.current = refresherValues;
+      const { settings } = form.getValues();
+      const actionOrTriggerName = settings.actionName ?? settings.triggerName;
+      const { pieceName, pieceVersion } = settings;
       mutate(
         {
           request: {
-            projectId: authenticationSession.getProjectId()!,
-            pieceName: props.pieceName,
-            pieceVersion: props.pieceVersion,
+            pieceName,
+            pieceVersion,
             propertyName: props.propertyName,
-            actionOrTriggerName: props.actionOrTriggerName,
+            actionOrTriggerName: actionOrTriggerName,
             input: refresherValues,
             flowVersionId: flowVersion.id,
             flowId: flowVersion.flowId,
@@ -131,40 +118,33 @@ const DynamicPropertiesImplementation = React.memo(
         {
           onSuccess: (response) => {
             const currentValue = form.getValues(
-              prependPrefixToPropertyName({
-                propertyName: props.propertyName,
-                prefix: propertyPrefix,
-              }),
+              `settings.input.${props.propertyName}`,
             );
             const defaultValue = formUtils.getDefaultValueForProperties({
               props: response.options,
               existingInput: currentValue ?? {},
-              propertySettings: undefined,
+              propertySettings:
+                form.getValues().settings?.propertySettings?.[
+                  props.propertyName
+                ],
             });
             setPropertyMap(response.options);
             const schemaWithoutDropdownOptions =
               removeOptionsFromDropdownPropertiesSchema(response.options);
-            props.updateFormSchema?.(
-              prependPrefixToPropertyName({
-                propertyName: props.propertyName,
-                prefix: propertyPrefix,
-              }),
+            updateFormSchema(
+              `settings.input.${props.propertyName}`,
               schemaWithoutDropdownOptions,
             );
 
-            if (!readonly && props.updatePropertySettingsSchema) {
-              props.updatePropertySettingsSchema(
+            if (!readonly) {
+              form.setValue(
+                `settings.propertySettings.${props.propertyName}.schema`,
                 schemaWithoutDropdownOptions,
-                props.propertyName,
-                form,
               );
             }
 
             form.setValue(
-              prependPrefixToPropertyName({
-                propertyName: props.propertyName,
-                prefix: propertyPrefix,
-              }),
+              `settings.input.${props.propertyName}`,
               defaultValue,
               {
                 shouldValidate: true,
@@ -182,17 +162,13 @@ const DynamicPropertiesImplementation = React.memo(
           <SkeletonList numberOfItems={3} className="h-7"></SkeletonList>
         )}
         {!isPending && propertyMap && (
-          <GenericPropertiesForm
-            prefixValue={prependPrefixToPropertyName({
-              propertyName: props.propertyName,
-              prefix: propertyPrefix,
-            })}
+          <AutoPropertiesFormComponent
+            prefixValue={`settings.input.${props.propertyName}`}
             props={propertyMap}
-            useMentionTextInput={!isNil(props.propertySettings)}
+            useMentionTextInput={true}
             disabled={props.disabled}
-            propertySettings={props.propertySettings}
-            dynamicPropsInfo={null}
-          ></GenericPropertiesForm>
+            allowDynamicValues={true}
+          ></AutoPropertiesFormComponent>
         )}
       </>
     );
@@ -209,34 +185,3 @@ const DynamicProperties = React.memo((props: DynamicPropertiesProps) => {
 DynamicPropertiesImplementation.displayName = 'DynamicPropertiesImplementation';
 DynamicProperties.displayName = 'DynamicProperties';
 export { DynamicProperties };
-
-const prependPrefixToPropertyName = ({
-  propertyName,
-  prefix,
-}: {
-  propertyName: string;
-  prefix: string;
-}) => {
-  return prefix.length === 0 ? propertyName : `${prefix}.${propertyName}`;
-};
-
-type DynamicPropertiesProps = {
-  refreshers: string[];
-  propertyName: string;
-  pieceName: string;
-  pieceVersion: string;
-  actionOrTriggerName: string;
-  disabled: boolean;
-  placedInside: 'stepSettings' | 'predefinedAgentInputs';
-  updateFormSchema:
-    | ((key: string, newFieldSchema: PiecePropertyMap) => void)
-    | null;
-  propertySettings: Record<string, PropertySettings> | null;
-  updatePropertySettingsSchema:
-    | ((
-        schema: PiecePropertyMap,
-        propertyName: string,
-        form: UseFormReturn,
-      ) => void)
-    | null;
-};

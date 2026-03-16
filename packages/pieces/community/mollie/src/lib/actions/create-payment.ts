@@ -426,7 +426,7 @@ export const mollieCreatePayment = createAction({
   },
 
   async run({ auth, propsValue }) {
-    const apiKey = auth;
+    const apiKey = auth as string;
 
     const paymentData: Record<string, unknown> = {
       description: propsValue.description,

@@ -57,7 +57,7 @@ export const stripeCheckoutSessionCompleted = createTrigger({
     const webhook = await stripeCommon.subscribeWebhook(
       'checkout.session.completed',
       context.webhookUrl,
-      context.auth.secret_text
+      context.auth
     );
     await context.store.put<StripeWebhookInformation>(
       '_checkout_session_completed_trigger',
@@ -74,7 +74,7 @@ export const stripeCheckoutSessionCompleted = createTrigger({
     if (webhookInfo !== null && webhookInfo !== undefined) {
       await stripeCommon.unsubscribeWebhook(
         webhookInfo.webhookId,
-        context.auth.secret_text
+        context.auth
       );
     }
   },
@@ -83,7 +83,7 @@ export const stripeCheckoutSessionCompleted = createTrigger({
       method: HttpMethod.GET,
       url: 'https://api.stripe.com/v1/checkout/sessions',
       headers: {
-        Authorization: 'Bearer ' + context.auth.secret_text,
+        Authorization: 'Bearer ' + context.auth,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       queryParams: {

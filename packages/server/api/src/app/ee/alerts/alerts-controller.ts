@@ -1,8 +1,6 @@
 import { CreateAlertParams, ListAlertsParams } from '@activepieces/ee-shared'
-import { ProjectResourceType, securityAccess } from '@activepieces/server-shared'
 import { ApId, Permission, PrincipalType } from '@activepieces/shared'
 import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'
-import { AlertEntity } from './alerts-entity'
 import { alertsService } from './alerts-service'
 
 export const alertsController: FastifyPluginAsyncTypebox = async (app) => {
@@ -31,13 +29,10 @@ export const alertsController: FastifyPluginAsyncTypebox = async (app) => {
 
 const ListAlertsRequest = {
     config: {
-        security: securityAccess.project(
-            [PrincipalType.USER],
-            Permission.READ_ALERT,
-            {
-                type: ProjectResourceType.QUERY,
-            },
-        ),
+        permission: Permission.READ_ALERT,
+        allowedPrincipals: [
+            PrincipalType.USER,
+        ],
     },
     schema: {
         querystring: ListAlertsParams,
@@ -46,13 +41,10 @@ const ListAlertsRequest = {
 
 const CreateAlertRequest = {
     config: {
-        security: securityAccess.project(
-            [PrincipalType.USER],
-            Permission.WRITE_ALERT,
-            {
-                type: ProjectResourceType.BODY,
-            },
-        ),
+        permission: Permission.WRITE_ALERT,
+        allowedPrincipals: [
+            PrincipalType.USER,
+        ],
     },
     schema: {
         body: CreateAlertParams,
@@ -61,14 +53,10 @@ const CreateAlertRequest = {
 
 const DeleteAlertRequest = {
     config: {
-        security: securityAccess.project(
-            [PrincipalType.USER],
-            Permission.WRITE_ALERT,
-            {
-                type: ProjectResourceType.TABLE,
-                tableName: AlertEntity,
-            },
-        ),
+        permission: Permission.WRITE_ALERT,
+        allowedPrincipals: [
+            PrincipalType.USER,
+        ],
     },
     schema: {
         params: Type.Object({

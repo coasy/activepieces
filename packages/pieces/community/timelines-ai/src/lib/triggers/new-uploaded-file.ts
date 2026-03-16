@@ -5,14 +5,14 @@ import {
 } from '@activepieces/pieces-common';
 import {
     createTrigger,
-    AppConnectionValueForAuthProperty,
+    PiecePropValueSchema,
     TriggerStrategy,
 } from '@activepieces/pieces-framework';
 import dayjs from 'dayjs';
 import { timelinesAiAuth, timelinesAiCommon } from '../common';
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof timelinesAiAuth>,
+  PiecePropValueSchema<typeof timelinesAiAuth>,
   Record<string, never>
 > = {
   strategy: DedupeStrategy.TIMEBASED,

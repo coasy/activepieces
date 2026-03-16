@@ -20,7 +20,7 @@ export const deleteFormProduct = createAction({
       await paperformCommon.apiCall({
         method: HttpMethod.DELETE,
         url: `/forms/${formId}/products/${productSku}`,
-        auth: auth.secret_text,
+        auth: auth as string,
       });
       
       return {

@@ -11,7 +11,6 @@ export const completeTaskAction = createAction({
     description: 'Marks a task as completed.',
     props: {
         task_list_id: Property.Dropdown({
-   auth: microsoftToDoAuth,
             displayName: 'Task List',
             description: 'The task list containing the task you want to complete.',
             required: true,
@@ -28,7 +27,6 @@ export const completeTaskAction = createAction({
             },
         }),
         task_id: Property.Dropdown({
-   auth: microsoftToDoAuth,
             displayName: 'Task',
             description: 'The specific task to mark as complete.',
             required: true,

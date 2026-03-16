@@ -4,9 +4,11 @@ import {
   httpClient,
 } from '@activepieces/pieces-common';
 import { PieceAuth } from '@activepieces/pieces-framework';
+import { SUPPORTED_AI_PROVIDERS } from '@activepieces/common-ai';
 
 export const grokAuth = PieceAuth.SecretText({
-  description: `
+  description: 
+    SUPPORTED_AI_PROVIDERS.find(p => p.provider === 'grok')?.markdown || `
 **Get your xAI API Key**
 
 1. Sign up at [xAI](https://x.ai)

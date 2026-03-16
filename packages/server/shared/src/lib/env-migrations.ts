@@ -1,18 +1,17 @@
 import { ExecutionMode } from '@activepieces/shared'
-import { DatabaseType } from './database-type'
 import { RedisType } from './redis/types'
-import { AppSystemProp } from './system-props'
+import { AppSystemProp, PiecesSource } from './system-props'
 
-const envPrefix = (prop: string): string => `AP_${prop}`
+const envPrefix = (prop: string) => `AP_${prop}`
 
 export const environmentMigrations = {
     migrate(): Record<string, string | undefined> {
 
         return {
             ...process.env,
+            [envPrefix(AppSystemProp.PIECES_SOURCE)]: migratePiecesSource(getRawValue(AppSystemProp.PIECES_SOURCE)),
             [envPrefix(AppSystemProp.EXECUTION_MODE)]: migrateExecutionMode(getRawValue(AppSystemProp.EXECUTION_MODE)),
             [envPrefix(AppSystemProp.REDIS_TYPE)]: migrateRedisType(getRawValue(AppSystemProp.REDIS_TYPE)),
-            [envPrefix(AppSystemProp.DB_TYPE)]: migrateDbType(getRawValue(AppSystemProp.DB_TYPE)),
         }
     },
 }
@@ -32,11 +31,11 @@ function migrateExecutionMode(currentExecutionMode: string | undefined): string 
     return currentExecutionMode
 }
 
-function migrateDbType(currentDbType: string | undefined): string | undefined {
-    if (currentDbType === 'SQLITE3') {
-        return DatabaseType.PGLITE
+function migratePiecesSource(currentPiecesSource: string | undefined): string | undefined {
+    if (currentPiecesSource === 'CLOUD_AND_DB') {
+        return PiecesSource.DB
     }
-    return currentDbType
+    return currentPiecesSource
 }
 
 function getRawValue(prop: string): string | undefined {

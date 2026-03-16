@@ -11,7 +11,6 @@ import {
 } from 'lucide-react';
 
 import {
-  ContextMenuContent,
   ContextMenuItem,
   ContextMenuSeparator,
   ContextMenuSub,
@@ -28,16 +27,19 @@ import {
 } from '@activepieces/shared';
 
 import { useBuilderStateContext } from '../../builder-hooks';
-import { CanvasShortcuts } from '../../shortcuts';
 import {
   copySelectedNodes,
   deleteSelectedNodes,
   getLastLocationAsPasteLocation,
   pasteNodes,
   toggleSkipSelectedNodes,
-} from '../utils/bulk-actions';
+} from '../bulk-actions';
 
-import { CanvasContextMenuProps, ContextMenuType } from './canvas-context-menu';
+import {
+  CanvasContextMenuProps,
+  CanvasShortcuts,
+  ContextMenuType,
+} from './canvas-context-menu';
 
 const ShortcutWrapper = ({
   children,
@@ -47,7 +49,7 @@ const ShortcutWrapper = ({
   shortcut: ShortcutProps;
 }) => {
   return (
-    <div className="flex items-center justify-between gap-4 grow">
+    <div className="flex items-center justify-between gap-4 flex-grow">
       <div className="flex gap-2 items-center">{children}</div>
       <Shortcut {...shortcut} className="text-end" />
     </div>
@@ -108,7 +110,6 @@ export const CanvasContextMenuContent = ({
     selectedNodes.length === 1 &&
     !readonly &&
     contextMenuType === ContextMenuType.STEP;
-
   const showCopy =
     !doSelectedNodesIncludeTrigger && contextMenuType === ContextMenuType.STEP;
   const showDuplicate =
@@ -126,6 +127,7 @@ export const CanvasContextMenuContent = ({
     !readonly &&
     contextMenuType === ContextMenuType.STEP &&
     !isTriggerTheOnlySelectedNode;
+
   const duplicateStep = () => {
     applyOperation({
       type: FlowOperationType.DUPLICATE_ACTION,
@@ -134,22 +136,8 @@ export const CanvasContextMenuContent = ({
       },
     });
   };
-  const showContextMenuContent =
-    showReplace ||
-    showCopy ||
-    showDuplicate ||
-    showSkip ||
-    showPasteAsFirstLoopAction ||
-    showPasteAsBranchChild ||
-    showPasteAfterCurrentStep ||
-    showPasteAfterLastStep ||
-    showDelete;
-  if (!showContextMenuContent) {
-    return null;
-  }
-
   return (
-    <ContextMenuContent>
+    <>
       {showReplace && (
         <ContextMenuItem
           disabled={disabled}
@@ -348,6 +336,6 @@ export const CanvasContextMenuContent = ({
           </>
         )}
       </>
-    </ContextMenuContent>
+    </>
   );
 };

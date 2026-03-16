@@ -1,9 +1,8 @@
-import { createAction, PieceAuth, Property } from '@activepieces/pieces-framework';
+import { createAction, Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { MEMPOOL_API_BASE_URL } from '../../common';
 
 export const getBlockHeight = createAction({
- auth:PieceAuth.None(),
     name: 'get_block_height',
     displayName: 'Get Block Height',
     description: 'Returns the hash of the block currently at specified height',

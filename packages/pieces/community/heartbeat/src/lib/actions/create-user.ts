@@ -28,7 +28,6 @@ export const heartBeatCreateUser = createAction({
       required: true,
     }),
     role_id: Property.Dropdown({
-      auth: heartbeatAuth,
       displayName: 'Roles',
       description: 'The role the user should have',
       required: true,
@@ -54,7 +53,7 @@ export const heartBeatCreateUser = createAction({
           },
           authentication: {
             type: AuthenticationType.BEARER_TOKEN,
-            token: auth.secret_text,
+            token: auth as string,
           },
           body: {},
         });
@@ -78,7 +77,6 @@ export const heartBeatCreateUser = createAction({
     }),
     group_ids: Property.MultiSelectDropdown({
       displayName: 'Groups',
-      auth: heartbeatAuth,
       description:
         'A list of the ids of the groups that the user should belong to.',
       required: false,
@@ -104,7 +102,7 @@ export const heartBeatCreateUser = createAction({
           },
           authentication: {
             type: AuthenticationType.BEARER_TOKEN,
-            token: auth.secret_text,
+            token: auth as string,
           },
           body: {},
         });
@@ -180,7 +178,7 @@ export const heartBeatCreateUser = createAction({
       },
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: auth.secret_text,
+        token: auth as string,
       },
       body: {
         name: propsValue.name,

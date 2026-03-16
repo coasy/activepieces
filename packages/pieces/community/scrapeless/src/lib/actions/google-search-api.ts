@@ -31,7 +31,7 @@ export const googleSearchApi = createAction({
 
   async run({ propsValue, auth }) {
     try {
-      const client = createScrapelessClient(auth.secret_text);
+      const client = createScrapelessClient(auth);
 
       const input = {
         q: propsValue.q,

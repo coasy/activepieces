@@ -38,7 +38,6 @@ export const spotifyCommon = {
   }),
   device_id: (required = true) =>
     Property.Dropdown({
-      auth: spotifyCommon.authentication,
       displayName: 'Device',
       required,
       refreshers: [],
@@ -51,7 +50,7 @@ export const spotifyCommon = {
           };
         }
         const client = makeClient({
-            auth: auth,
+          auth: auth as OAuth2PropertyValue,
         });
         const res = await client.getDevices();
         return {
@@ -67,7 +66,6 @@ export const spotifyCommon = {
     }),
   playlist_id: (required = true) =>
     Property.Dropdown({
-      auth: spotifyCommon.authentication,
       displayName: 'Playlist',
       required,
       refreshers: [],

@@ -29,7 +29,7 @@ export const runCustomSqlAction = createAction({
     const { sql, binds } = context.propsValue;
     
     try {
-      const client = new OracleDbClient(context.auth.props);
+      const client = new OracleDbClient(context.auth);
       const bindParams = (binds as oracledb.BindParameters) || {};
       return await client.execute(sql, bindParams);
     } catch (error) {

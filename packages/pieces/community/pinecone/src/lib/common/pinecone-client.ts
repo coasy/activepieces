@@ -1,6 +1,4 @@
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
 import { Pinecone, type PineconeConfiguration } from '@pinecone-database/pinecone';
-import { pineconeAuth } from '../..';
 
 export interface PineconeAuthConfig {
   apiKey: string;
@@ -31,12 +29,15 @@ export function validateApiKey(apiKey: string): void {
 }
 
 
-export function createPineconeClientFromAuth(auth: AppConnectionValueForAuthProperty<typeof pineconeAuth>): Pinecone {
+export function createPineconeClientFromAuth(auth: any): Pinecone {
   if (typeof auth === 'string') {
     return createPineconeClient({ apiKey: auth });
   }
   
-  const actualAuth = auth.props;
+  let actualAuth = auth;
+  if (auth && auth.props) {
+    actualAuth = auth.props;
+  }
   
   if (!actualAuth || !actualAuth.apiKey) {
     throw new Error('Invalid authentication: API key is required');

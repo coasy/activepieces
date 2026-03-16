@@ -60,7 +60,7 @@ export const documentParsedTrigger = createTrigger({
       hasNextPage: boolean;
       docs: { _id: string; name: string }[];
     }>({
-      apiKey: context.auth.secret_text,
+      apiKey: context.auth as string,
       method: HttpMethod.GET,
       resourceUri: `/inboxes/${inboxId}/docs`,
       query: {
@@ -73,7 +73,7 @@ export const documentParsedTrigger = createTrigger({
     const items = [];
     for (const doc of listDocResponse.docs) {
       const response = await airparserApiCall<GetDocumentResponse>({
-        apiKey: context.auth.secret_text,
+        apiKey: context.auth,
         method: HttpMethod.GET,
         resourceUri: `/docs/${doc._id}/extended`,
       });

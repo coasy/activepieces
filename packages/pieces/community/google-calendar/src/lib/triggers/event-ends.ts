@@ -1,6 +1,6 @@
 import {
-  AppConnectionValueForAuthProperty,
   createTrigger,
+  PiecePropValueSchema,
   Property,
 } from '@activepieces/pieces-framework';
 import { TriggerStrategy } from '@activepieces/pieces-framework';
@@ -24,7 +24,7 @@ interface GoogleCalendarEventList {
 }
 
 const polling: Polling<
-  AppConnectionValueForAuthProperty<typeof googleCalendarAuth>,
+  PiecePropValueSchema<typeof googleCalendarAuth>,
   {
     calendar_id: string | undefined;
     specific_event: boolean | undefined;

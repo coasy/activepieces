@@ -35,12 +35,12 @@ export const ActionErrorHandlingOptions = Type.Optional(
     Type.Object({
         continueOnFailure: Type.Optional(
             Type.Object({
-                value: Type.Optional(Type.Boolean()),
+                value: Type.Boolean(),
             }),
         ),
         retryOnFailure: Type.Optional(
             Type.Object({
-                value: Type.Optional(Type.Boolean()),
+                value: Type.Boolean(),
             }),
         ),
     }),

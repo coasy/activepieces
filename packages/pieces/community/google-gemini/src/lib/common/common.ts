@@ -1,6 +1,4 @@
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
-import { AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
-import { googleGeminiAuth } from '../..';
 export const defaultLLM = 'gemini-1.5-flash';
 
 export const allowedLLMs = [
@@ -10,11 +8,10 @@ export const allowedLLMs = [
   'gemini-2.0-flash',
   'gemini-2.0-flash-lite',
   'gemini-2.5-flash',
-  'gemini-2.5-pro',
-  'gemini-3-pro'
+  'gemini-2.5-pro'
 ];
 
-export const getGeminiModelOptions = async ({ auth}: { auth?: AppConnectionValueForAuthProperty<typeof googleGeminiAuth> }) => {
+export const getGeminiModelOptions = async ({ auth}: { auth: string | undefined | unknown }) => {
   if (!auth) {
     return {
       disabled: true,
@@ -28,7 +25,7 @@ export const getGeminiModelOptions = async ({ auth}: { auth?: AppConnectionValue
       models: { name: string; displayName: string }[];
     }>({
       method: HttpMethod.GET,
-      url: `https://generativelanguage.googleapis.com/v1beta/models?key=${auth.secret_text}`,
+      url: `https://generativelanguage.googleapis.com/v1beta/models?key=${auth}`,
     });
     const options = body.models
       .filter((model) =>

@@ -1,7 +1,5 @@
-import { EntitySourceType, ProjectResourceType, securityAccess } from '@activepieces/server-shared'
 import { CreateTodoActivityRequestBody, ListTodoActivitiesQueryParams, PrincipalType } from '@activepieces/shared'
 import { FastifyPluginAsyncTypebox } from '@fastify/type-provider-typebox'
-import { TodoEntity } from '../todo.entity'
 import { todoActivitiesService as todoActivityService } from './todos-activity.service'
 
 const DEFAULT_LIMIT = 10
@@ -12,7 +10,7 @@ export const todoActivityController: FastifyPluginAsyncTypebox = async (app) => 
         return todoActivityService(request.log).list({
             todoId: request.query.todoId,
             platformId: request.principal.platform.id,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
             limit: request.query.limit ?? DEFAULT_LIMIT,
             cursor: request.query.cursor ?? DEFAULT_CURSOR,
         })
@@ -23,7 +21,7 @@ export const todoActivityController: FastifyPluginAsyncTypebox = async (app) => 
         return todoActivityService(request.log).create({
             content,
             platformId: request.principal.platform.id,
-            projectId: request.projectId,
+            projectId: request.principal.projectId,
             userId: request.principal.id,
             todoId: request.body.todoId,
             socket: app.io,
@@ -36,15 +34,7 @@ const ListTodoCommentsRequest = {
         querystring: ListTodoActivitiesQueryParams,
     },
     config: {
-        security: securityAccess.project([PrincipalType.USER], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: TodoEntity,
-            entitySourceType: EntitySourceType.QUERY,
-            lookup: {
-                paramKey: 'todoId',
-                entityField: 'id',
-            },
-        }),
+        allowedPrincipals: [PrincipalType.USER] as const,
     },
 }
 
@@ -54,14 +44,6 @@ const CreateTodoCommentRequest = {
         body: CreateTodoActivityRequestBody,
     },
     config: {
-        security: securityAccess.project([PrincipalType.USER], undefined, {
-            type: ProjectResourceType.TABLE,
-            tableName: TodoEntity,
-            entitySourceType: EntitySourceType.BODY,
-            lookup: {
-                paramKey: 'todoId',
-                entityField: 'id',
-            },
-        }),
+        allowedPrincipals: [PrincipalType.USER] as const,
     },
 }

@@ -15,7 +15,7 @@ export const createBookingComment = createAction({
     })
   },
   async run(context) {
-    const auth = context.auth.props;
+    const auth = context.auth as SimplybookAuth;
     const { bookingId, comment } = context.propsValue;
 
     const params = [bookingId, comment];

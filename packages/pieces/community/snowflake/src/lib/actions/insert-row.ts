@@ -29,7 +29,7 @@ export const insertRowAction = createAction({
       .join(', ');
     const statement = `INSERT INTO ${tableName}(${columns}) VALUES(${valuePlaceholders})`;
 
-    const connection = configureConnection(context.auth.props);
+    const connection = configureConnection(context.auth);
     await connect(connection);
 
     const response = await execute(

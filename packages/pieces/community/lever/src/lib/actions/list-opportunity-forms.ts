@@ -18,7 +18,6 @@ export const listOpportunityForms = createAction({
       required: true,
     }),
     template: Property.Dropdown({
-      auth: leverAuth,
       displayName: 'Form template',
       required: false,
       refreshers: ['auth'],
@@ -35,7 +34,7 @@ export const listOpportunityForms = createAction({
           url: `${LEVER_BASE_URL}/form_templates?include=text`,
           authentication: {
             type: AuthenticationType.BASIC,
-            username: auth.props.apiKey,
+            username: (auth as LeverAuth).apiKey,
             password: '',
           },
         });
@@ -55,7 +54,7 @@ export const listOpportunityForms = createAction({
       url: `${LEVER_BASE_URL}/opportunities/${propsValue.opportunityId}/forms`,
       authentication: {
         type: AuthenticationType.BASIC,
-        username: auth.props.apiKey,
+        username: auth.apiKey,
         password: '',
       },
     });

@@ -49,7 +49,6 @@ export const createUser = createAction({
             defaultValue: true,
         }),
         custom_fields: Property.DynamicProperties({
-            auth: uscreenAuth,
             displayName: 'Custom Fields',
             description: 'Add custom user fields defined in your storefront (e.g., "favorite_genre").',
             required: false,
@@ -75,7 +74,7 @@ export const createUser = createAction({
             opted_in_for_news_and_updates, 
             custom_fields 
         } = context.propsValue as CreateUserProps;
-        const client = new UscreenClient(context.auth.secret_text);
+        const client = new UscreenClient(context.auth);
         const body: Record<string, unknown> = { ...custom_fields };
         
         delete body['add_field_helper'];

@@ -9,7 +9,6 @@ export const disputeEventsTrigger = createTrigger({
   auth: checkoutComAuth,
   props: {
     eventTypes: Property.MultiSelectDropdown({
-      auth: checkoutComAuth,
       displayName: 'Event Types',
       description: 'Select the dispute events you want to listen for',
       required: true,
@@ -24,13 +23,13 @@ export const disputeEventsTrigger = createTrigger({
         }
 
         try {
-          const { baseUrl } = getEnvironmentFromApiKey(auth.secret_text);
+          const { baseUrl } = getEnvironmentFromApiKey(auth as string);
           
           const response = await httpClient.sendRequest({
             method: HttpMethod.GET,
             url: `${baseUrl}/workflows/event-types`,
             headers: {
-              Authorization: `Bearer ${auth.secret_text}`,
+              Authorization: `Bearer ${auth}`,
               'Content-Type': 'application/json',
             },
           });
@@ -101,14 +100,14 @@ export const disputeEventsTrigger = createTrigger({
   type: TriggerStrategy.WEBHOOK,
   async onEnable(context) {
     const { eventTypes } = context.propsValue;
-    const { baseUrl } = getEnvironmentFromApiKey(context.auth.secret_text);
+    const { baseUrl } = getEnvironmentFromApiKey(context.auth);
     
     try {
       const response = await httpClient.sendRequest({
         method: HttpMethod.POST,
         url: `${baseUrl}/workflows`,
         headers: {
-          Authorization: `Bearer ${context.auth.secret_text}`,
+          Authorization: `Bearer ${context.auth}`,
           'Content-Type': 'application/json',
         },
         body: {
@@ -143,13 +142,13 @@ export const disputeEventsTrigger = createTrigger({
       const workflowData = await context.store.get<{ workflowId: string }>('checkout_dispute_workflow');
       
       if (workflowData?.workflowId) {
-        const { baseUrl } = getEnvironmentFromApiKey(context.auth.secret_text);
+        const { baseUrl } = getEnvironmentFromApiKey(context.auth);
         
         await httpClient.sendRequest({
           method: HttpMethod.DELETE,
           url: `${baseUrl}/workflows/${workflowData.workflowId}`,
           headers: {
-            Authorization: `Bearer ${context.auth.secret_text}`,
+            Authorization: `Bearer ${context.auth}`,
           },
         });
       }

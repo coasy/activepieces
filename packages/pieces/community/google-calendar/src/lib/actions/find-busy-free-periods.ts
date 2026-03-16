@@ -31,7 +31,6 @@ export const findFreeBusy = createAction({
   description: 'Finds free/busy calendar details from Google Calendar.',
   props: {
     calendar_ids: Property.MultiSelectDropdown({
-      auth: googleCalendarAuth,
       displayName: 'Calendars',
       description: 'Select the calendars to check for busy periods.',
       required: true,

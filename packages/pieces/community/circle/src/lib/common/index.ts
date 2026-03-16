@@ -1,15 +1,13 @@
 import { Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { ListBasicPostsResponse, ListCommunityMembersResponse, ListSpacesResponse } from './types';
-import { circleAuth } from './auth';
 
 export const BASE_URL = 'https://app.circle.so/api/admin/v2';
 
-export const spaceIdDropdown = Property.Dropdown({
+export const spaceIdDropdown = Property.Dropdown<number>({
 	displayName: 'Space',
 	required: true,
-	refreshers: [],		
-	auth: circleAuth,
+	refreshers: [],
 	options: async ({ auth }) => {
 		if (!auth) {
 			return {
@@ -22,7 +20,7 @@ export const spaceIdDropdown = Property.Dropdown({
 			method: HttpMethod.GET,
 			url: `${BASE_URL}/spaces`,
 			headers: {
-				Authorization: `Bearer ${auth.secret_text}`,
+				Authorization: `Bearer ${auth as string}`,
 				'Content-Type': 'application/json',
 			},
 		});
@@ -43,11 +41,10 @@ export const spaceIdDropdown = Property.Dropdown({
 	},
 });
 
-export const postIdDropdown = Property.Dropdown({
+export const postIdDropdown = Property.Dropdown<number>({
 	displayName: 'Post',
 	required: true,
 	refreshers: ['space_id'],
-	auth: circleAuth,
 	options: async ({ auth, space_id }) => {
 		if (!auth || !space_id) {
 			return {
@@ -60,7 +57,7 @@ export const postIdDropdown = Property.Dropdown({
 			method: HttpMethod.GET,
 			url: `${BASE_URL}/posts`,
 			headers: {
-				Authorization: `Bearer ${auth.secret_text}`,
+				Authorization: `Bearer ${auth as string}`,
 				'Content-Type': 'application/json',
 			},
 			queryParams: {
@@ -85,11 +82,10 @@ export const postIdDropdown = Property.Dropdown({
 	},
 });
 
-export const communityMemberIdDropdown = Property.Dropdown({
+export const communityMemberIdDropdown = Property.Dropdown<number>({
 	displayName: 'Community Member',
 	required: true,
 	refreshers: [],
-	auth: circleAuth,
 	options: async ({ auth }) => {
 		if (!auth) {
 			return { disabled: true, placeholder: 'Please authenticate first', options: [] };
@@ -98,7 +94,7 @@ export const communityMemberIdDropdown = Property.Dropdown({
 			method: HttpMethod.GET,
 			url: `${BASE_URL}/community_members`,
 			headers: {
-				Authorization: `Bearer ${auth.secret_text}`,
+				Authorization: `Bearer ${auth as string}`,
 				'Content-Type': 'application/json',
 			},
 			queryParams: { status: 'all' },

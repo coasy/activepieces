@@ -1,15 +1,13 @@
 import { createTrigger, Property, TriggerStrategy, OAuth2PropertyValue } from "@activepieces/pieces-framework";
 import { httpClient, HttpMethod } from "@activepieces/pieces-common";
-import { netlifyAuth } from "../common/auth";
 
 export const newDeployFailed = createTrigger({
   name: "new_deploy_failed",
   displayName: "New Deploy Failed",
   description: "Fires when a site deploy fails.",
-  auth: netlifyAuth, 
   props: {
     siteId: Property.Dropdown({
-      auth: netlifyAuth,      displayName: "Site",
+      displayName: "Site",
       description: "Select the site to monitor for failed deploy events",
       required: true,
       refreshers: ['auth'],

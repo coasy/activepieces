@@ -51,7 +51,6 @@ export async function makeOktaRequest(
 
 export const userIdDropdown = (groupusers = false) =>
   Property.Dropdown({
-    auth: oktaAuth,
     displayName: 'User',
     description: 'Select a user',
     required: true,
@@ -116,7 +115,6 @@ export const userIdDropdown = (groupusers = false) =>
 
 export const groupIdDropdown = 
   Property.Dropdown({
-    auth: oktaAuth,
     displayName: 'Group',
     description: 'Select a group',
     required: true,

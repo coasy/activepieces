@@ -33,7 +33,6 @@ export const createSessionAction = createAction({
 			defaultValue: true,
 		}),
 		proxyConfig: Property.DynamicProperties({
-			auth: airtopAuth,
 			displayName: 'Custom Proxy Configuration',
 			refreshers: ['useAirtopProxy'],
 			required: false,
@@ -67,7 +66,6 @@ export const createSessionAction = createAction({
 			},
 		}),
 		proxyAdvanced: Property.DynamicProperties({
-			auth: airtopAuth,
 			displayName: 'Advanced Proxy Settings',
 			refreshers: ['useAirtopProxy', 'proxyConfig'],
 			required: false,
@@ -221,7 +219,7 @@ export const createSessionAction = createAction({
 		}
 
 		const response = await airtopApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.POST,
 			resourceUri: '/sessions',
 			body: {

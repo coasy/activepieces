@@ -1,10 +1,8 @@
 import { Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { aidbaseClient } from './client';
-import { aidbaseAuth } from './auth';
 
-export const emailInboxDropdown = Property.Dropdown<string,false,typeof aidbaseAuth>({
-  auth: aidbaseAuth,
+export const emailInboxDropdown = Property.Dropdown({
   displayName: 'Email Inbox',
   description:
     'Select the email inbox to watch. Leave blank to trigger for all inboxes.',
@@ -26,7 +24,7 @@ export const emailInboxDropdown = Property.Dropdown<string,false,typeof aidbaseA
       method: HttpMethod.GET,
       url: 'https://api.aidbase.ai/v1/email-inboxes',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth as string}`,
       },
     });
 
@@ -48,8 +46,7 @@ export const emailInboxDropdown = Property.Dropdown<string,false,typeof aidbaseA
   },
 });
 
-export const ticketFormDropdown = Property.Dropdown<string, false,typeof aidbaseAuth>({
-  auth: aidbaseAuth,
+export const ticketFormDropdown = Property.Dropdown({
   displayName: 'Ticket Form',
   description:
     'Select the ticket form to watch. Leave blank to trigger for all forms.',
@@ -71,7 +68,7 @@ export const ticketFormDropdown = Property.Dropdown<string, false,typeof aidbase
       method: HttpMethod.GET,
       url: 'https://api.aidbase.ai/v1/ticket-forms',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth as string}`,
       },
     });
 
@@ -93,8 +90,7 @@ export const ticketFormDropdown = Property.Dropdown<string, false,typeof aidbase
   },
 });
 
-export const faqDropdown = Property.Dropdown<string,true,typeof aidbaseAuth>({
-  auth: aidbaseAuth,
+export const faqDropdown = Property.Dropdown({
   displayName: 'FAQ',
   description: 'Select the FAQ to which the item will be added.',
   required: true,
@@ -108,7 +104,7 @@ export const faqDropdown = Property.Dropdown<string,true,typeof aidbaseAuth>({
       };
     }
 
-    const response = await aidbaseClient.listKnowledgeItems(auth.secret_text);
+    const response = await aidbaseClient.listKnowledgeItems(auth as string);
 
     const faqItems = response.items.filter((item) => item.type === 'faq');
 
@@ -122,8 +118,7 @@ export const faqDropdown = Property.Dropdown<string,true,typeof aidbaseAuth>({
   },
 });
 
-export const chatbotDropdown = Property.Dropdown<string,true,typeof aidbaseAuth>({
-  auth: aidbaseAuth,
+export const chatbotDropdown = Property.Dropdown({
   displayName: 'Chatbot',
   description: 'Select the chatbot that will generate the reply.',
   required: true,
@@ -137,7 +132,7 @@ export const chatbotDropdown = Property.Dropdown<string,true,typeof aidbaseAuth>
       };
     }
 
-    const response = await aidbaseClient.listChatbots(auth.secret_text);
+    const response = await aidbaseClient.listChatbots(auth as string);
 
     return {
       disabled: false,
@@ -149,8 +144,7 @@ export const chatbotDropdown = Property.Dropdown<string,true,typeof aidbaseAuth>
   },
 });
 
-export const knowledgeItemDropdown = Property.Dropdown<string,true,typeof aidbaseAuth>({
-  auth: aidbaseAuth,
+export const knowledgeItemDropdown = Property.Dropdown({
   displayName: 'Knowledge Item',
   description: 'Select the knowledge item to train.',
   required: true,
@@ -164,7 +158,7 @@ export const knowledgeItemDropdown = Property.Dropdown<string,true,typeof aidbas
       };
     }
 
-    const response = await aidbaseClient.listKnowledgeItems(auth.secret_text);
+    const response = await aidbaseClient.listKnowledgeItems(auth as string);
 
     const getLabel = (item: {
       type: string;

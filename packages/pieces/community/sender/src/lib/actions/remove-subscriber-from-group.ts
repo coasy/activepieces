@@ -25,7 +25,7 @@ export const removeSubscriberFromGroupAction = createAction({
     };
 
     const response = await makeSenderRequest(
-      context.auth.secret_text,
+      context.auth,
       `/subscribers/groups/${groupId}`,
       HttpMethod.DELETE,
       requestBody

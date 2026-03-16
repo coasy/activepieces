@@ -118,8 +118,8 @@ export const createPptFromSummary = createAction({
     } = context.propsValue;
 
     const payload: any = {
-      accessId: context.auth.props.accessId,
-      email: context.auth.props.email,
+      accessId: context.auth.accessId,
+      email: context.auth.email,
       msSummaryText,
       slideCount,
       language,

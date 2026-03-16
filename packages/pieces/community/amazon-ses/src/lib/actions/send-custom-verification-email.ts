@@ -28,7 +28,6 @@ export const sendCustomVerificationEmail = createAction({
       required: true,
     }),
     templateName: Property.Dropdown({
-      auth: amazonSesAuth,
       displayName: 'Verification Template',
       description: 'Select custom verification email template',
       required: true,
@@ -55,7 +54,6 @@ export const sendCustomVerificationEmail = createAction({
       },
     }),
     configurationSetName: Property.Dropdown({
-      auth: amazonSesAuth,
       displayName: 'Configuration Set',
       description: 'SES configuration set for tracking (optional)',
       required: false,
@@ -87,7 +85,7 @@ export const sendCustomVerificationEmail = createAction({
       checkExistingIdentity,
     } = context.propsValue;
 
-    const { accessKeyId, secretAccessKey, region } = context.auth.props;
+    const { accessKeyId, secretAccessKey, region } = context.auth;
 
     if (validateEmailFormat) {
       const validatedEmails = validateEmailAddresses(

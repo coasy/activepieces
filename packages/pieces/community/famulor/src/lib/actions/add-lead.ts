@@ -38,7 +38,7 @@ export const addLead = createAction({
     }
 
     return await famulorCommon.addLead({
-      auth: auth.secret_text,
+      auth: auth as string,
       campaign_id: propsValue.campaign,
       phone_number: propsValue.phone_number!,
       variable: propsValue.variables,

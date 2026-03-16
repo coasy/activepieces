@@ -57,7 +57,7 @@ export const createTaskAction = createAction({
 	async run(context) {
 		const { project_id, content_type, content, placement } = context.propsValue;
 
-		const client = new TaskadeAPIClient(context.auth.secret_text);
+		const client = new TaskadeAPIClient(context.auth);
 
 		return await client.createTask(project_id, {
 			content,

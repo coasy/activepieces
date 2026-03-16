@@ -20,7 +20,7 @@ export const airtableFindBaseAction = createAction({
     const { baseName } = propsValue;
 
     const allBases: AirtableBase[] = await airtableCommon.fetchAllBases({
-      token: personalToken.secret_text,
+      token: personalToken,
     });
 
     const searchTerm = (baseName as string).toLowerCase();

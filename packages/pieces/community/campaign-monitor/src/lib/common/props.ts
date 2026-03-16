@@ -1,13 +1,11 @@
 import { DynamicPropsValue, Property } from '@activepieces/pieces-framework';
 import { makeRequest } from './client';
 import { HttpMethod } from '@activepieces/pieces-common';
-import { campaignMonitorAuth } from '../..';
 
 export const clientId = Property.Dropdown({
   displayName: 'Client Account',
   refreshers: [],
   required: true,
-  auth: campaignMonitorAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -18,7 +16,7 @@ export const clientId = Property.Dropdown({
     }
 
     const response = await makeRequest(
-      { apiKey: auth.secret_text },
+      { apiKey: auth as string },
       HttpMethod.GET,
       '/clients.json'
     );
@@ -37,7 +35,6 @@ export const clientId = Property.Dropdown({
 });
 
 export const listId = Property.Dropdown({
-  auth: campaignMonitorAuth,
   displayName: 'List ID',
   refreshers: ['clientId'],
   required: true,
@@ -51,7 +48,7 @@ export const listId = Property.Dropdown({
     }
 
     const response = await makeRequest(
-      { apiKey: auth.secret_text },
+      { apiKey: auth as string },
       HttpMethod.GET,
       `/clients/${clientId}/lists.json`
     );
@@ -70,7 +67,6 @@ export const listId = Property.Dropdown({
 });
 
 export const customFields = Property.DynamicProperties({
-  auth: campaignMonitorAuth,
   displayName: 'Custom Fields',
   refreshers: ['listId'],
   required: true,
@@ -81,7 +77,7 @@ export const customFields = Property.DynamicProperties({
 
     const response = await makeRequest(
       {
-          apiKey: auth.secret_text,
+        apiKey: auth as unknown as string,
       },
       HttpMethod.GET,
       `/lists/${listId}/customfields.json`

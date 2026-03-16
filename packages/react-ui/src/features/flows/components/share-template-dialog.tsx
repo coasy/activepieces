@@ -18,9 +18,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { flowsApi } from '@/features/flows/lib/flows-api';
 import { templatesApi } from '@/features/templates/lib/templates-api';
-import { userHooks } from '@/hooks/user-hooks';
 import { useNewWindow } from '@/lib/navigation-utils';
-import { Template } from '@activepieces/shared';
+import { FlowTemplate, TemplateType } from '@activepieces/shared';
 
 const ShareTemplateSchema = Type.Object({
   description: Type.String(),
@@ -40,9 +39,8 @@ const ShareTemplateDialog: React.FC<{
     resolver: typeboxResolver(ShareTemplateSchema),
   });
   const openNewIndow = useNewWindow();
-  const { data: currentUser } = userHooks.useCurrentUser();
   const { mutate, isPending } = useMutation<
-    Template,
+    FlowTemplate,
     Error,
     { flowId: string; description: string }
   >({
@@ -51,21 +49,12 @@ const ShareTemplateDialog: React.FC<{
         versionId: flowVersionId,
       });
 
-      const author = currentUser
-        ? `${currentUser.firstName} ${currentUser.lastName}`
-        : 'Unknown User';
-
       const flowTemplate = await templatesApi.create({
-        name: template.name,
-        description: shareTemplateForm.getValues().description,
-        summary: template.summary,
+        template: template.template,
+        type: TemplateType.PROJECT,
+        blogUrl: template.blogUrl,
         tags: template.tags,
-        blogUrl: template.blogUrl ?? undefined,
-        metadata: template.metadata,
-        author,
-        categories: template.categories,
-        type: template.type,
-        flows: template.flows,
+        description: shareTemplateForm.getValues().description,
       });
 
       return flowTemplate;

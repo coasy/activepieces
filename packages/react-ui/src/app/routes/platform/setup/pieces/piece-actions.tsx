@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { t } from 'i18next';
 import { Eye, EyeOff, Pin, PinOff } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -9,6 +8,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { toast } from '@/components/ui/use-toast';
 import { platformHooks } from '@/hooks/platform-hooks';
 import { platformApi } from '@/lib/platforms-api';
 
@@ -37,7 +37,9 @@ const PieceActions = ({ pieceName, isEnabled }: PieceActionsProps) => {
       await refetch();
     },
     onSuccess: () => {
-      toast.success(t('Your changes have been saved.'), {
+      toast({
+        title: t('Success'),
+        description: t('Your changes have been saved.'),
         duration: 3000,
       });
     },
@@ -58,7 +60,9 @@ const PieceActions = ({ pieceName, isEnabled }: PieceActionsProps) => {
       await refetch();
     },
     onSuccess: () => {
-      toast.success(t('Your changes have been saved.'), {
+      toast({
+        title: t('Success'),
+        description: t('Your changes have been saved.'),
         duration: 3000,
       });
     },

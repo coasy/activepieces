@@ -7,7 +7,7 @@ import {
 	sendJiraRequest,
 } from '.';
 import { DropdownOption, Property } from '@activepieces/pieces-framework';
-import { JiraAuth, jiraCloudAuth } from '../../auth';
+import { JiraAuth } from '../../auth';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { IssueFieldMetaData, IssueTypeMetadata } from './types';
 import { isNil } from '@activepieces/shared';
@@ -15,7 +15,6 @@ import dayjs from 'dayjs';
 
 export function getProjectIdDropdown(data?: DropdownParams) {
 	return Property.Dropdown({
-		auth: jiraCloudAuth,
 		displayName: data?.displayName ?? 'Project ID or Key',
 		description: data?.description,
 		required: data?.required ?? true,
@@ -42,7 +41,6 @@ export function getProjectIdDropdown(data?: DropdownParams) {
 
 export function getIssueIdDropdown(data?: DropdownParams) {
 	return Property.Dropdown({
-		auth: jiraCloudAuth,
 		displayName: data?.displayName ?? 'Issue ID or Key',
 		description: data?.description,
 		required: data?.required ?? true,
@@ -54,19 +52,19 @@ export function getIssueIdDropdown(data?: DropdownParams) {
 					options: [],
 				};
 			}
-			let hasMore = true
-			let nextPageToken:string|undefined;
+			let total = 0,
+				startAt = 0;
 			const options: DropdownOption<string>[] = [];
 			do {
 				const response = await sendJiraRequest({
 					method: HttpMethod.POST,
-					url: 'search/jql',
+					url: 'search',
 					auth: auth as JiraAuth,
 					body: {
 						fields: ['summary'],
 						jql: `project=${projectId}`,
-						nextPageToken,
-						maxResults: 100,
+						startAt: startAt,
+						maxResults: 1,
 					},
 				});
 				const issueList = response.body as SearchIssuesResponse;
@@ -78,10 +76,9 @@ export function getIssueIdDropdown(data?: DropdownParams) {
 						};
 					}),
 				);
-
-				nextPageToken = issueList.nextPageToken;
-				hasMore = !issueList.isLast
-			} while (hasMore);
+				startAt = issueList.startAt + issueList.maxResults;
+				total = issueList.total;
+			} while (startAt < total);
 
 			return {
 				disabled: false,
@@ -93,7 +90,6 @@ export function getIssueIdDropdown(data?: DropdownParams) {
 
 export function getIssueTypeIdDropdown(data?: DropdownParams) {
 	return Property.Dropdown({
-		auth: jiraCloudAuth,
 		displayName: data?.displayName ?? 'Issue Type',
 		description: data?.description,
 		required: data?.required ?? true,
@@ -123,7 +119,6 @@ export function getIssueTypeIdDropdown(data?: DropdownParams) {
 
 export function getUsersDropdown(data?: DropdownParams) {
 	return Property.Dropdown({
-		auth: jiraCloudAuth,
 		displayName: data?.displayName ?? 'User',
 		description: data?.description,
 		required: data?.required ?? true,
@@ -158,8 +153,9 @@ export interface DropdownParams {
 }
 
 export interface SearchIssuesResponse {
-	nextPageToken?:string,
-	isLast: boolean;
+	startAt: number;
+	maxResults: number;
+	total: number;
 	issues: Array<{
 		id: string;
 		key: string;
@@ -231,7 +227,6 @@ async function fetchUsersOptions(auth: JiraAuth): Promise<DropdownOption<string>
 
 export const issueTypeIdProp = (displayName: string, required = true) =>
 	Property.Dropdown({
-		auth: jiraCloudAuth,
 		displayName,
 		refreshers: ['projectId'],
 		required,
@@ -270,7 +265,6 @@ export const issueTypeIdProp = (displayName: string, required = true) =>
 
 export const issueLinkTypeIdProp = (displayName: string, required = true) =>
 	Property.Dropdown({
-		auth: jiraCloudAuth,
 		displayName,
 		refreshers: [],
 		required,
@@ -308,7 +302,6 @@ export const issueLinkTypeIdProp = (displayName: string, required = true) =>
 
 export const issueIdOrKeyProp = (displayName: string, required = true) =>
 	Property.Dropdown({
-		auth: jiraCloudAuth,
 		displayName,
 		refreshers: [],
 		required,
@@ -347,7 +340,6 @@ export const issueIdOrKeyProp = (displayName: string, required = true) =>
 
 export const issueStatusIdProp = (displayName: string, required = true) =>
 	Property.Dropdown({
-		auth: jiraCloudAuth,
 		displayName,
 		refreshers: ['issueId'],
 		required,

@@ -31,7 +31,7 @@ export const createWorker = createAction({
     }),
   },
   async run(context) {
-    const onfleetApi = new Onfleet(context.auth.secret_text);
+    const onfleetApi = new Onfleet(context.auth);
 
     return await onfleetApi.workers.create({
       name: context.propsValue.name,

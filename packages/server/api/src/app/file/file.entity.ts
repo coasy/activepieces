@@ -3,6 +3,8 @@ import { EntitySchema } from 'typeorm'
 import {
     ApIdSchema,
     BaseColumnSchemaPart,
+    BLOB_COLUMN_TYPE,
+    JSONB_COLUMN_TYPE,
 } from '../database/database-common'
 
 type FileSchema = File & {
@@ -16,7 +18,7 @@ export const FileEntity = new EntitySchema<FileSchema>({
         projectId: { ...ApIdSchema, nullable: true },
         platformId: { ...ApIdSchema, nullable: true },
         data: {
-            type: 'bytea',
+            type: BLOB_COLUMN_TYPE,
             nullable: true,
         },
         location: {
@@ -32,7 +34,7 @@ export const FileEntity = new EntitySchema<FileSchema>({
             nullable: true,
         },
         metadata: {
-            type: 'jsonb',
+            type: JSONB_COLUMN_TYPE,
             nullable: true,
         },
         s3Key: {

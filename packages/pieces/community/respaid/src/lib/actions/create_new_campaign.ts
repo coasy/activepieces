@@ -66,7 +66,7 @@ export const createNewCampaign = createAction({
     const res = await httpClient.sendRequest<string[]>({
       method: HttpMethod.POST,
       url: `${respaidCommon.baseUrl}/actions/import_campaign`,
-      headers: respaidCommon.getHeadersStructure(auth.secret_text),
+      headers: respaidCommon.getHeadersStructure(auth),
       body: ({ type: 'active_pieces', import: JSON.stringify(requestBody) }),
     });
     return res.body;

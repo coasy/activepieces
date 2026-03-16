@@ -79,9 +79,6 @@ export const updateTicketAction = createAction({
 
         // Add additional properties to the ticketProperties object
         Object.entries(objectProperties).forEach(([key, value]) => {
-            if ((Array.isArray(value) && value.length === 0)) {
-                return;  
-			}
             // Format values if they are arrays
             ticketProperties[key] = Array.isArray(value) ? value.join(';') : value;
         });

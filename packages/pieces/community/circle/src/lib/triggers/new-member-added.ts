@@ -1,5 +1,4 @@
 import {
-	AppConnectionValueForAuthProperty,
 	PiecePropValueSchema,
 	TriggerStrategy,
 	createTrigger,
@@ -17,7 +16,7 @@ import { circleAuth } from '../common/auth';
 import dayjs from 'dayjs';
 import { ListCommunityMembersResponse } from '../common/types';
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof circleAuth>, Record<string, any>> = {
+const polling: Polling<PiecePropValueSchema<typeof circleAuth>, Record<string, any>> = {
 	strategy: DedupeStrategy.TIMEBASED,
 	async items({ auth, lastFetchEpochMS }) {
 		let page = 1;
@@ -36,7 +35,7 @@ const polling: Polling<AppConnectionValueForAuthProperty<typeof circleAuth>, Rec
 					status: 'all',
 				},
 				headers: {
-					Authorization: `Bearer ${auth.secret_text}`,
+					Authorization: `Bearer ${auth}`,
 					'Content-Type': 'application/json',
 				},
 			});

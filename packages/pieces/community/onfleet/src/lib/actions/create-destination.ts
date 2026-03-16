@@ -22,7 +22,7 @@ export const createDestination = createAction({
     }),
   },
   async run(context) {
-    const onfleetApi = new Onfleet(context.auth.secret_text);
+    const onfleetApi = new Onfleet(context.auth);
 
     let address;
     if (context.propsValue.unparsedDestination) {

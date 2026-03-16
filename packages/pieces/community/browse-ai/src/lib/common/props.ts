@@ -1,7 +1,6 @@
 import { DynamicPropsValue, Property } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { browseAiApiCall } from './client';
-import { browseAiAuth } from './auth';
 
 interface BrowseAiRobot {
   id: string;
@@ -42,7 +41,6 @@ interface BrowseAiRobotResponse {
 }
 
 export const robotIdDropdown = Property.Dropdown({
-  auth: browseAiAuth,
   displayName: 'Robot',
   description: 'Select a robot from your Browse AI account',
   required: true,
@@ -62,7 +60,7 @@ export const robotIdDropdown = Property.Dropdown({
       }>({
         method: HttpMethod.GET,
         resourceUri: '/robots',
-        auth: { apiKey: auth.secret_text },
+        auth: { apiKey: auth as string },
       });
 
       const robots = response?.robots?.items ?? [];
@@ -94,7 +92,6 @@ export const robotIdDropdown = Property.Dropdown({
 });
 
 export const taskIdDropdown = Property.Dropdown({
-  auth: browseAiAuth,
   displayName: 'Task',
   description: 'Select a task associated with the selected robot',
   required: true,
@@ -120,7 +117,7 @@ export const taskIdDropdown = Property.Dropdown({
       const response = await browseAiApiCall<BrowseAiTasksResponse>({
         method: HttpMethod.GET,
         resourceUri: `/robots/${robotId}/tasks`,
-        auth: { apiKey: auth.secret_text },
+        auth: { apiKey: auth as string },
       });
 
       const tasks = response.result?.robotTasks?.items ?? [];
@@ -158,7 +155,6 @@ export const taskIdDropdown = Property.Dropdown({
 });
 
 export const robotParameters = Property.DynamicProperties({
-  auth: browseAiAuth,
   displayName: 'Input Parameters',
   refreshers: ['robotId'],
   required: true,
@@ -169,7 +165,7 @@ export const robotParameters = Property.DynamicProperties({
       const response = await browseAiApiCall<BrowseAiRobotResponse>({
         method: HttpMethod.GET,
         resourceUri: `/robots/${robotId}`,
-        auth: { apiKey: auth.secret_text },
+        auth: { apiKey: auth as unknown as string },
       });
 
       const props: DynamicPropsValue = {};

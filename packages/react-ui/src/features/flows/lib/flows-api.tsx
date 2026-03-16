@@ -1,22 +1,21 @@
 import { t } from 'i18next';
-import { toast } from 'sonner';
 
-import { UNSAVED_CHANGES_TOAST } from '@/components/ui/sonner';
+import { Button } from '@/components/ui/button';
+import { toast, UNSAVED_CHANGES_TOAST } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
-import { GetFlowTemplateRequestQuery } from '@activepieces/ee-shared';
 import {
   CreateFlowRequest,
   ErrorCode,
   FlowOperationRequest,
+  FlowTemplate,
   FlowVersion,
   FlowVersionMetadata,
   GetFlowQueryParamsRequest,
+  GetFlowTemplateRequestQuery,
   ListFlowVersionRequest,
   ListFlowsRequest,
   PopulatedFlow,
-  SharedTemplate,
   SeekPage,
-  CountFlowsRequest,
 } from '@activepieces/shared';
 
 export const flowsApi = {
@@ -39,29 +38,31 @@ export const flowsApi = {
             error.response?.data as { code: ErrorCode }
           )?.code;
           if (errorCode === ErrorCode.FLOW_IN_USE) {
-            toast.error(t('Flow Is In Use'), {
+            toast({
+              title: t('Flow Is In Use'),
               description: t(
                 'Flow is being used by another user, please try again later.',
               ),
               duration: Infinity,
-              action: {
-                label: t('Refresh'),
-                onClick: () => window.location.reload(),
-              },
+              action: (
+                <Button
+                  onClick={() => window.location.reload()}
+                  size={'sm'}
+                  variant={'outline'}
+                >
+                  {t('Refresh')}
+                </Button>
+              ),
             });
           } else {
-            toast.error(UNSAVED_CHANGES_TOAST.title, {
-              description: UNSAVED_CHANGES_TOAST.description,
-              duration: UNSAVED_CHANGES_TOAST.duration,
-              id: UNSAVED_CHANGES_TOAST.id,
-            });
+            toast(UNSAVED_CHANGES_TOAST);
           }
         }
         throw error;
       });
   },
   getTemplate(flowId: string, request: GetFlowTemplateRequestQuery) {
-    return api.get<SharedTemplate>(`/v1/flows/${flowId}/template`, {
+    return api.get<FlowTemplate>(`/v1/flows/${flowId}/template`, {
       params: request,
     });
   },
@@ -83,7 +84,7 @@ export const flowsApi = {
   delete(flowId: string) {
     return api.delete<void>(`/v1/flows/${flowId}`);
   },
-  count(query: CountFlowsRequest) {
-    return api.get<number>('/v1/flows/count', query);
+  count() {
+    return api.get<number>('/v1/flows/count');
   },
 };

@@ -1,7 +1,6 @@
-import { AppConnectionValueForAuthProperty, Property } from '@activepieces/pieces-framework';
+import { Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod, AuthenticationType } from '@activepieces/pieces-common';
 import { XAI_BASE_URL } from './constants';
-import { grokAuth } from './auth';
 
 export interface XaiChoice {
   index: number;
@@ -120,9 +119,8 @@ export const createModelProperty = (config?: {
   return Property.Dropdown({
     displayName,
     required: true,
-    description,    
+    description,
     refreshers: [],
-    auth: grokAuth,
     defaultValue,
     options: async ({ auth }) => {
       if (!auth) {
@@ -143,7 +141,7 @@ export const createModelProperty = (config?: {
           method: HttpMethod.GET,
           authentication: {
             type: AuthenticationType.BEARER_TOKEN,
-            token: auth.secret_text,
+            token: auth as string,
           },
         });
         
@@ -172,7 +170,7 @@ export const createModelProperty = (config?: {
             method: HttpMethod.GET,
             authentication: {
               type: AuthenticationType.BEARER_TOKEN,
-              token: auth.secret_text,
+              token: auth as string,
             },
           });
           
@@ -290,7 +288,7 @@ const handleXaiError = (error: any, operation: string): never => {
 };
 
 export const makeXaiRequest = async (
-  {secret_text}: AppConnectionValueForAuthProperty<typeof grokAuth>,
+  auth: string,
   requestBody: any,
   timeout: number,
   operation: string
@@ -301,7 +299,7 @@ export const makeXaiRequest = async (
       url: `${XAI_BASE_URL}/chat/completions`,
       authentication: {
         type: AuthenticationType.BEARER_TOKEN,
-        token: secret_text,
+        token: auth,
       },
       body: requestBody,
       timeout,

@@ -1,7 +1,6 @@
 import { Property, DynamicPropsValue } from '@activepieces/pieces-framework';
 import { HttpMethod } from '@activepieces/pieces-common';
 import { knackApiCall, KnackAuthProps } from './client';
-import { knackAuth } from './auth';
 
 interface KnackObject {
   key: string;
@@ -26,7 +25,6 @@ export const objectDropdown = Property.Dropdown({
   displayName: 'Object',
   required: true,
   refreshers: [],
-  auth: knackAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -36,7 +34,7 @@ export const objectDropdown = Property.Dropdown({
       };
     }
 
-    const typedAuth = auth;
+    const typedAuth = auth as KnackAuthProps;
 
     try {
       const response = await knackApiCall<{ objects: KnackObject[] }>({
@@ -63,7 +61,6 @@ export const objectDropdown = Property.Dropdown({
 });
 
 export const fieldIdDropdown = Property.Dropdown({
-  auth: knackAuth,
   displayName: 'Field ID',
   required: true,
   description:'Field to find the record by',
@@ -76,7 +73,7 @@ export const fieldIdDropdown = Property.Dropdown({
         options: [],
       };
     }
-    const typedAuth = auth;
+    const typedAuth = auth as KnackAuthProps;
 
     try {
       const response = await knackApiCall<KnackGetObjectResponse>({
@@ -103,7 +100,6 @@ export const fieldIdDropdown = Property.Dropdown({
 });
 
 export const recordFields = Property.DynamicProperties({
-  auth: knackAuth,
   displayName: 'Record Fields',
   refreshers: ['object'],
   required: true,
@@ -114,7 +110,7 @@ export const recordFields = Property.DynamicProperties({
 
     const props: DynamicPropsValue = {};
 
-    const typedAuth = auth;
+    const typedAuth = auth as KnackAuthProps;
 
     const response = await knackApiCall<KnackGetObjectResponse>({
       method: HttpMethod.GET,

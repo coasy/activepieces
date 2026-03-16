@@ -1,14 +1,12 @@
 import { Property } from '@activepieces/pieces-framework';
 import { httpClient, HttpMethod } from '@activepieces/pieces-common';
 import { getAuthToken, CyberArkAuth } from './auth-helper';
-import { cyberarkAuth } from '../..';
 
 export const memberIdDropdown = Property.Dropdown({
   displayName: 'Member',
   description: 'Select a Vault user or enter LDAP group name to add to the group',
   required: true,
   refreshers: [],
-  auth: cyberarkAuth,
   options: async ({ auth }) => {
     if (!auth) {
       return {
@@ -19,7 +17,7 @@ export const memberIdDropdown = Property.Dropdown({
     }
 
     try {
-      const authData = await getAuthToken(auth);
+      const authData = await getAuthToken(auth as CyberArkAuth);
 
       const response = await httpClient.sendRequest({
         method: HttpMethod.GET,

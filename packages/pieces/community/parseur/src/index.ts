@@ -31,7 +31,7 @@ export const parseur = createPiece({
       baseUrl: () => parseurCommon.baseUrl,
       authMapping: async (auth) => {
         return {
-          Authorization: auth.secret_text,
+          Authorization: auth as string,
         };
       },
     }),

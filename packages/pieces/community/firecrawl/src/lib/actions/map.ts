@@ -41,7 +41,7 @@ export const map = createAction({
         method: HttpMethod.POST,
         url: `${FIRECRAWL_API_BASE_URL}/map`,
         headers: {
-          'Authorization': `Bearer ${auth.secret_text}`,
+          'Authorization': `Bearer ${auth}`,
           'Content-Type': 'application/json'
         },
         body: body,

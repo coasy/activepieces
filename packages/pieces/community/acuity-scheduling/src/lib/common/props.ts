@@ -1,6 +1,5 @@
 import { OAuth2PropertyValue, Property } from '@activepieces/pieces-framework';
 import { fetchAddons, fetchAppointmentTypes, fetchCalendars, fetchLabels } from '.';
-import { acuitySchedulingAuth } from '../..';
 
 interface DropdownParams {
 	displayName: string;
@@ -10,7 +9,6 @@ interface DropdownParams {
 
 export const appointmentTypeIdDropdown = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: acuitySchedulingAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -34,7 +32,6 @@ export const appointmentTypeIdDropdown = (params: DropdownParams) =>
 
 export const calendarIdDropdown = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: acuitySchedulingAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -58,7 +55,6 @@ export const calendarIdDropdown = (params: DropdownParams) =>
 
 export const addonIdsDropdown = (params: DropdownParams) =>
 	Property.MultiSelectDropdown({
-		auth: acuitySchedulingAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,
@@ -82,7 +78,6 @@ export const addonIdsDropdown = (params: DropdownParams) =>
 
 export const labelIdDropdown = (params: DropdownParams) =>
 	Property.Dropdown({
-		auth: acuitySchedulingAuth,
 		displayName: params.displayName,
 		description: params.description,
 		required: params.required,

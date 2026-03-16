@@ -10,8 +10,6 @@ export const addPeopleToProject = createAction({
 	auth: teamworkAuth,
 	props: {
 		projectId: Property.Dropdown({
-auth: teamworkAuth,
-			
 			displayName: 'Project',
 			description: 'The project to add people to.',
 			required: true,
@@ -24,7 +22,7 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const res = await teamworkRequest(auth, {
+				const res = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: '/projects.json',
 				});
@@ -39,7 +37,6 @@ auth: teamworkAuth,
 			},
 		}),
 		userIdList: Property.MultiSelectDropdown({
-auth: teamworkAuth,
 			displayName: 'Users',
 			description: 'The users to add to the project.',
 			required: true,
@@ -52,7 +49,7 @@ auth: teamworkAuth,
 						options: [],
 					};
 				}
-				const res = await teamworkRequest(auth, {
+				const res = await teamworkRequest(auth as PiecePropValueSchema<typeof teamworkAuth>, {
 					method: HttpMethod.GET,
 					path: '/people.json',
 				});

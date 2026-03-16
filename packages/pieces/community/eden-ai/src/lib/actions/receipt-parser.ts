@@ -3,7 +3,6 @@ import { HttpMethod, propsValidation } from '@activepieces/pieces-common';
 import { edenAiApiCall } from '../common/client';
 import { createStaticDropdown } from '../common/providers';
 import { z } from 'zod';
-import { edenAiAuth } from '../..';
 
 const DATA_EXTRACTION_PROVIDERS = [
   { label: 'Amazon', value: 'amazon' },
@@ -27,13 +26,11 @@ function normalizeDataExtractionResponse(provider: string, response: any) {
 }
 
 export const receiptParserAction = createAction({
-  auth: edenAiAuth,
   name: 'receipt_parser',
   displayName: 'Receipt Parser',
   description: 'Extract structured data from receipts and documents using Eden AI. Supports general data extraction with bounding boxes.',
   props: {
     provider: Property.Dropdown({
-      auth: edenAiAuth,
       displayName: 'Provider',
       description: 'The AI provider to use for data extraction.',
       required: true,
@@ -63,7 +60,6 @@ export const receiptParserAction = createAction({
       defaultValue: false,
     }),
     fallback_providers: Property.MultiSelectDropdown({
-      auth: edenAiAuth,
       displayName: 'Fallback Providers',
       description: 'Alternative providers to try if the main provider fails (up to 5).',
       required: false,
@@ -114,7 +110,7 @@ export const receiptParserAction = createAction({
 
     try {
       const response = await edenAiApiCall({
-        apiKey: auth.secret_text,
+        apiKey: auth as string,
         method: HttpMethod.POST,
         resourceUri: '/ocr/data_extraction',
         body,

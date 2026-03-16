@@ -23,3 +23,9 @@ export const SwitchPlatformRequest = Type.Object({
 })
 
 export type SwitchPlatformRequest = Static<typeof SwitchPlatformRequest>
+
+export const SwitchProjectRequest = Type.Object({
+    projectId: ApId,
+})
+
+export type SwitchProjectRequest = Static<typeof SwitchProjectRequest>

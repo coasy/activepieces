@@ -1,5 +1,5 @@
-import { BranchCondition, BranchOperator, FlowAction, FlowRunStatus, RouterExecutionType } from '@activepieces/shared'
-import { FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
+import { BranchCondition, BranchOperator, FlowAction, RouterExecutionType } from '@activepieces/shared'
+import { ExecutionVerdict, FlowExecutorContext } from '../../src/lib/handler/context/flow-execution-context'
 import { flowExecutor } from '../../src/lib/handler/flow-executor'
 import { buildCodeAction, buildPieceAction, buildRouterWithOneCondition, generateMockEngineConstants } from './test-helper'
 
@@ -52,9 +52,7 @@ describe('router with branching different conditions', () => {
             },
         ], RouterExecutionType.EXECUTE_FIRST_MATCH)
 
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.data_mapper.output).toEqual({ 'key': 3 })
         expect(result.steps.data_mapper_1).toBeUndefined()
     })
@@ -96,9 +94,7 @@ describe('router with branching different conditions', () => {
             },
         ], RouterExecutionType.EXECUTE_ALL_MATCH)
 
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.data_mapper.output).toEqual({ 'key': 3 })
         expect(result.steps.data_mapper_1.output).toEqual({ 'key': 3 })
     })
@@ -140,9 +136,7 @@ describe('router with branching different conditions', () => {
             },
         ], RouterExecutionType.EXECUTE_ALL_MATCH)
 
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         const routerOutput = result.steps.router.output as { branches: boolean[] }
         expect(routerOutput.branches).toEqual([
             {
@@ -208,9 +202,7 @@ describe('router with branching different conditions', () => {
             null, // Fallback branch
         ], RouterExecutionType.EXECUTE_FIRST_MATCH)
 
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.data_mapper).toBeUndefined()
         expect(result.steps.data_mapper_1).toBeUndefined()
         expect(result.steps.fallback_mapper.output).toEqual({ 'key': 11 })
@@ -264,9 +256,7 @@ describe('router with branching different conditions', () => {
             null, // Fallback branch
         ], RouterExecutionType.EXECUTE_ALL_MATCH)
 
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.data_mapper).toBeUndefined()
         expect(result.steps.data_mapper_1).toBeUndefined()
         expect(result.steps.fallback_mapper.output).toEqual({ 'key': 11 })
@@ -304,9 +294,7 @@ describe('router with branching different conditions', () => {
             null, // Fallback branch
         ], RouterExecutionType.EXECUTE_FIRST_MATCH)
 
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.data_mapper.output).toEqual({ 'key': 3 })
         expect(result.steps.fallback_mapper).toBeUndefined()
     })
@@ -359,9 +347,7 @@ describe('router with branching different conditions', () => {
             null, // Fallback branch
         ], RouterExecutionType.EXECUTE_ALL_MATCH)
 
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.data_mapper.output).toEqual({ 'key': 3 })
         expect(result.steps.data_mapper_1.output).toEqual({ 'key': 6 })
         expect(result.steps.fallback_mapper).toBeUndefined()
@@ -385,9 +371,7 @@ describe('router with branching different conditions', () => {
                 },
             ], executionType: RouterExecutionType.EXECUTE_FIRST_MATCH, skip: true }), executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.router).toBeUndefined()
     })
     it('should skip router action in flow', async () => {
@@ -424,9 +408,7 @@ describe('router with branching different conditions', () => {
         const result = await flowExecutor.execute({
             action: router, executionState: FlowExecutorContext.empty(), constants: generateMockEngineConstants(),
         })
-        expect(result.verdict).toStrictEqual({
-            status: FlowRunStatus.RUNNING,
-        })
+        expect(result.verdict).toBe(ExecutionVerdict.RUNNING)
         expect(result.steps.router).toBeUndefined()
         expect(result.steps.echo_step.output).toEqual({ 'key': 3 })
     })

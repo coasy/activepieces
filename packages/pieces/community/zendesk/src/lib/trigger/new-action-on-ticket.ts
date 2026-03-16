@@ -117,21 +117,21 @@ export const newActionOnTicket = createTrigger({
     },
   },
   async onEnable(context) {
-    const authentication = context.auth;
+    const authentication = context.auth as AuthProps;
     
     try {
       const response = await httpClient.sendRequest<{
         webhook: { id: string };
       }>({
-        url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/webhooks`,
+        url: `https://${authentication.subdomain}.zendesk.com/api/v2/webhooks`,
         method: HttpMethod.POST,
         headers: {
           'Content-Type': 'application/json',
         },
         authentication: {
           type: AuthenticationType.BASIC,
-          username: authentication.props.email + '/token',
-          password: authentication.props.token,
+          username: authentication.email + '/token',
+          password: authentication.token,
         },
         body: {
           webhook: {
@@ -152,18 +152,18 @@ export const newActionOnTicket = createTrigger({
   },
 
   async onDisable(context) {
-    const authentication = context.auth;
+    const authentication = context.auth as AuthProps;
     const webhookId = await context.store.get<string>(WEBHOOK_TRIGGER_KEY);
 
     if (webhookId) {
       try {
         await httpClient.sendRequest({
-          url: `https://${authentication.props.subdomain}.zendesk.com/api/v2/webhooks/${webhookId}`,
+          url: `https://${authentication.subdomain}.zendesk.com/api/v2/webhooks/${webhookId}`,
           method: HttpMethod.DELETE,
           authentication: {
             type: AuthenticationType.BASIC,
-            username: authentication.props.email + '/token',
-            password: authentication.props.token,
+            username: authentication.email + '/token',
+            password: authentication.token,
           },
         });
       } catch (error) {

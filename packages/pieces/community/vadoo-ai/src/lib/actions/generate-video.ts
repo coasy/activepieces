@@ -15,7 +15,6 @@ export const generateVideo = createAction({
   description: 'Create an AI-generated video from parameters',
   props: {
     topic: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Topic',
       description: 'To create content for AI Video',
       required: false,
@@ -34,7 +33,7 @@ export const generateVideo = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_topics',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
           });
 
@@ -67,7 +66,6 @@ export const generateVideo = createAction({
       required: false,
     }),
     voice: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Voice',
       description: 'The voice for AI Video',
       required: false,
@@ -86,7 +84,7 @@ export const generateVideo = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_voices',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
             timeout: 10000, // 10 second timeout
           });
@@ -131,7 +129,6 @@ export const generateVideo = createAction({
       },
     }),
     theme: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Theme',
       description: 'To display captions with style',
       required: false,
@@ -150,7 +147,7 @@ export const generateVideo = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_themes',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
           });
 
@@ -178,7 +175,6 @@ export const generateVideo = createAction({
       defaultValue: 'None',
     }),
     language: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Language',
       description: 'To generate video in language you want',
       required: false,
@@ -197,7 +193,7 @@ export const generateVideo = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_languages',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
           });
 
@@ -293,7 +289,6 @@ export const generateVideo = createAction({
       required: false,
     }),
     bg_music: Property.Dropdown({
-  auth: vadooAiAuth,
       displayName: 'Background Music',
       description: 'Background music to use along with the video',
       required: false,
@@ -312,7 +307,7 @@ export const generateVideo = createAction({
             method: HttpMethod.GET,
             url: 'https://viralapi.vadoo.tv/api/get_background_music',
             headers: {
-              'X-API-KEY': auth.secret_text,
+              'X-API-KEY': auth as string,
             },
           });
 
@@ -395,7 +390,7 @@ export const generateVideo = createAction({
       method: HttpMethod.POST,
       url: 'https://viralapi.vadoo.tv/api/generate_video',
       headers: {
-        'X-API-KEY': context.auth.secret_text,
+        'X-API-KEY': context.auth,
         'Content-Type': 'application/json',
       },
       body: requestBody,
@@ -418,7 +413,7 @@ export const generateVideo = createAction({
         method: HttpMethod.GET,
         url: 'https://viralapi.vadoo.tv/api/get_video_url',
         headers: {
-          'X-API-KEY': context.auth.secret_text,
+          'X-API-KEY': context.auth,
           'Content-Type': 'application/json',
         },
         queryParams: {

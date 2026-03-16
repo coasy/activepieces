@@ -131,7 +131,7 @@ export const captureScreenshot = createAction({
         }
 
         const response = await browserlessCommon.apiCall({
-            auth: context.auth.props,
+            auth: context.auth,
             method: HttpMethod.POST,
             resourceUri: '/screenshot',
             body: requestBody,

@@ -35,21 +35,21 @@ export const runwareCommon = {
 
   // API methods
   generateImages: async ({ apiKey, ...imageParams }: GenerateImagesParams) => {
-    const client = runwareCommon.runwareClient(apiKey.secret_text);
+    const client = runwareCommon.runwareClient(apiKey);
     return await client.requestImages(imageParams);
   },
   generateVideoFromText: async ({
     apiKey,
     ...videoParams
   }: GenerateVideoFromTextParams) => {
-    const client = runwareCommon.runwareClient(apiKey.secret_text);
+    const client = runwareCommon.runwareClient(apiKey);
     return await client.videoInference(videoParams);
   },
   imageBackgroundRemoval: async ({
     apiKey,
     ...imageParams
   }: ImageBackgroundRemovalParams) => {
-    const client = runwareCommon.runwareClient(apiKey.secret_text);
+    const client = runwareCommon.runwareClient(apiKey);
     return await client.removeImageBackground(imageParams);
   },
 };

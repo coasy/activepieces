@@ -1,11 +1,10 @@
-import { securityAccess } from '@activepieces/server-shared'
 import {
     ActivepiecesError,
     ApEdition,
     ApId,
     assertNotNullOrUndefined,
+    EndpointScope,
     ErrorCode,
-    FileType,
     PlatformWithoutSensitiveData,
     PrincipalType,
     SERVICE_KEY_SECURITY_OPENAPI,
@@ -18,10 +17,10 @@ import {
 import { StatusCodes } from 'http-status-codes'
 import { userIdentityRepository } from '../authentication/user-identity/user-identity-service'
 import { transaction } from '../core/db/transaction'
-import { platformToEditMustBeOwnedByCurrentUser } from '../ee/authentication/ee-authorization'
+import { platformMustBeOwnedByCurrentUser, platformToEditMustBeOwnedByCurrentUser } from '../ee/authentication/ee-authorization'
+import { smtpEmailSender } from '../ee/helper/email/email-sender/smtp-email-sender'
 import { platformPlanService } from '../ee/platform/platform-plan/platform-plan.service'
 import { stripeHelper } from '../ee/platform/platform-plan/stripe-helper'
-import { fileService } from '../file/file.service'
 import { flowService } from '../flows/flow/flow.service'
 import { system } from '../helper/system/system'
 import { projectRepo } from '../project/project-service'
@@ -30,36 +29,17 @@ import { platformRepo, platformService } from './platform.service'
 
 const edition = system.getEdition()
 export const platformController: FastifyPluginAsyncTypebox = async (app) => {
-    app.post('/:id', UpdatePlatformRequest, async (req, _res) => {
-        const platformId = req.principal.platform.id
-
-        const [logoIconUrl, fullLogoUrl, favIconUrl] = await Promise.all([
-            fileService(app.log).uploadPublicAsset({
-                file: req.body.logoIcon,
-                type: FileType.PLATFORM_ASSET,
-                platformId,
-                metadata: { platformId },
-            }),
-            fileService(app.log).uploadPublicAsset({
-                file: req.body.fullLogo,
-                type: FileType.PLATFORM_ASSET,
-                platformId,
-                metadata: { platformId },
-            }),
-            fileService(app.log).uploadPublicAsset({
-                file: req.body.favIcon,
-                type: FileType.PLATFORM_ASSET,
-                platformId,
-                metadata: { platformId },
-            }),
-        ])
+    app.post('/:id', UpdatePlatformRequest, async (req, res) => {
+        await platformMustBeOwnedByCurrentUser.call(app, req, res)
+        await platformToEditMustBeOwnedByCurrentUser.call(app, req, res)
+        const { smtp } = req.body
+        if (smtp) {
+            await smtpEmailSender(req.log).validateOrThrow(smtp)
+        }
 
         await platformService.update({
             id: req.params.id,
             ...req.body,
-            logoIconUrl,
-            fullLogoUrl,
-            favIconUrl,
         })
         return platformService.getOneWithPlanAndUsageOrThrow(req.params.id)
     })
@@ -76,23 +56,9 @@ export const platformController: FastifyPluginAsyncTypebox = async (app) => {
         return platformService.getOneWithPlanAndUsageOrThrow(req.principal.platform.id)
     })
 
-    app.get('/assets/:id', GetAssetRequest, async (req, reply) => {
-        const [file, data] = await Promise.all([
-            fileService(app.log).getFileOrThrow({ fileId: req.params.id }),
-            fileService(app.log).getDataOrThrow({ fileId: req.params.id })])
-
-        return reply
-            .header(
-                'Content-Disposition',
-                `attachment; filename="${encodeURI(file.fileName ?? '')}"`,
-            )
-            .type(file.metadata?.mimetype ?? 'application/octet-stream')
-            .status(StatusCodes.OK)
-            .send(data.data)
-    })
-
     if (edition === ApEdition.CLOUD) {
         app.delete('/:id', DeletePlatformRequest, async (req, res) => {
+            await platformMustBeOwnedByCurrentUser.call(app, req, res)
             await platformToEditMustBeOwnedByCurrentUser.call(app, req, res)
             assertNotNullOrUndefined(req.principal.platform.id, 'platformId')
             const isCloudNonEnterprisePlan = await platformPlanService(req.log).isCloudNonEnterprisePlan(req.params.id)
@@ -142,7 +108,8 @@ export const platformController: FastifyPluginAsyncTypebox = async (app) => {
 
 const UpdatePlatformRequest = {
     config: {
-        security: securityAccess.platformAdminOnly([PrincipalType.USER]),
+        allowedPrincipals: [PrincipalType.USER] as const,
+        scope: EndpointScope.PLATFORM,
     },
     schema: {
         body: UpdatePlatformRequestBody,
@@ -158,7 +125,8 @@ const UpdatePlatformRequest = {
 
 const GetPlatformRequest = {
     config: {
-        security: securityAccess.publicPlatform([PrincipalType.USER, PrincipalType.SERVICE]),
+        allowedPrincipals: [PrincipalType.USER, PrincipalType.SERVICE] as const,
+        scope: EndpointScope.PLATFORM,
     },
     schema: {
         tags: ['platforms'],
@@ -175,22 +143,12 @@ const GetPlatformRequest = {
 
 const DeletePlatformRequest = {
     config: {
-        security: securityAccess.platformAdminOnly([PrincipalType.USER]),
+        allowedPrincipals: [PrincipalType.USER] as const,
+        scope: EndpointScope.PLATFORM,
     },
     schema: {
         params: Type.Object({
             id: ApId,
-        }),
-    },
-}
-
-const GetAssetRequest = {
-    config: {
-        security: securityAccess.public(),
-    },
-    schema: {
-        params: Type.Object({
-            id: Type.String(),
         }),
     },
 }

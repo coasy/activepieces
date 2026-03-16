@@ -29,7 +29,6 @@ export const createActivity = createAction({
       },
     }),
     entityItemId: Property.Dropdown({
-      auth: CopperAuth,
       displayName: 'Parent Entity Resource',
       description: 'Select Resource',
       required: true,

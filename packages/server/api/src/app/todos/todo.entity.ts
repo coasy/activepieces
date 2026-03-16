@@ -3,6 +3,7 @@ import { EntitySchema } from 'typeorm'
 import {
     ApIdSchema,
     BaseColumnSchemaPart,
+    JSONB_COLUMN_TYPE,
 } from '../database/database-common'
 
 export type TodoSchema = Todo & {
@@ -31,11 +32,11 @@ export const TodoEntity = new EntitySchema<TodoSchema>({
             nullable: false,
         },
         status: {
-            type: 'jsonb',
+            type: JSONB_COLUMN_TYPE,
             nullable: false,
         },
         statusOptions: {
-            type: 'jsonb',
+            type: JSONB_COLUMN_TYPE,
             nullable: false,
         },
         assigneeId: {

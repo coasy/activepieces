@@ -1,5 +1,5 @@
 
-import { createTrigger, TriggerStrategy, PiecePropValueSchema, Property, AppConnectionValueForAuthProperty } from '@activepieces/pieces-framework';
+import { createTrigger, TriggerStrategy, PiecePropValueSchema, Property } from '@activepieces/pieces-framework';
 import { DedupeStrategy, Polling, pollingHelper } from '@activepieces/pieces-common';
 import crypto from 'crypto';
 import { postgresAuth } from '../..';
@@ -8,7 +8,7 @@ import format from 'pg-format';
 import dayjs from 'dayjs';
 
 type OrderDirection = 'ASC' | 'DESC';
-const polling: Polling<AppConnectionValueForAuthProperty<typeof postgresAuth>, {
+const polling: Polling<PiecePropValueSchema<typeof postgresAuth>, {
     table: {
         table_schema: string,
         table_name: string
@@ -77,7 +77,6 @@ export const newRow = createTrigger({
             value: `**NOTE:** The trigger fetches the latest rows using the provided order by column (newest first), and then will keep polling until the previous last row is reached.`,
         }),
         table: Property.Dropdown({
-            auth: postgresAuth,
             displayName: 'Table name',
             required: true,
             refreshers: ['auth'],
@@ -90,7 +89,8 @@ export const newRow = createTrigger({
                         placeholder: 'Please authenticate first',
                     };
                 }
-                const client = await pgClient(auth)
+                const authProps = auth as PiecePropValueSchema<typeof postgresAuth>;
+                const client = await pgClient(authProps)
                 try {
                     const result = await client.query(
                         `SELECT table_schema, table_name FROM information_schema.tables WHERE table_type = 'BASE TABLE'`
@@ -112,7 +112,6 @@ export const newRow = createTrigger({
             }
         }),
         order_by: Property.Dropdown({
-            auth: postgresAuth,
             displayName: 'Column to order by',
             description: 'Use something like a created timestamp or an auto-incrementing ID.',
             required: true,
@@ -133,7 +132,8 @@ export const newRow = createTrigger({
                         placeholder: 'Please select a table',
                     };
                 }
-                const client = await pgClient(auth)
+                const authProps = auth as PiecePropValueSchema<typeof postgresAuth>;
+                const client = await pgClient(authProps)
                 try {
                     const { table_name, table_schema } = table as { table_schema: string, table_name: string };
                     const query = `

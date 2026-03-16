@@ -16,8 +16,6 @@ export const createExpenseAction = createAction({
 	description: 'Creates an expense transaction (purchase) in QuickBooks.',
 	props: {
 		accountRef: Property.Dropdown({
-			auth: quickbooksAuth,
-
 			displayName: 'Bank/Credit Card Account',
 			description: 'The account from which the expense was paid.',
 			required: true,
@@ -73,8 +71,6 @@ export const createExpenseAction = createAction({
 			defaultValue: 'Cash',
 		}),
 		entityRef: Property.Dropdown({
-			auth: quickbooksAuth,
-
 			displayName: 'Payee (Vendor)',
 			description: 'Optional - The vendor the expense was paid to.',
 			required: false,
@@ -168,7 +164,7 @@ export const createExpenseAction = createAction({
 		const { access_token } = context.auth;
 		const companyId = context.auth.props?.['companyId'];
 
-		const apiUrl = quickbooksCommon.getApiUrl(companyId as string);
+		const apiUrl = quickbooksCommon.getApiUrl(companyId);
 		const props = context.propsValue;
 
 		const lines = (props['lineItems'] as any[]).map((line) => {

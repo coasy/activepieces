@@ -25,7 +25,7 @@ export const createSpace = createAction({
         body: {
           name,
         },
-        auth: auth.secret_text,
+        auth: auth as string,
       });
       
       return response.results.space;

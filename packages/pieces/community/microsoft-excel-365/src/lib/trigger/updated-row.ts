@@ -1,5 +1,5 @@
 import {
-    AppConnectionValueForAuthProperty,
+    OAuth2PropertyValue,
     Property,
     createTrigger,
 } from '@activepieces/pieces-framework';
@@ -21,7 +21,7 @@ function createRowHash(rowData: unknown[]): string {
 }
 
 // Helper function to get all worksheet rows with error handling
-async function getWorksheetRows(auth: AppConnectionValueForAuthProperty<typeof excelAuth>, workbookId: string, worksheetId: string): Promise<(string | number | boolean)[][]> {
+async function getWorksheetRows(auth: OAuth2PropertyValue, workbookId: string, worksheetId: string): Promise<(string | number | boolean)[][]> {
     try {
         return await excelCommon.getAllRows(workbookId, worksheetId, auth.access_token);
     } catch (error) {
@@ -31,7 +31,7 @@ async function getWorksheetRows(auth: AppConnectionValueForAuthProperty<typeof e
 
 // Polling implementation using the framework's best practices
 const polling: Polling<
-    AppConnectionValueForAuthProperty<typeof excelAuth>,
+    OAuth2PropertyValue,
     {
         workbook_id: string;
         worksheet_id: string;

@@ -13,8 +13,7 @@
         "tsConfig": "packages/server/shared/tsconfig.lib.json",
         "assets": ["packages/server/shared/*.md"],
         "buildableProjectDepsInPackageJsonType": "dependencies",
-        "updateBuildableProjectDepsInPackageJson": true,
-        "clean": false
+        "updateBuildableProjectDepsInPackageJson": true
       }
     },
     "lint": {

@@ -25,7 +25,6 @@ export const createVideoFromTemplate = createAction({
       },
     }),
     template_id: Property.Dropdown({
-      auth: joggAiAuth,
       displayName: 'Template',
       description: 'Select a template to use',
       required: true,
@@ -49,7 +48,7 @@ export const createVideoFromTemplate = createAction({
             method: HttpMethod.GET,
             url,
             headers: {
-              'x-api-key': auth.secret_text,
+              'x-api-key': auth as string,
             },
           });
 
@@ -131,8 +130,7 @@ export const createVideoFromTemplate = createAction({
         ],
       },
     }),
-    avatar_id: Property.Dropdown({  
-      auth: joggAiAuth,
+    avatar_id: Property.Dropdown({
       displayName: 'Avatar',
       description: 'Select an avatar to use',
       required: false,
@@ -156,7 +154,7 @@ export const createVideoFromTemplate = createAction({
             method: HttpMethod.GET,
             url,
             headers: {
-              'x-api-key': auth.secret_text,
+              'x-api-key': auth as string,
             },
           });
 
@@ -319,7 +317,7 @@ export const createVideoFromTemplate = createAction({
       method: HttpMethod.POST,
       url: 'https://api.jogg.ai/v1/create_video_with_template',
       headers: {
-        'x-api-key': auth.secret_text,
+        'x-api-key': auth,
         'Content-Type': 'application/json',
       },
       body: requestBody,

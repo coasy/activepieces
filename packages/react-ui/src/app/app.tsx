@@ -13,25 +13,40 @@ import { useTranslation } from 'react-i18next';
 import { EmbeddingProvider } from '@/components/embed-provider';
 import TelemetryProvider from '@/components/telemetry-provider';
 import { ThemeProvider } from '@/components/theme-provider';
-import { internalErrorToast, Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { useManagePlanDialogStore } from '@/features/billing/lib/active-flows-addon-dialog-state';
-import { RefreshAnalyticsProvider } from '@/features/platform-admin/lib/refresh-analytics-context';
+import {
+  INTERNAL_ERROR_TOAST,
+  RESOURCE_LOCKED_MESSAGE,
+  toast,
+} from '@/components/ui/use-toast';
+import { useManagePlanDialogStore } from '@/features/billing/components/upgrade-dialog/store';
+import { RefreshAnalyticsProvider } from '@/features/platform-admin/components/refresh-analytics-provider';
 import { api } from '@/lib/api';
-import { ErrorCode, isNil } from '@activepieces/shared';
+import {
+  ErrorCode,
+  isNil,
+  QuotaExceededParams,
+  ResourceLockedParams,
+} from '@activepieces/shared';
 
 import { EmbeddingFontLoader } from './components/embedding-font-loader';
 import { InitialDataGuard } from './components/initial-data-guard';
-import { ApRouter } from './guards';
+import { ApRouter } from './router';
 
 const queryClient = new QueryClient({
   mutationCache: new MutationCache({
     onError: (err: Error, _, __, mutation) => {
-      if (api.isApError(err, ErrorCode.QUOTA_EXCEEDED)) {
+      console.error(err);
+      if (api.isApError(err, ErrorCode.RESOURCE_LOCKED)) {
+        const error = err.response?.data as ResourceLockedParams;
+        toast(RESOURCE_LOCKED_MESSAGE(error.params.message));
+      } else if (api.isApError(err, ErrorCode.QUOTA_EXCEEDED)) {
+        const error = err.response?.data as QuotaExceededParams;
         const { openDialog } = useManagePlanDialogStore.getState();
-        openDialog();
+        openDialog({ metric: error.params.metric });
       } else if (isNil(mutation.options.onError)) {
-        internalErrorToast();
+        toast(INTERNAL_ERROR_TOAST);
       }
     },
   }),
@@ -59,7 +74,7 @@ export function App() {
                   <React.Fragment key={i18n.language}>
                     <ThemeProvider storageKey="vite-ui-theme">
                       <ApRouter />
-                      <Toaster position="bottom-right" />
+                      <Toaster />
                     </ThemeProvider>
                   </React.Fragment>
                 </TooltipProvider>

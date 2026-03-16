@@ -1,24 +1,17 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { t } from 'i18next';
-import {
-  CheckIcon,
-  Package,
-  Tag,
-  Hash,
-  GitBranch,
-  Tags,
-  Puzzle,
-} from 'lucide-react';
+import { CheckIcon, Package } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { DashboardPageHeader } from '@/app/components/dashboard-page-header';
 import { RequestTrial } from '@/app/components/request-trial';
 import { ApplyTags } from '@/app/routes/platform/setup/pieces/apply-tags';
 import { PieceActions } from '@/app/routes/platform/setup/pieces/piece-actions';
 import { SyncPiecesButton } from '@/app/routes/platform/setup/pieces/sync-pieces';
 import { ConfigurePieceOAuth2Dialog } from '@/app/routes/platform/setup/pieces/update-oauth2-dialog';
+import { DashboardPageHeader } from '@/components/custom/dashboard-page-header';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { DataTable, RowDataWithActions } from '@/components/ui/data-table';
 import { DataTableColumnHeader } from '@/components/ui/data-table/data-table-column-header';
 import { LockedAlert } from '@/components/ui/locked-alert';
@@ -26,12 +19,20 @@ import { oauthAppsQueries } from '@/features/connections/lib/oauth-apps-hooks';
 import { InstallPieceDialog } from '@/features/pieces/components/install-piece-dialog';
 import { PieceIcon } from '@/features/pieces/components/piece-icon';
 import { piecesHooks } from '@/features/pieces/lib/pieces-hooks';
+import { flagsHooks } from '@/hooks/flags-hooks';
 import { platformHooks } from '@/hooks/platform-hooks';
 import {
   PieceMetadataModelSummary,
   PropertyType,
 } from '@activepieces/pieces-framework';
-import { isNil, OAuth2GrantType, PieceScope } from '@activepieces/shared';
+import {
+  ApEdition,
+  ApFlagId,
+  BOTH_CLIENT_CREDENTIALS_AND_AUTHORIZATION_CODE,
+  isNil,
+  OAuth2GrantType,
+  PieceScope,
+} from '@activepieces/shared';
 
 const PlatformPiecesPage = () => {
   const { platform } = platformHooks.useCurrentPlatform();
@@ -47,22 +48,42 @@ const PlatformPiecesPage = () => {
     includeTags: true,
     includeHidden: true,
   });
+  const { data: edition } = flagsHooks.useFlag<ApEdition>(ApFlagId.EDITION);
 
-  const { refetch: refetchPiecesOAuth2AppsMap } =
-    oauthAppsQueries.usePiecesOAuth2AppsMap();
+  const { refetch: refetchPiecesClientIdsMap } =
+    oauthAppsQueries.usePieceToClientIdMap(platform.cloudAuthEnabled, edition!);
 
   const columns: ColumnDef<RowDataWithActions<PieceMetadataModelSummary>>[] =
     useMemo(
       () => [
         {
-          accessorKey: 'name',
-          size: 80,
-          header: ({ column }) => (
-            <DataTableColumnHeader
-              column={column}
-              title={t('Piece')}
-              icon={Puzzle}
+          id: 'select',
+          header: ({ table }) => (
+            <Checkbox
+              checked={
+                table.getIsAllPageRowsSelected() ||
+                (table.getIsSomePageRowsSelected() && 'indeterminate')
+              }
+              variant="secondary"
+              onCheckedChange={(value) =>
+                table.toggleAllPageRowsSelected(!!value)
+              }
             />
+          ),
+          cell: ({ row }) => (
+            <Checkbox
+              variant="secondary"
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => {
+                row.toggleSelected(!!value);
+              }}
+            />
+          ),
+        },
+        {
+          accessorKey: 'name',
+          header: ({ column }) => (
+            <DataTableColumnHeader column={column} title={t('App')} />
           ),
           cell: ({ row }) => {
             return (
@@ -81,13 +102,8 @@ const PlatformPiecesPage = () => {
         },
         {
           accessorKey: 'displayName',
-          size: 180,
           header: ({ column }) => (
-            <DataTableColumnHeader
-              column={column}
-              title={t('Display Name')}
-              icon={Tag}
-            />
+            <DataTableColumnHeader column={column} title={t('Display Name')} />
           ),
           cell: ({ row }) => {
             return <div className="text-left">{row.original.displayName}</div>;
@@ -95,13 +111,8 @@ const PlatformPiecesPage = () => {
         },
         {
           accessorKey: 'packageName',
-          size: 200,
           header: ({ column }) => (
-            <DataTableColumnHeader
-              column={column}
-              title={t('Package Name')}
-              icon={Hash}
-            />
+            <DataTableColumnHeader column={column} title={t('Package Name')} />
           ),
           cell: ({ row }) => {
             return <div className="text-left">{row.original.name}</div>;
@@ -109,13 +120,8 @@ const PlatformPiecesPage = () => {
         },
         {
           accessorKey: 'version',
-          size: 100,
           header: ({ column }) => (
-            <DataTableColumnHeader
-              column={column}
-              title={t('Version')}
-              icon={GitBranch}
-            />
+            <DataTableColumnHeader column={column} title={t('Version')} />
           ),
           cell: ({ row }) => {
             return <div className="text-left">{row.original.version}</div>;
@@ -123,13 +129,8 @@ const PlatformPiecesPage = () => {
         },
         {
           accessorKey: 'tags',
-          size: 150,
           header: ({ column }) => (
-            <DataTableColumnHeader
-              column={column}
-              title={t('Tags')}
-              icon={Tags}
-            />
+            <DataTableColumnHeader column={column} title={t('Tags')} />
           ),
           cell: ({ row }) => {
             return (
@@ -146,14 +147,22 @@ const PlatformPiecesPage = () => {
         {
           id: 'actions',
           cell: ({ row }) => {
+            const isOAuth2Enabled =
+              row.original.auth &&
+              row.original.auth.type === PropertyType.OAUTH2 &&
+              (row.original.auth.grantType ===
+                BOTH_CLIENT_CREDENTIALS_AND_AUTHORIZATION_CODE ||
+                row.original.auth.grantType ===
+                  OAuth2GrantType.AUTHORIZATION_CODE ||
+                isNil(row.original.auth.grantType));
             return (
               <div className="flex justify-end">
-                {shouldShowOauth2SettingForPiece(row.original) && (
+                {isOAuth2Enabled && (
                   <ConfigurePieceOAuth2Dialog
                     pieceName={row.original.name}
                     onConfigurationDone={() => {
                       refetchPieces();
-                      refetchPiecesOAuth2AppsMap();
+                      refetchPiecesClientIdsMap();
                     }}
                     isEnabled={isEnabled}
                   />
@@ -230,7 +239,6 @@ const PlatformPiecesPage = () => {
             previous: null,
           }}
           isLoading={isLoading}
-          selectColumn={true}
           onSelectedRowsChange={setSelectedPieces}
         />
       </div>
@@ -240,19 +248,3 @@ const PlatformPiecesPage = () => {
 
 PlatformPiecesPage.displayName = 'PlatformPiecesPage';
 export { PlatformPiecesPage };
-
-function shouldShowOauth2SettingForPiece(piece: PieceMetadataModelSummary) {
-  const pieceAuth = Array.isArray(piece.auth)
-    ? piece.auth.find((auth) => auth.type === PropertyType.OAUTH2)
-    : piece.auth;
-  if (isNil(pieceAuth)) {
-    return false;
-  }
-  if (pieceAuth.type !== PropertyType.OAUTH2) {
-    return false;
-  }
-  if (pieceAuth.grantType === OAuth2GrantType.CLIENT_CREDENTIALS) {
-    return false;
-  }
-  return true;
-}

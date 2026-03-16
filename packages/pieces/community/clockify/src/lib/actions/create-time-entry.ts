@@ -49,7 +49,7 @@ export const createTimeEntryAction = createAction({
 		const tagIds = context.propsValue.tagIds ?? [];
 
 		const response = await clockifyApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.POST,
 			resourceUri: `/workspaces/${workspaceId}/time-entries`,
 			body: {

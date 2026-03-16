@@ -86,7 +86,7 @@ export const updateSubscriberDetailsAction = createAction({
     };
 
     const response = await makeRequest(
-      { apiKey: auth.secret_text },
+      { apiKey: auth as string },
       HttpMethod.PUT,
       `/subscribers/${listId}.json?email=${encodeURIComponent(email)}`,
       payload

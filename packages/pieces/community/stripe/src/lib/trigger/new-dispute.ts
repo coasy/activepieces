@@ -63,7 +63,7 @@ export const stripeNewDispute = createTrigger({
     const webhook = await stripeCommon.subscribeWebhook(
       'charge.dispute.created',
       context.webhookUrl,
-      context.auth.secret_text
+      context.auth
     );
     await context.store.put<StripeWebhookInformation>('_new_dispute_trigger', {
       webhookId: webhook.id,
@@ -77,7 +77,7 @@ export const stripeNewDispute = createTrigger({
     if (webhookInfo !== null && webhookInfo !== undefined) {
       await stripeCommon.unsubscribeWebhook(
         webhookInfo.webhookId,
-        context.auth.secret_text
+        context.auth
       );
     }
   },
@@ -85,13 +85,12 @@ export const stripeNewDispute = createTrigger({
   async test(context) {
     const response = await httpClient.sendRequest<{ data: { id: string }[] }>({
       method: HttpMethod.GET,
-      url: 'https://api.stripe.com/v1/issuing/disputes',
+      url: 'https://api.stripe.com/v1/checkout/disputes',
       headers: {
-        Authorization: 'Bearer ' + context.auth.secret_text,
+        Authorization: 'Bearer ' + context.auth,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       queryParams: {
-        status: 'submitted',
         limit: '5',
       },
     });

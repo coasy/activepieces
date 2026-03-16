@@ -55,7 +55,7 @@ export const createOpportunity = createAction({
     };
 
     const response = await clickfunnelsApiService.createOpportunity(
-      auth.props,
+      auth,
       propsValue.workspaceId as string,
       {
         sales_opportunity: payload,

@@ -14,7 +14,7 @@ export const getExtendedUserAction = createAction({
       method: HttpMethod.GET,
       url: 'https://api.zoo.dev/user/extended',
       headers: {
-        Authorization: `Bearer ${auth.secret_text}`,
+        Authorization: `Bearer ${auth}`,
       },
     });
     return response.body;

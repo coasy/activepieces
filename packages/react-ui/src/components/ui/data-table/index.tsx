@@ -4,9 +4,6 @@ import {
   ColumnDef as TanstackColumnDef,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { t } from 'i18next';
@@ -26,7 +23,6 @@ import { cn } from '@/lib/utils';
 import { apId, isNil, SeekPage } from '@activepieces/shared';
 
 import { Button } from '../button';
-import { Checkbox } from '../checkbox';
 import {
   Select,
   SelectTrigger,
@@ -82,9 +78,6 @@ interface DataTableProps<
   emptyStateTextTitle: string;
   emptyStateTextDescription: string;
   emptyStateIcon: React.ReactNode;
-  selectColumn?: boolean;
-  initialSorting?: SortingState;
-  clientPagination?: boolean;
 }
 
 export type DataTableFilters<Keys extends string> = DataTableFilterProps & {
@@ -116,42 +109,10 @@ export function DataTable<
   emptyStateTextDescription,
   emptyStateIcon,
   customFilters,
-  selectColumn = false,
-  initialSorting = [],
-  clientPagination = false,
 }: DataTableProps<TData, TValue, Keys>) {
-  const selectColumnDef: ColumnDef<RowDataWithActions<TData>, TValue> = {
-    id: 'select',
-    accessorKey: 'select',
-    notClickable: true,
-    size: 40,
-    minSize: 40,
-    maxSize: 40,
-    header: ({ table }) => (
-      <div className="flex items-center h-full">
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className="flex items-center h-full">
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-        />
-      </div>
-    ),
-  };
-
-  const columnsWithSelect = selectColumn
-    ? [selectColumnDef, ...columnsInitial]
-    : columnsInitial;
-
   const columns =
     actions.length > 0
-      ? columnsWithSelect.concat([
+      ? columnsInitial.concat([
           {
             accessorKey: '__actions',
             header: ({ column }) => (
@@ -172,7 +133,7 @@ export function DataTable<
             },
           },
         ])
-      : columnsWithSelect;
+      : columnsInitial;
 
   const columnVisibility = columnsInitial.reduce((acc, column) => {
     if (column.enableHiding && 'accessorKey' in column) {
@@ -224,17 +185,14 @@ export function DataTable<
   const table = useReactTable({
     data: tableData,
     columns,
-    manualPagination: !clientPagination,
+    manualPagination: true,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    ...(clientPagination && { getPaginationRowModel: getPaginationRowModel() }),
     getRowId: () => apId(),
     initialState: {
       pagination: {
         pageSize: parseInt(startingLimit),
       },
       columnVisibility,
-      sorting: initialSorting,
     },
   });
 
@@ -255,27 +213,17 @@ export function DataTable<
   }, [table.getSelectedRowModel().rows]);
 
   useEffect(() => {
-    if (hidePagination) {
-      return;
-    }
     setSearchParams(
       (prev) => {
         const newParams = new URLSearchParams(prev);
 
-        if (!isNil(currentCursor) && currentCursor !== '') {
-          newParams.set('cursor', currentCursor);
-        } else {
-          newParams.delete('cursor');
-        }
-        const pageSize = table.getState().pagination.pageSize;
-        if (pageSize) {
-          newParams.set('limit', `${pageSize}`);
-        }
+        newParams.set('cursor', currentCursor ?? '');
+        newParams.set('limit', `${table.getState().pagination.pageSize}`);
         return newParams;
       },
       { replace: true },
     );
-  }, [currentCursor, table.getState().pagination.pageSize, hidePagination]);
+  }, [currentCursor, table.getState().pagination.pageSize]);
 
   useEffect(() => {
     setTableData(
@@ -323,22 +271,14 @@ export function DataTable<
         </DataTableToolbar>
       )}
 
-      <div className="rounded-md mt-0 overflow-hidden">
-        <Table className="table-fixed">
+      <div className="rounded-md border mt-0 overflow-hidden">
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
                 {headerGroup.headers.map((header) => {
-                  const size = header.column.columnDef.size;
                   return (
-                    <TableHead
-                      key={header.id}
-                      style={
-                        size
-                          ? { width: size, minWidth: size, maxWidth: size }
-                          : undefined
-                      }
-                    >
+                    <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -374,7 +314,7 @@ export function DataTable<
                     )?.cellIndex;
                     if (
                       clickedCellIndex !== undefined &&
-                      columns[clickedCellIndex]?.notClickable
+                      columnsInitial[clickedCellIndex]?.notClickable
                     ) {
                       return; // Don't trigger onRowClick for not clickable columns
                     }
@@ -387,7 +327,7 @@ export function DataTable<
                     )?.cellIndex;
                     if (
                       clickedCellIndex !== undefined &&
-                      columns[clickedCellIndex]?.notClickable
+                      columnsInitial[clickedCellIndex]?.notClickable
                     ) {
                       return;
                     }
@@ -396,42 +336,31 @@ export function DataTable<
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                 >
-                  {row.getVisibleCells().map((cell) => {
-                    const size = cell.column.columnDef.size;
-                    return (
-                      <TableCell
-                        key={cell.id}
-                        style={
-                          size
-                            ? { width: size, minWidth: size, maxWidth: size }
-                            : undefined
-                        }
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      <div
+                        className={cn('flex items-center', {
+                          'justify-end': cell.column.id === 'actions',
+                          'justify-start': cell.column.id !== 'actions',
+                        })}
                       >
                         <div
-                          className={cn('flex w-full items-center', {
-                            'justify-end': cell.column.id === 'actions',
-                            'justify-start': cell.column.id !== 'actions',
-                          })}
+                          onClick={(e) => {
+                            if (cell.column.id === 'select') {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              return;
+                            }
+                          }}
                         >
-                          <div
-                            className="w-full"
-                            onClick={(e) => {
-                              if (cell.column.id === 'select') {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                return;
-                              }
-                            }}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </div>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
                         </div>
-                      </TableCell>
-                    );
-                  })}
+                      </div>
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))
             ) : (
@@ -464,9 +393,7 @@ export function DataTable<
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
-              if (!clientPagination) {
-                setCurrentCursor(undefined);
-              }
+              setCurrentCursor(undefined);
             }}
           >
             <SelectTrigger className="h-9 min-w-[70px] w-auto">
@@ -483,18 +410,8 @@ export function DataTable<
           <Button
             variant="outline"
             size="sm"
-            onClick={() => {
-              if (clientPagination) {
-                table.previousPage();
-              } else {
-                setCurrentCursor(previousPageCursor);
-              }
-            }}
-            disabled={
-              clientPagination
-                ? !table.getCanPreviousPage()
-                : !previousPageCursor
-            }
+            onClick={() => setCurrentCursor(previousPageCursor)}
+            disabled={!previousPageCursor}
           >
             {t('Previous')}
           </Button>
@@ -502,15 +419,9 @@ export function DataTable<
             variant="outline"
             size="sm"
             onClick={() => {
-              if (clientPagination) {
-                table.nextPage();
-              } else {
-                setCurrentCursor(nextPageCursor);
-              }
+              setCurrentCursor(nextPageCursor);
             }}
-            disabled={
-              clientPagination ? !table.getCanNextPage() : !nextPageCursor
-            }
+            disabled={!nextPageCursor}
           >
             {t('Next')}
           </Button>

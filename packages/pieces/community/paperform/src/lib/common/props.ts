@@ -7,11 +7,9 @@ import {
   PaperformSpace,
 } from './types';
 import { isNil } from '@activepieces/shared';
-import { paperformAuth } from './auth';
 
 export const paperformCommonProps = {
   spaceId: Property.Dropdown({
-auth: paperformAuth,
     displayName: 'Space',
     required: true,
     refreshers: ['auth'],
@@ -26,7 +24,7 @@ auth: paperformAuth,
 
       try {
         const spaces = await paperformCommon.getSpaces({
-          auth: auth.secret_text,
+          auth: auth as string,
           limit: 100,
         });
 
@@ -47,7 +45,6 @@ auth: paperformAuth,
     },
   }),
   formId: Property.Dropdown({
-auth: paperformAuth,
     displayName: 'Form',
     required: true,
     refreshers: ['auth'],
@@ -62,7 +59,7 @@ auth: paperformAuth,
 
       try {
         const forms = await paperformCommon.getForms({
-          auth: auth.secret_text,
+          auth: auth as string,
           limit: 100,
         });
 
@@ -83,7 +80,6 @@ auth: paperformAuth,
     },
   }),
   productFieldKey: Property.Dropdown({
-auth: paperformAuth,
     displayName: 'Product Field',
     required: true,
     refreshers: ['auth', 'formId'],
@@ -99,7 +95,7 @@ auth: paperformAuth,
       try {
         const fields = await paperformCommon.getFormFields({
           formSlugOrId: formId as string,
-          auth: auth.secret_text,
+          auth: auth as string,
         });
 
         const productFields = fields.results.fields.filter(
@@ -131,7 +127,6 @@ auth: paperformAuth,
     },
   }),
   productSku: Property.Dropdown({
-auth: paperformAuth,
     displayName: 'Product',
     required: true,
     refreshers: ['auth', 'formId'],
@@ -147,7 +142,7 @@ auth: paperformAuth,
       try {
         const products = await paperformCommon.getProducts({
           formSlugOrId: formId as string,
-          auth: auth.secret_text,
+          auth: auth as string,
           limit: 100,
         });
 
@@ -173,7 +168,6 @@ auth: paperformAuth,
     },
   }),
   couponCode: Property.Dropdown({
-auth: paperformAuth,
     displayName: 'Coupon',
     required: true,
     refreshers: ['auth', 'formId'],
@@ -189,7 +183,7 @@ auth: paperformAuth,
       try {
         const coupons = await paperformCommon.getCoupons({
           formSlugOrId: formId as string,
-          auth: auth.secret_text,
+          auth: auth as string,
           limit: 100,
         });
 

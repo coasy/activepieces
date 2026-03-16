@@ -3,7 +3,6 @@ import { HttpMethod, propsValidation } from '@activepieces/pieces-common';
 import { edenAiApiCall } from '../common/client';
 import { createStaticDropdown } from '../common/providers';
 import { z } from 'zod';
-import { edenAiAuth } from '../..';
 
 const SPELL_CHECK_PROVIDERS = [
   { label: 'Microsoft', value: 'microsoft' },
@@ -164,12 +163,10 @@ function normalizeSpellCheckResponse(provider: string, response: any) {
 
 export const spellCheckAction = createAction({
   name: 'spell_check',
-  auth: edenAiAuth,
   displayName: 'Spell Check',
   description: 'Identify and correct spelling or grammar errors using Eden AI. Supports multiple providers, languages, and models.',
   props: {
     provider: Property.Dropdown({
-      auth: edenAiAuth,
       displayName: 'Provider',
       description: 'The AI provider to use for spell checking and grammar correction.',
       required: true,
@@ -182,7 +179,6 @@ export const spellCheckAction = createAction({
       required: true,
     }),
     language: Property.Dropdown({
-      auth: edenAiAuth,
       displayName: 'Text Language',
       description: 'The language of the input text. Choose "Auto Detection" if unsure.',
       required: false,
@@ -196,7 +192,6 @@ export const spellCheckAction = createAction({
       required: false,
     }),
     fallback_providers: Property.MultiSelectDropdown({
-      auth: edenAiAuth,
       displayName: 'Fallback Providers',
       description: 'Alternative providers to try if the main provider fails (up to 5).',
       required: false,
@@ -247,7 +242,7 @@ export const spellCheckAction = createAction({
 
     try {
       const response = await edenAiApiCall({
-        apiKey: auth.secret_text,
+        apiKey: auth as string,
         method: HttpMethod.POST,
         resourceUri: '/text/spell_check',
         body,

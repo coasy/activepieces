@@ -1,6 +1,6 @@
 import {
   createTrigger,
-  AppConnectionValueForAuthProperty,
+  PiecePropValueSchema,
   TriggerStrategy
 } from '@activepieces/pieces-framework';
 import {
@@ -10,7 +10,7 @@ import {
 } from '@activepieces/pieces-common';
 import { simplybookAuth, makeJsonRpcCall } from '../common';
 
-const polling: Polling<AppConnectionValueForAuthProperty<typeof simplybookAuth>, Record<string, never>> = {
+const polling: Polling<PiecePropValueSchema<typeof simplybookAuth>, Record<string, never>> = {
   strategy: DedupeStrategy.TIMEBASED,
   items: async ({ auth, lastFetchEpochMS }) => {
     const authData = auth;
@@ -23,7 +23,7 @@ const polling: Polling<AppConnectionValueForAuthProperty<typeof simplybookAuth>,
     const dateTo = now.toISOString().split('T')[0];
 
     // Get bookings with promo: false (offers/proposals)
-    const bookings = await makeJsonRpcCall<any[]>(authData.props, 'getBookings', [
+    const bookings = await makeJsonRpcCall<any[]>(authData, 'getBookings', [
       {
         created_date_from: dateFrom,
         created_date_to: dateTo,

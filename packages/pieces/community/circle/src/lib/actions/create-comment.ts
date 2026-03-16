@@ -63,7 +63,7 @@ export const createComment = createAction({
 			url: `${BASE_URL}/comments`,
 			body: payload,
 			headers: {
-				Authorization: `Bearer ${context.auth.secret_text}`,
+				Authorization: `Bearer ${context.auth}`,
 				'Content-Type': 'application/json',
 			},
 		});

@@ -62,7 +62,7 @@ export const getAllListItems = createAction({
         `public/v4/lists/${listId}/items?${parameters}used-with-activepieces=`,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: context.auth.secret_text,
+        Authorization: context.auth,
       },
     });
     if (response.status === 200) {

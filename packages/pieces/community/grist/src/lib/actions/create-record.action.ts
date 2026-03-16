@@ -20,8 +20,8 @@ export const gristCreateRecordAction = createAction({
     const tableColumnValues = context.propsValue.table_columns;
 
     const client = new GristAPIClient({
-      domainUrl: context.auth.props.domain,
-      apiKey: context.auth.props.apiKey,
+      domainUrl: context.auth.domain,
+      apiKey: context.auth.apiKey,
     });
 
     const tableColumnSchema = await client.listTableColumns(

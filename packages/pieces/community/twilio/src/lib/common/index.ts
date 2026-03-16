@@ -8,11 +8,9 @@ import {
   httpClient,
   AuthenticationType,
 } from '@activepieces/pieces-common';
-import { twilioAuth } from '../..';
 
 export const twilioCommon = {
   phone_number: Property.Dropdown({
-    auth: twilioAuth,
     description: 'The phone number to send the message from',
     displayName: 'From',
     required: true,
@@ -26,7 +24,7 @@ export const twilioCommon = {
         };
       }
 
-      const basicAuthProperty = auth;
+      const basicAuthProperty = auth as BasicAuthPropertyValue;
       const response = await callTwilioApi<{
         incoming_phone_numbers: {
           phone_number: string;

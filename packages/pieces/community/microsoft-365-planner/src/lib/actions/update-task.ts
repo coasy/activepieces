@@ -26,8 +26,7 @@ export const updateTask = createAction({
         'Select users to assign the task to. If left empty, the task will be unassigned.',
       required: false,
       refreshers: ['auth'],
-      auth: microsoft365PlannerAuth,
-      options: async ({ auth }) => {
+      options: async ({ auth }: { auth?: OAuth2PropertyValue | null }) => {
         if (!auth) {
           return {
             options: [],

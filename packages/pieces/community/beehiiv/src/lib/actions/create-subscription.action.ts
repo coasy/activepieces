@@ -104,7 +104,7 @@ export const createSubscriptionAction = createAction({
 		const premiumTierIds = context.propsValue.premium_tier_ids ?? [];
 
 		const response = await beehiivApiCall({
-			apiKey: context.auth.secret_text,
+			apiKey: context.auth,
 			method: HttpMethod.POST,
 			resourceUri: `/publications/${publicationId}/subscriptions`,
 			body: {

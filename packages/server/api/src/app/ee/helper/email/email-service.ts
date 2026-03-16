@@ -1,10 +1,11 @@
 import { AlertChannel, OtpType } from '@activepieces/ee-shared'
-import { ApEdition, assertNotNullOrUndefined, BADGES, InvitationType, isNil, UserIdentity, UserInvitation } from '@activepieces/shared'
+import { ApEdition, assertNotNullOrUndefined, InvitationType, UserIdentity, UserInvitation } from '@activepieces/shared'
+import dayjs from 'dayjs'
 import { FastifyBaseLogger } from 'fastify'
+import { issuesService } from '../../../flows/issues/issues-service'
 import { system } from '../../../helper/system/system'
 import { platformService } from '../../../platform/platform.service'
 import { projectService } from '../../../project/project-service'
-import { userService } from '../../../user/user-service'
 import { alertsService } from '../../alerts/alerts-service'
 import { domainHelper } from '../../custom-domains/domain-helper'
 import { projectRoleService } from '../../projects/project-role/project-role.service'
@@ -103,7 +104,7 @@ export const emailService = (log: FastifyBaseLogger) => ({
             [OtpType.PASSWORD_RESET]: 'reset-password',
         }
 
-        const setupLink = await domainHelper.getInternalUrl({
+        const setupLink = await domainHelper.getPublicUrl({
             platformId,
             path: frontendPath[type] + `?otpcode=${otp}&identityId=${userIdentity.id}`,
         })
@@ -130,27 +131,71 @@ export const emailService = (log: FastifyBaseLogger) => ({
         })
     },
 
-    async sendBadgeAwardedEmail(userId: string, badgeName: string): Promise<void> {
-        const user = await userService.getMetaInformation({ id: userId })
-
-        if (isNil(user)) {
+    async sendIssuesSummary(job: {
+        projectId: string
+        platformId: string
+        projectName: string
+    }): Promise<void> {
+        const issues = await issuesService(log).list({ projectId: job.projectId, cursor: undefined, limit: 50 })
+        if (issues.data.length === 0) {
             return
         }
-        const badge = BADGES[badgeName as keyof typeof BADGES]
+
+        const alerts = await alertsService(log).list({ projectId: job.projectId, cursor: undefined, limit: 50 })
+        const emails = alerts.data.filter((alert) => alert.channel === AlertChannel.EMAIL).map((alert) => alert.receiver)
+
+        if (emails.length === 0) {
+            return
+        }
+
+        const issuesUrl = await domainHelper.getPublicUrl({
+            platformId: job.platformId,
+            path: 'runs?limit=10#Issues',
+        })
+
+        const issuesWithFormattedDate = issues.data.map((issue) => ({
+            ...issue,
+            created: dayjs(issue.created).format('MMM D, h:mm a'),
+            lastOccurrence: dayjs(issue.lastOccurrence).format('MMM D, h:mm a'),
+        }))
+
         await emailSender(log).send({
-            emails: [user.email],
-            platformId: user.platformId!,
+            emails,
+            platformId: job.platformId,
             templateData: {
-                name: 'badge-awarded',
+                name: 'issues-summary',
                 vars: {
-                    firstName: user.firstName,
-                    badgeTitle: badge.title,
-                    badgeDescription: badge.description,
-                    badgeImageUrl: badge.imageUrl,
+                    issuesUrl,
+                    issuesCount: issues.data.length.toString(),
+                    projectName: job.projectName,
+                    issues: JSON.stringify(issuesWithFormattedDate),
                 },
             },
         })
     },
+
+    async sendExceedFailureThresholdAlert(projectId: string, flowName: string): Promise<void> {
+        const alerts = await alertsService(log) .list({ projectId, cursor: undefined, limit: 50 })
+        const emails = alerts.data.filter((alert) => alert.channel === AlertChannel.EMAIL).map((alert) => alert.receiver)
+        const project = await projectService.getOneOrThrow(projectId)
+
+        if (emails.length === 0) {
+            return
+        }
+
+        await emailSender(log).send({
+            emails,
+            platformId: project.platformId,
+            templateData: {
+                name: 'trigger-failure',
+                vars: {
+                    flowName,
+                    projectName: project.displayName,
+                },
+            },
+        })
+    },
+
 })
 
 async function getEntityNameForInvitation(userInvitation: UserInvitation): Promise<{ name: string, role: string }> {

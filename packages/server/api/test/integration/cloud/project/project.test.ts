@@ -3,6 +3,7 @@ import {
     UpdateProjectPlatformRequest,
 } from '@activepieces/ee-shared'
 import {
+    apId,
     FlowStatus,
     Platform,
     PlatformRole,
@@ -42,11 +43,11 @@ afterAll(async () => {
 describe('Project API', () => {
     describe('Create Project', () => {
         it('it should create project by user', async () => {
-            const { mockOwner, mockPlatform } = await mockAndSaveBasicSetup()
+            const { mockOwner, mockPlatform, mockProject } = await mockAndSaveBasicSetup()
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: mockOwner.id,
-                
+                projectId: mockProject.id,
                 platform: { id: mockPlatform.id },
             })
 
@@ -137,6 +138,7 @@ describe('Project API', () => {
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: mockUserTwo.id,
+                projectId: mockProjectTwo.id,
                 platform: {
                     id: mockPlatformTwo.id,
                 },
@@ -144,7 +146,7 @@ describe('Project API', () => {
 
             const response = await app?.inject({
                 method: 'GET',
-                url: '/v1/projects',
+                url: '/v1/users/projects',
                 headers: {
                     authorization: `Bearer ${testToken}`,
                 },
@@ -176,7 +178,7 @@ describe('Project API', () => {
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: mockUser.id,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -238,7 +240,7 @@ describe('Project API', () => {
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: mockUser.id,
-                
+                projectId: mockProject.id,
                 platform: { id: mockPlatform.id },
             })
 
@@ -288,7 +290,7 @@ describe('Project API', () => {
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: memberUser.id,
-                
+                projectId: mockProject.id,
                 platform: { id: mockPlatform.id },
             })
 
@@ -317,7 +319,7 @@ describe('Project API', () => {
             const mockToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockProject.platformId,
                 },
@@ -362,7 +364,7 @@ describe('Project API', () => {
             const testToken = await generateMockToken({
                 type: PrincipalType.USER,   
                 id: mockUser.id,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockPlatform.id,
                 },
@@ -406,7 +408,7 @@ describe('Project API', () => {
             const mockToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockProject.platformId,
                 },
@@ -427,7 +429,7 @@ describe('Project API', () => {
             expect(deletedProject?.deleted).not.toBeNull()
         })
 
-        it('Succeeds if project has enabled flows', async () => {
+        it('Fails if project has enabled flows', async () => {
             // arrange
             const { mockOwner, mockPlatform, mockProject } = await mockAndSaveBasicSetup()
 
@@ -440,7 +442,7 @@ describe('Project API', () => {
             const mockToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockProject.platformId,
                 },
@@ -456,7 +458,39 @@ describe('Project API', () => {
             })
 
             // assert
-            expect(response?.statusCode).toBe(StatusCodes.NO_CONTENT)
+            expect(response?.statusCode).toBe(StatusCodes.CONFLICT)
+            const responseBody = response?.json()
+            expect(responseBody?.code).toBe('VALIDATION')
+            expect(responseBody?.params?.message).toBe('PROJECT_HAS_ENABLED_FLOWS')
+        })
+
+        it('Fails if project to delete is the active project', async () => {
+            // arrange
+            const { mockOwner, mockProject } = await mockAndSaveBasicSetup()
+
+            const mockToken = await generateMockToken({
+                id: mockOwner.id,
+                type: PrincipalType.USER,
+                projectId: mockProject.id,
+                platform: {
+                    id: mockProject.platformId,
+                },
+            })
+
+            // act
+            const response = await app?.inject({
+                method: 'DELETE',
+                url: `/v1/projects/${mockProject.id}`,
+                headers: {
+                    authorization: `Bearer ${mockToken}`,
+                },
+            })
+
+            // assert
+            expect(response?.statusCode).toBe(StatusCodes.CONFLICT)
+            const responseBody = response?.json()
+            expect(responseBody?.code).toBe('VALIDATION')
+            expect(responseBody?.params?.message).toBe('ACTIVE_PROJECT')
         })
 
         it('Requires user to be platform owner', async () => {
@@ -469,7 +503,7 @@ describe('Project API', () => {
             const mockToken = await generateMockToken({
                 id: mockOwner.id,
                 type: PrincipalType.USER,
-                
+                projectId: mockProject.id,
                 platform: {
                     id: mockProject.platformId,
                 },
@@ -488,6 +522,37 @@ describe('Project API', () => {
             expect(response?.statusCode).toBe(StatusCodes.FORBIDDEN)
             const responseBody = response?.json()
             expect(responseBody?.code).toBe('AUTHORIZATION')
+        })
+
+        it('Fails if project to delete is not in current platform', async () => {
+            // arrange
+            const { mockOwner, mockPlatform, mockProject } = await mockAndSaveBasicSetup()
+
+            const mockProjectToDelete = createMockProject({ ownerId: mockOwner.id, platformId: mockPlatform.id })
+            await databaseConnection().getRepository('project').save([mockProjectToDelete])
+
+            const randomPlatformId = apId()
+
+            const mockToken = await generateMockToken({
+                id: mockOwner.id,
+                type: PrincipalType.USER,
+                projectId: mockProject.id,
+                platform: {
+                    id: randomPlatformId,
+                },
+            })
+
+            // act
+            const response = await app?.inject({
+                method: 'DELETE',
+                url: `/v1/projects/${mockProjectToDelete.id}`,
+                headers: {
+                    authorization: `Bearer ${mockToken}`,
+                },
+            })
+
+            // assert
+            expect(response?.statusCode).toBe(StatusCodes.FORBIDDEN)
         })
 
     })
@@ -522,13 +587,14 @@ describe('Project API', () => {
             const operatorToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: operatorUser.id,
+                projectId: project1.id,
                 platform: { id: mockPlatform.id },
             })
             
             // act - list projects
             const response = await app?.inject({
                 method: 'GET',
-                url: '/v1/projects',
+                url: '/v1/users/projects',
                 headers: {
                     authorization: `Bearer ${operatorToken}`,
                 },
@@ -546,7 +612,7 @@ describe('Project API', () => {
 
         it('Platform operator cannot update platform settings', async () => {
             // arrange
-            const { mockPlatform } = await mockAndSaveBasicSetup()
+            const { mockPlatform, mockProject } = await mockAndSaveBasicSetup()
             
             const { mockUser: operatorUser } = await mockBasicUser({
                 user: {
@@ -558,7 +624,7 @@ describe('Project API', () => {
             const operatorToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: operatorUser.id,
-                
+                projectId: mockProject.id,
                 platform: { id: mockPlatform.id },
             })
             
@@ -602,13 +668,14 @@ describe('Project API', () => {
             const memberToken = await generateMockToken({
                 type: PrincipalType.USER,
                 id: memberUser.id,
+                projectId: project.id,
                 platform: { id: mockPlatform.id },
             })
             
             // act - list projects
             const response = await app?.inject({
                 method: 'GET',
-                url: '/v1/projects',
+                url: '/v1/users/projects',
                 headers: {
                     authorization: `Bearer ${memberToken}`,
                 },

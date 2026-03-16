@@ -59,7 +59,7 @@ export const generateDocumentAction = createAction({
 			},
 		};
 		const response = await makeRequest(
-			auth,
+			auth as string,
 			HttpMethod.POST,
 			'/documents',
 			undefined,

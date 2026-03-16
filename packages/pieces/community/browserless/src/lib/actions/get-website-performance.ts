@@ -224,7 +224,7 @@ export const getWebsitePerformance = createAction({
         }
 
         const response = await browserlessCommon.apiCall({
-            auth: context.auth.props,
+            auth: context.auth,
             method: HttpMethod.POST,
             resourceUri,
             body: requestBody,
