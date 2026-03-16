@@ -23,6 +23,7 @@ import { newSubscription } from './lib/triggers/new-subscription';
 import { newWebinarParticipant } from './lib/triggers/new-webinar-participant';
 import { webinarParticipantAttend } from './lib/triggers/webinar-participant-attend';
 import { webinarParticipantReminder } from './lib/triggers/webinar-participant-reminder';
+import { assignToUser } from './lib/actions/assign-to-user';
 
 export const coasyAuth = PieceAuth.CustomAuth({
   required: true,
@@ -50,6 +51,7 @@ export const coasy = createPiece({
   logoUrl: 'https://console.coasy.io/favicon/apple-icon.png',
   authors: ['christian-schab'],
   actions: [
+    assignToUser,
     createEventParticipant,
     createFunnelParticipant,
     createVoucher,
