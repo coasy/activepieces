@@ -4,6 +4,31 @@ import { runCoasyAction } from '../common/actions';
 
 const name = 'addTrialPeriod';
 
+// Reshapes flat guard props into the nested `guards: { ... }` body the server
+// expects. `guardSources` maps a prop name to its server guard key (e.g.
+// `{ funnelGuard: 'funnel' }`). Blank entries are dropped and `guards` is omitted
+// when no guard has any value.
+const buildGuardedRequest = (
+  request: Record<string, unknown>,
+  guardSources: Record<string, string>
+): Record<string, unknown> => {
+  const rest = { ...request };
+  const guards: Record<string, unknown> = {};
+
+  for (const [propName, guardKey] of Object.entries(guardSources)) {
+    const value = rest[propName];
+    delete rest[propName];
+    const ids = Array.isArray(value)
+      ? value.filter((id) => typeof id === 'string' && id.trim() !== '')
+      : [];
+    if (ids.length > 0) {
+      guards[guardKey] = ids;
+    }
+  }
+
+  return Object.keys(guards).length > 0 ? { ...rest, guards } : rest;
+};
+
 export const addTrialPeriod = createAction({
   auth: coasyAuth,
   name,
@@ -37,6 +62,17 @@ export const addTrialPeriod = createAction({
       description: 'Optional first name, forwarded when a new user is created.',
       required: false,
     }),
+    funnelGuard: Property.Array({
+      displayName: 'Funnel Guard',
+      description:
+        'Guards against extending the trial period if the user is already a funnel participant in one of these funnels.',
+      required: false,
+    }),
   },
-  run: (configValue) => runCoasyAction(configValue, name),
+  run: (configValue) =>
+    runCoasyAction(
+      configValue,
+      name,
+      buildGuardedRequest(configValue.propsValue, { funnelGuard: 'funnel' })
+    ),
 });

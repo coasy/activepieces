@@ -7,7 +7,8 @@ import { CoasyClient } from './coasyClient';
 
 export const runCoasyAction = async <T extends InputPropertyMap>(
   configValue: ActionContext<typeof coasyAuth, T>,
-  action: string
+  action: string,
+  request?: Record<string, unknown>
 ) => {
   const { propsValue, auth: authPayload } = configValue;
   const client = new CoasyClient(
@@ -15,10 +16,8 @@ export const runCoasyAction = async <T extends InputPropertyMap>(
     authPayload.apiKey
   );
 
-  const { ...restPropsValue } = propsValue;
+  const body = { ...(request ?? propsValue) };
+  delete body['auth'];
 
-  delete restPropsValue['auth'];
-
-  const request = { ...restPropsValue };
-  return client.action(action, request);
+  return client.action(action, body);
 };

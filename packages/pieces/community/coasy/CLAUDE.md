@@ -35,5 +35,6 @@ The doc is **private** — fetch it with `gh api repos/coasy/coasy-core/contents
 - **`createFunnelParticipant`** lowercases `email` server-side. The response includes server-generated `funnelParticipantId`, `registrationTime`, and `timestamp`.
 - **`createVoucher`** auto-generates the voucher ID (`VOC-…`) and sets `status: "ACTIVE"`. Setting `countLeft` implicitly sets `isCountLimited: true`.
 - **`addTrialPeriod`** has its own domain error model (`AppSubscriptionError`) mapped to HTTP via `toApiErrorIfAppSubscriptionError` — surface the server's error message rather than masking it.
+- **`addTrialPeriod` funnel guard** (coasy-core PR #220): the piece's `funnelGuard` array maps to the nested body `guards: { funnel: string[] }`. Guards are checked before the user is resolved; a match is a **silent no-op success** (`subscriptionStatus: "BLOCKED"`, `blockedBy` set, HTTP 200) — nothing is created/extended. Omitting it preserves original behavior.
 
 When the upstream doc changes, refresh this file by re-fetching the source via `gh api`.
