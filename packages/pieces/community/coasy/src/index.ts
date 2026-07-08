@@ -26,6 +26,7 @@ import { webinarParticipantAttend } from './lib/triggers/webinar-participant-att
 import { webinarParticipantReminder } from './lib/triggers/webinar-participant-reminder';
 import { addTrialPeriod } from './lib/actions/add-trial-period';
 import { assignToUser } from './lib/actions/assign-to-user';
+import { removeFromUser } from './lib/actions/remove-from-user';
 
 export const coasyAuth = PieceAuth.CustomAuth({
   required: true,
@@ -60,6 +61,7 @@ export const coasy = createPiece({
     createVoucher,
     enrollUserCourse,
     findEvent,
+    removeFromUser,
     sendPushNotification,
   ],
   triggers: [
