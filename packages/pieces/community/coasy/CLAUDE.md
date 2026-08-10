@@ -27,6 +27,7 @@ The doc is **private** — fetch it with `gh api repos/coasy/coasy-core/contents
 | `enrollUserCourse` | `POST /apps/actions/enrollUserCourse` | Enroll a user in a course |
 | `findEvent` | `POST /apps/actions/findEvent` | Find events of the calling app by exact title |
 | `removeFromUser` | `POST /apps/actions/removeFromUser` | Remove features / community topics / topic groups / meditation categories from a user |
+| `sendEmail` | `POST /apps/actions/sendEmail` | Queue an email dispatch to a raw email address |
 | `sendPushNotification` | `POST /apps/actions/sendPushNotification` | Send a push notification to all of a user's devices |
 
 ### Gotchas worth remembering
@@ -36,6 +37,8 @@ The doc is **private** — fetch it with `gh api repos/coasy/coasy-core/contents
 - **`sendPushNotification`** accepts a `topic` field in the DTO but it is silently discarded by the current `buildNotification` implementation — do not expose it as a piece property until the upstream handler is fixed.
 - **`createFunnelParticipant`** lowercases `email` server-side. The response includes server-generated `funnelParticipantId`, `registrationTime`, and `timestamp`.
 - **`createVoucher`** auto-generates the voucher ID (`VOC-…`) and sets `status: "ACTIVE"`. Setting `countLeft` implicitly sets `isCountLimited: true`.
+- **`sendEmail`** requires exactly one of `templateKey` / `templateId` (XOR, `400` otherwise). A `templateId` of a foreign app returns `401`, an unknown or soft-deleted one `404`. `data` is validated against the `MetaData` DTO — unknown keys are rejected with `400`.
+- **`POST /apps/actions/listEmailTemplates`** is a backend endpoint the piece calls, not a piece action — it only backs the Send Email template dropdown, via `common/emailTemplates.ts`. It takes no body and returns only the app's *configured* keys, not the whole `email_templates` table. Keys whose template is gone are omitted. Several keys can share one template.
 - **`addTrialPeriod`** has its own domain error model (`AppSubscriptionError`) mapped to HTTP via `toApiErrorIfAppSubscriptionError` — surface the server's error message rather than masking it.
 - **`addTrialPeriod` funnel guard** (coasy-core PR #220): the piece's `funnelGuard` array maps to the nested body `guards: { funnel: string[] }`. Guards are checked before the user is resolved; a match is a **silent no-op success** (`subscriptionStatus: "BLOCKED"`, `blockedBy` set, HTTP 200) — nothing is created/extended. Omitting it preserves original behavior.
 

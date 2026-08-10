@@ -5,6 +5,13 @@ import {
   HttpRequest,
 } from '@activepieces/pieces-common';
 
+export type CoasyAuth = {
+  baseUrl?: string;
+  apiKey: string;
+};
+
+export const DEFAULT_BASE_URL = 'https://backend.api.prod.coasy.io';
+
 export class CoasyClient {
   private baseUrl: string;
   private apiKey: string;
@@ -56,3 +63,6 @@ export class CoasyClient {
     }
   }
 }
+
+export const createCoasyClient = (auth: CoasyAuth) =>
+  new CoasyClient(auth.baseUrl ?? DEFAULT_BASE_URL, auth.apiKey);
