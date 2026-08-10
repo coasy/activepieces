@@ -8,6 +8,7 @@ import { createFunnelParticipant } from './lib/actions/create-funnel-participant
 import { createVoucher } from './lib/actions/create-voucher';
 import { enrollUserCourse } from './lib/actions/enroll-user-course';
 import { findEvent } from './lib/actions/find-event';
+import { sendEmail } from './lib/actions/send-email';
 import { sendPushNotification } from './lib/actions/send-push-notification';
 import { cancelledMembership } from './lib/triggers/cancelled-membership';
 import { cancelledOrder } from './lib/triggers/cancelled-order';
@@ -62,6 +63,7 @@ export const coasy = createPiece({
     enrollUserCourse,
     findEvent,
     removeFromUser,
+    sendEmail,
     sendPushNotification,
   ],
   triggers: [
