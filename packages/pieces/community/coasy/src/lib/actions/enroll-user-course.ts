@@ -20,6 +20,13 @@ export const enrollUserCourse = createAction({
       description: 'ID of Course',
       required: true,
     }),
+    directGrant: Property.Checkbox({
+      displayName: 'Direct Grant Course',
+      description:
+        'Also grants the course to the user. Without it the enrollment is only progress tracking and the course stays locked.',
+      required: false,
+      defaultValue: true,
+    }),
   },
   run: (configValue) => runCoasyAction(configValue, name),
 });
