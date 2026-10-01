@@ -13,8 +13,14 @@ export const assignToUser = createAction({
   props: {
     userId: Property.ShortText({
       displayName: 'User ID',
-      description: 'ID of User',
-      required: true,
+      description: 'ID of User. Takes precedence over Email',
+      required: false,
+    }),
+    email: Property.ShortText({
+      displayName: 'Email',
+      description:
+        'Resolves the user by email within the app when User ID is empty. One of User ID or Email is required',
+      required: false,
     }),
     features: Property.Array({
       displayName: 'Features',
