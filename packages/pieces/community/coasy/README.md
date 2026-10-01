@@ -140,7 +140,7 @@ The piece uses custom authentication with:
 
 ## Publishing
 
-The piece is published as `@coasy/piece-coasy` to npm. Version is currently `0.4.0`.
+The piece is published as `@coasy/piece-coasy` to npm. Version is currently `0.5.0`.
 
 To publish a new version:
 
