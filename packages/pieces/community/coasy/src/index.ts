@@ -22,6 +22,7 @@ import { newMembership } from './lib/triggers/new-membership';
 import { newOrder } from './lib/triggers/new-order';
 import { newOrderItem } from './lib/triggers/new-order-item';
 import { newSubscription } from './lib/triggers/new-subscription';
+import { quizParticipantCompleted } from './lib/triggers/quiz-participant-completed';
 import { newWebinarParticipant } from './lib/triggers/new-webinar-participant';
 import { webinarParticipantAttend } from './lib/triggers/webinar-participant-attend';
 import { webinarParticipantReminder } from './lib/triggers/webinar-participant-reminder';
@@ -80,6 +81,7 @@ export const coasy = createPiece({
     newOrderItem,
     newSubscription,
     newWebinarParticipant,
+    quizParticipantCompleted,
     webinarParticipantAttend,
     webinarParticipantReminder,
   ],
