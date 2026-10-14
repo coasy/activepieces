@@ -7,7 +7,7 @@ This is the Coasy integration piece for Activepieces, providing actions and trig
 The Coasy piece includes:
 
 - **Actions**: Create funnel participants
-- **Triggers**: New funnel participants, new webinar participants, new auth events
+- **Triggers**: New funnel participants, new webinar participants, new auth events, quiz participant completed
 - **Authentication**: Custom auth with base URL and API key
 
 ## Development Setup
